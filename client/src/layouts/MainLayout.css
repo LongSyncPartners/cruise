@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+    font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 14px;
+    
+}
+
+#root {
+  width: 100%;
+  display: block;
+}
+
+body {
+    margin: 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
+    min-width: 1200px;
+}
+
+div.header-toolbar {
+  min-height: 30px;
+  background-color: #eaeceb;
+  color: #0d243e;
+}
+
+.header-box {
+    background: white;
+    border: 1px solid #000;
+    padding: 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.logo { 
+  max-width: 270px; 
+  max-height: 25px;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-left: 30px;
+}
+
+.logo img {
+  max-width: 400px;
+  max-height: 35px;
+  padding-bottom: 5px;
+}
+
+.system-name { 
+  min-width: 800px; 
+  max-height: 25px;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 150%;
+  font-weight: 500;
+  margin: auto;
+}
+.user-info { 
+  max-height: 25px;
+  background-color: transparent;
+  border: none;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: bolder;
+  margin-left: auto;
+  font-size: 100%;
+}
+
+/* Layout main */
+div.container {
+    display: flex;
+    flex: 1;
+    color: rgb(50, 49, 48);
+}
+
+/* Menu */
+.menu-container div:first-of-type {
+  top: 40px;
+}
+
+.menu-header p {
+  font-size: 120%;
+}
+
+.menuToggleBtn:focus {
+  outline: none;
+}
+
+.menuToggleBtn.Mui-focusVisible {
+  outline: none;
+}
+
+.menu-container div span{
+  padding-top: 5px;
+  font-size: 100%;
+}
+
+.menu-container div svg {
+    color: #203386;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px 20px 20px 20px;
+    padding: 5px;
+    margin-left: auto;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-left: 0px;
+    padding-top: 0px;
+    background-color: #ffffff;
+}
+

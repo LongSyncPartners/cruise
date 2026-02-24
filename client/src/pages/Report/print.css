@@ -1,0 +1,206 @@
+/* print.css */
+@page {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+div.report-container {
+    padding-left: 50px;
+    padding-top: 35px;
+}
+
+div.report-container * {
+  font-size: 8pt;
+  border: none;
+  border-radius: unset;
+}
+
+div.print-common-header {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    margin-bottom: 20px;
+    display: flex;
+    position: fixed;
+    background-color: white;
+    top : 40px;
+    z-index: 1099;
+    width: stretch;
+    padding-top: 20px;
+}
+
+div.print-common-header svg {
+    color: #467ABA;
+    padding-right: 2px;
+    font-size: 20px;
+}
+
+div.print-common-header p {
+  font-size: 14px;
+}
+
+div.common-header-item, div.common-header-item-logout{
+    display: flex;
+    padding: 5px 10px;
+}
+
+div.common-header-item:hover, div.common-header-item-logout:hover {
+  background-color: #eae9e9;
+}
+
+div.common-header-item-logout {
+    margin-left: auto;
+}
+
+div.MuiDataGrid-row--firstVisible .MuiDataGrid-cell {
+  border-top: 1px solid black;
+}
+
+div.MuiDataGrid-row--lastVisible .MuiDataGrid-cell{
+  border-top: 1px solid black;
+  border-bottom: 2px solid black;
+}
+
+div.MuiDataGrid-row .reprot-grid-cell-border-left-bold {
+  border-left: 2px solid black;
+}
+
+/* Chrome, Edge, Safari */
+div.report-container input[type="number"]::-webkit-outer-spin-button,
+div.report-container input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+div.report-container input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+div.report-header-button {
+  padding-bottom: 20px;
+  display: flex;
+  padding-top: 30px;
+}
+
+div.report-header-button p {
+  font-size: 150%;
+  font-weight: 600;
+}
+
+div.report-header-button button {
+  min-width: 200px;
+  margin-left: 50px;
+}
+
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print { display: none !important; }
+
+
+}
+
+img.header-logo-report {
+  max-width: 200px;
+  max-height: 25px;
+}
+/* 1 trang cố định */
+div.print-page {
+  width: 297mm;
+  height: 194mm;
+  box-sizing: border-box;
+  padding: 10mm 15mm 5mm 12mm;
+  background: #fff;
+} 
+
+@media screen {
+div.print-page {
+    margin: 10px auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    margin-left: 0px;
+  }
+}
+
+.break-before {
+  break-before: page;
+  page-break-before: always;
+}
+
+div.report-container div.reprot-grid-cell {
+  padding-left: 0px;
+  padding-right: 0px;
+  font-size: 8pt;
+}
+
+div.report-container div.reprot-grid-cell input {
+  padding-left: 1px;
+  padding-right: 1px;
+}
+
+/* Cell red flag */
+
+.has-comment {
+  position: relative;
+}
+
+.has-comment::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #d32f2f;
+  border-left: 10px solid transparent;
+  pointer-events: none;
+}
+
+/* Style “帳票” */
+td.report-table-cell {
+  border: 1px solid #000;
+  padding: 3px;
+  font-size: 8pt;
+  line-height: 1.15;
+  text-align: center;
+} 
+
+td.report-table-cell-border-bold {
+  border: 2px solid #000;
+}
+
+td.report-table-cell-border-left-bold {
+  border-left: 2px solid #000;
+}
+
+td.report-table-cell-border-top-bold {
+  border-top: 2px solid #000;
+}
+
+td.report-table-cell span {
+  font-size: 8pt;
+}
+
+div.report-header-title {
+  background: #111;
+  color: #fff;
+  padding: 7px 9px;
+  font-weight: 800;
+  font-size: 15px;
+  max-width: 400px;
+  min-width: 300px;
+  text-align: center;
+}
+
+div.report_header_line {
+  width: 200px;
+  border-bottom: 1px solid #000;;
+}
+
+/* Nếu có cột dài, cho phép wrap ở cột đó */
+.wrap {
+  white-space: normal;
+}

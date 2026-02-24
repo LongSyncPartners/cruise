@@ -1,0 +1,230 @@
+/* Container */
+.forecast-container {
+  padding-left: 50px;
+  max-width: 1200px;
+}
+
+/* Header */
+.forecast-container .search-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.forecast-container p.forecast-title {
+    font-size: 150%;
+    font-weight: 600;
+}
+
+div.forecast-common-header {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    margin-bottom: 20px;
+    display: flex;
+
+}
+
+div.forecast-common-header svg {
+    color: #467ABA;
+    padding-right: 2px;
+}
+
+div.common-header-item, div.common-header-item-logout{
+    display: flex;
+    padding: 5px 10px;
+}
+
+div.common-header-item:hover, div.common-header-item-logout:hover {
+  background-color: #eae9e9;
+}
+
+div.common-header-item-logout {
+    margin-left: auto;
+}
+
+/* 検索条件 component */
+.forecast-container .search-container {
+  padding: 20px 0px;
+}
+
+.forecast-container div.search-condition-container {
+  background-color: inherit;
+  border: none;
+  box-shadow: none ;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.forecast-container .search-condition-container button svg {
+  color: #1976d2;
+}
+
+.forecast-container button.search-condition-summary {
+  min-height: 30px;
+  max-height: 40px;
+  background-color: #eff2f6;
+  color: black;
+}
+
+.forecast-container button.search-condition-summary.Mui-expanded {
+  min-height: 48px;
+}
+
+.forecast-container button.search-condition-summary .MuiAccordionSummary-content {
+  margin: 12px 0;
+}
+
+.forecast-container button.search-condition-summary .MuiAccordionSummary-content.Mui-expanded {
+  margin: 12px 0;
+}
+
+.forecast-container .search-condition-summary:focus {
+  outline: none;
+}
+
+.forecast-container .search-condition-summary.Mui-focusVisible {
+  outline: 2px solid #05427e;
+}
+
+.forecast-container div.search-condition-detail {
+  padding-top: 20px;
+}
+
+.forecast-container button.search-button {
+  min-width: 120px;
+}
+
+.forecast-container .form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.forecast-container .period-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.forecast-container .form-row .period-group .form-input{
+    width: 150px;
+}
+
+.forecast-container .form-row .period-group .period-separator{
+    width: 24px;
+    text-align: center;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.forecast-container .form-label {
+  width: 120px;
+  font-size: 14px;
+}
+
+.forecast-container .form-input {
+  background-color: #ffffff;
+  width: 340px;
+}
+
+.forecast-container .period-group div{
+    background-color: white;
+}
+
+/* 検索結果 Component Grid */
+.forecast-grid-contaniner .MuiDataGrid-row {
+    background-color: transparent;
+}
+
+.forecast-grid-contaniner .MuiDataGrid-row .form-input {
+    width: 100%;
+}
+
+.forecast-grid-contaniner div.MuiDataGrid-columnHeader {
+    background-color: #1976d2;
+    color: white;
+}
+
+.forecast-grid-contaniner div.MuiDataGrid-columnSeparator {
+  display: none;
+}
+
+.forecast-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root {
+  color: #eff1f3;
+}
+
+.forecast-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root.Mui-checked {
+  color: #eff1f3;
+}
+
+.forecast-grid-contaniner  div.form-input {
+    margin-top: 5px;
+}
+
+/*　フッター　*/
+.forecast-footer {
+    padding-top: 20px;
+}
+
+.forecast-footer button {
+    width: 120px;
+    margin-right: 30px;
+}
+
+/* 契約詳細　Contract Detail */
+div.forecast-detail {
+  box-shadow: "-8px 0 16px rgba(0,0,0,0.1)";
+  width: 700px;
+  background-color: #eff2f6;
+  top: 40px;
+  height: calc(100vh - 40px);
+}
+
+div.forecast-detail hr {
+  margin-bottom: 10px;
+  margin-top: 3px;;
+}
+
+.forecast-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #999;
+}
+
+.forecast-detail-header h6 {
+  margin: auto;
+  font-size: 18px;
+}
+
+.forecast-detail-header svg {
+  color: black;
+  font-weight: 900;
+  font-size: 39px;
+}
+
+.forecast-detail-footer {
+  border-top: 1px solid #999;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.forecast-detail-footer button {
+  width: 120px;
+}
+
+.forecast-detail-footer button svg {
+  width: 20px;
+  margin-left: 5px;
+}
+
+.forecast-detail-footer button.close-button {
+  margin-right: auto;
+}
+
