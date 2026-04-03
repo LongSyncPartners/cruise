@@ -1,7 +1,9 @@
 import * as React from "react";
 import type {
   GridColDef,
+  GridFilterItem,
   GridFilterModel,
+  GridFilterOperator,
   GridSortModel,
 } from "@mui/x-data-grid";
 import HeaderFilterCell from "./HeaderFilterCell";
@@ -31,8 +33,7 @@ export function createFilterableHeader({
     const field = params.field;
     const label = params.colDef.headerName ?? field;
 
-    const operator =
-      params.colDef.type === "singleSelect" ? "is" : "contains";
+    const operator = "contains";
 
     return (
       <HeaderFilterCell
@@ -53,3 +54,20 @@ export function createFilterableHeader({
     );
   };
 }
+
+export const singleSelectContainsOperator: GridFilterOperator = {
+  label: "contains",
+  value: "contains",
+  getApplyFilterFn: (filterItem: GridFilterItem) => {
+    const filterValue = String(filterItem.value ?? "").trim().toLowerCase();
+
+    if (!filterValue) {
+      return null;
+    }
+
+    return (cellValue) => {
+      const value = String(cellValue ?? "").toLowerCase();
+      return value.includes(filterValue);
+    };
+  },
+};

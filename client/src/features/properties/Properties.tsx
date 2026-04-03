@@ -37,7 +37,7 @@ import CustomPagination from "../shared/CustomPagination";
 
 import MultilineEditCell from "../shared/MultilineEditCell";
 import { dataGridCommonSx } from "../shared/dataGridCommonSx";
-import { createFilterableHeader } from "../shared/createFilterableHeader";
+import { createFilterableHeader, singleSelectContainsOperator } from "../shared/createFilterableHeader";
 
 import "./index.style.css";
 import CsvUpload from "../shared/CsvUpload";
@@ -231,6 +231,7 @@ function PropertyDataGrid() {
                 filterable: false,
                 type: "singleSelect",
                 valueOptions: MANAGEMENT_TYPE_OPTIONS,
+                filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
             withContextMenu({
@@ -242,6 +243,7 @@ function PropertyDataGrid() {
                 filterable: false,
                 type: "singleSelect",
                 valueOptions: PROPERTY_TYPE_OPTIONS,
+                filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
             withContextMenu({
@@ -271,6 +273,7 @@ function PropertyDataGrid() {
                 filterable: false,
                 type: "singleSelect",
                 valueOptions: PROPERTY_STATUS_OPTIONS ,
+                filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
             withContextMenu({   
@@ -292,6 +295,7 @@ function PropertyDataGrid() {
                 filterable: false,
                 type: "singleSelect",
                 valueOptions: PROCESSING_STATUS_OPTIONS,
+                filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
         ],
