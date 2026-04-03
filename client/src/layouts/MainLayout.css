@@ -27,8 +27,8 @@ body {
 
 div.header-toolbar {
   min-height: 30px;
-  background-color: #eaeceb;
-  color: #0d243e;
+  background-color: #406a95ad;
+  color: #fff;
 }
 
 .header-box {
@@ -37,7 +37,6 @@ div.header-toolbar {
     padding: 0px 0px;
     display: flex;
     align-items: center;
-    justify-content: center;
     min-height: 40px;
 }
 
@@ -65,25 +64,25 @@ div.header-toolbar {
   background-color: transparent;
   border: none;
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
   font-size: 150%;
-  font-weight: 500;
-  margin: auto;
+  font-weight: 400;
 }
 .user-info { 
   max-height: 25px;
   background-color: transparent;
   border: none;
-  padding: 5px 10px;
+  padding: 5px 5px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   flex-shrink: 0;
   font-weight: bolder;
   margin-left: auto;
   font-size: 100%;
+}
+
+.user-info span {
+  padding-right: 20px;
 }
 
 /* Layout main */
@@ -94,9 +93,6 @@ div.container {
 }
 
 /* Menu */
-.menu-container div:first-of-type {
-  top: 40px;
-}
 
 .menu-header p {
   font-size: 120%;
@@ -116,7 +112,7 @@ div.container {
 }
 
 .menu-container div svg {
-    color: #203386;
+    color: #214d78;
     width: 40px;
     height: 40px;
     border-radius: 20px 20px 20px 20px;

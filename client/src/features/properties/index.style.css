@@ -1,0 +1,89 @@
+/* Container */
+.properties-container {
+  padding-left: 50px;
+  max-width: 1200px;
+}
+
+/* Header */
+.properties-container .search-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.properties-container p.properties-title {
+    font-size: 150%;
+    font-weight: 600;
+}
+
+div.properties-common-header {
+    border-bottom: 1px solid rgb(204, 204, 204);
+    margin-bottom: 20px;
+    display: flex;
+
+}
+
+div.properties-common-header svg {
+    color: #467ABA;
+    padding-right: 2px;
+}
+
+div.common-header-item, div.common-header-item-logout{
+    display: flex;
+    padding: 5px 10px;
+}
+
+div.common-header-item:hover, div.common-header-item-logout:hover {
+  background-color: #eae9e9;
+}
+
+div.common-header-item-logout {
+    margin-left: auto;
+}
+
+/* 検索結果 Component Grid */
+.properties-grid-contaniner .MuiDataGrid-row {
+    background-color: transparent;
+}
+
+.properties-grid-contaniner .MuiDataGrid-row .form-input {
+    width: 100%;
+}
+
+.properties-grid-contaniner div.MuiDataGrid-columnHeader {
+    background-color: #1976d2;
+    color: white;
+}
+
+.properties-grid-contaniner div.MuiDataGrid-columnSeparator {
+  display: none;
+}
+
+.properties-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root {
+  color: #eff1f3;
+}
+
+.properties-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root.Mui-checked {
+  color: #eff1f3;
+}
+
+.properties-grid-contaniner  div.form-input {
+    margin-top: 5px;
+}
+
+/*　フッター　*/
+.properties-footer {
+    padding-top: 20px;
+    text-align: center;
+}
+
+.properties-footer button {
+    width: 120px;
+    margin-right: 30px;
+}
+
