@@ -1,15 +1,12 @@
-import { useMemo, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import {
   DataGrid,
   useGridApiRef,
   type GridColDef,
-  type GridRowId,
-  type GridFilterModel,
-  type GridSortModel,
+  type GridPaginationModel,
   type GridRowSelectionModel,
 } from "@mui/x-data-grid";
-
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import { paggingdata } from "./data.dump";
@@ -21,7 +18,6 @@ import {
   createFilterableHeader,
   singleSelectContainsOperator,
 } from "../shared/createFilterableHeader";
-
 import "./index.style.css";
 import LoadingDialog from "../shared/LoadingDialog";
 import {
@@ -33,51 +29,55 @@ import {
 import { getPreviousMonthLabel } from "../shared/utils";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
 import { usePropertySelectionStore } from "../../stores/propertySelectionStore";
+import { usePropertiesGridStore, PropertiesGridState } from "@/stores/propertiesGridStore";
 
 function PropertyDataGrid() {
   const [rows, setRows] = useState<PropertyRow[]>(paggingdata);
-
-  const [filterModel, setFilterModel] = useState<GridFilterModel>({
-    items: [],
-  });
-
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 20,
-  });
-
-  const [rowCount] = useState(rows.length);
-
-  const [rowSelectionModel, setRowSelectionModel] =
-    useState<GridRowSelectionModel>({
-      type: "include",
-      ids: new Set<GridRowId>(),
-    });
-
   const [openProcessingStatusDialog, setOpenProcessingStatusDialog] =
     useState(false);
-  const [propertyCode, setPropertyCode] = useState<string | null>(null);
+  const [dialogPropertyCode, setDialogPropertyCode] = useState<string | null>(
+    null
+  );
 
   const apiRef = useGridApiRef();
 
   const setSelectedProperty = usePropertySelectionStore(
     (state) => state.setSelectedProperty
   );
-
   const clearSelectedProperty = usePropertySelectionStore(
     (state) => state.clearSelectedProperty
   );
+
+  const filterModel = usePropertiesGridStore((state) => state.filterModel);
+  const sortModel = usePropertiesGridStore((state) => state.sortModel);
+  const paginationModel = usePropertiesGridStore(
+    (state) => state.paginationModel
+  );
+  const rowSelectionModel = usePropertiesGridStore(
+    (state) => state.rowSelectionModel
+  );
+
+  const setFilterModel = usePropertiesGridStore((state) => state.setFilterModel);
+  const setSortModel = usePropertiesGridStore((state) => state.setSortModel);
+  const setPaginationModel = usePropertiesGridStore(
+    (state) => state.setPaginationModel
+  );
+  const setRowSelectionModel = usePropertiesGridStore(
+    (state) => state.setRowSelectionModel
+  );
+
+  const rowCount = rows.length;
 
   useEffect(() => {
     clearSelectedProperty();
   }, [clearSelectedProperty]);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = window.setTimeout(() => {
       apiRef.current?.resetRowHeights();
     }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [apiRef]);
 
   const renderFilterableHeader = useMemo(
@@ -89,17 +89,56 @@ function PropertyDataGrid() {
         setSortModel,
         debounceMs: 400,
       }),
-    [filterModel, sortModel]
+    [filterModel, setFilterModel, sortModel, setSortModel]
   );
 
-  const handleOpenProcessingStatusDialog = (propertyCode: string) => {
-    setOpenProcessingStatusDialog(true);
-    setPropertyCode(propertyCode);
-  };
+  const handleOpenProcessingStatusDialog = useCallback(
+    (propertyCode: string) => {
+      setDialogPropertyCode(propertyCode);
+      setOpenProcessingStatusDialog(true);
+    },
+    []
+  );
 
-  const handleCloseProcessingStatusDialog = () => {
+  const handleCloseProcessingStatusDialog = useCallback(() => {
     setOpenProcessingStatusDialog(false);
-  };
+  }, []);
+
+  const handleRowSelectionModelChange = useCallback(
+    (newSelection: GridRowSelectionModel) => {
+      setRowSelectionModel(newSelection);
+    },
+    [setRowSelectionModel]
+  );
+
+  const handlePaginationModelChange = useCallback(
+    (newModel: GridPaginationModel) => {
+      setPaginationModel(newModel);
+    },
+    [setPaginationModel]
+  );
+
+  const handleProcessRowUpdate = useCallback((updatedRow: PropertyRow) => {
+    setRows((prev) =>
+      prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
+    );
+    return updatedRow;
+  }, []);
+
+  const handleRowClick = useCallback(
+    (params: { id: PropertyRow["id"]; row: PropertyRow }) => {
+      setSelectedProperty(params.id, params.row.propertyCode);
+    },
+    [setSelectedProperty]
+  );
+
+  const handleRowDoubleClick = useCallback(
+    (params: { id: PropertyRow["id"]; row: PropertyRow }) => {
+      setSelectedProperty(params.id, params.row.propertyCode);
+      handleOpenProcessingStatusDialog(params.row.propertyCode);
+    },
+    [handleOpenProcessingStatusDialog, setSelectedProperty]
+  );
 
   const columns = useMemo<GridColDef<PropertyRow>[]>(
     () => [
@@ -204,38 +243,26 @@ function PropertyDataGrid() {
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",
         }}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 20, page: 0 } },
-        }}
         disableColumnMenu
         pageSizeOptions={[20]}
         checkboxSelection={false}
         disableRowSelectionOnClick={false}
-        rowSelectionModel={rowSelectionModel}
-        onRowSelectionModelChange={(newSelection) => {
-          setRowSelectionModel(newSelection);
-        }}
         disableColumnFilter
         disableColumnSelector
         disableDensitySelector
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
         editMode="cell"
         apiRef={apiRef}
+        sx={[dataGridCommonSx]}
+        rowSelectionModel={rowSelectionModel}
+        onRowSelectionModelChange={handleRowSelectionModelChange}
+        paginationModel={paginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         filterModel={filterModel}
         onFilterModelChange={setFilterModel}
         sortModel={sortModel}
         onSortModelChange={setSortModel}
-        processRowUpdate={(updatedRow) => {
-          setRows((prev) =>
-            prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
-          );
-          return updatedRow;
-        }}
-        onProcessRowUpdateError={(error) => {
-          console.error(error);
-        }}
-        sx={[dataGridCommonSx]}
+        processRowUpdate={handleProcessRowUpdate}
+        onProcessRowUpdateError={console.error}
         slots={{
           footer: () => (
             <CustomPagination
@@ -244,27 +271,22 @@ function PropertyDataGrid() {
               rowCount={rowCount}
               totalCountLabel="総物件数"
               onPageChange={(newPage) =>
-                setPaginationModel((prev) => ({
-                  ...prev,
+                setPaginationModel({
+                  ...paginationModel,
                   page: newPage,
-                }))
+                })
               }
             />
           ),
         }}
-        onRowClick={(params) => {
-          setSelectedProperty(params.id, params.row.propertyCode);
-        }}
-        onRowDoubleClick={(params) => {
-          setSelectedProperty(params.id, params.row.propertyCode);
-          handleOpenProcessingStatusDialog(params.row.propertyCode);
-        }}
+        onRowClick={handleRowClick}
+        onRowDoubleClick={handleRowDoubleClick}
       />
 
       <ProcessingStatusStateDialog
         open={openProcessingStatusDialog}
         onClose={handleCloseProcessingStatusDialog}
-        propertyCode={propertyCode ?? undefined}
+        propertyCode={dialogPropertyCode ?? undefined}
       />
     </Box>
   );
@@ -273,25 +295,25 @@ function PropertyDataGrid() {
 export default function Properties() {
   const [loading, setLoading] = useState(false);
 
-  const handleLoading = async () => {
+  const handleRefresh = useCallback(async () => {
     try {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 500));
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return (
     <div className="properties-container">
       <div className="properties-common-header">
-        <div className="common-header-item" onClick={handleLoading}>
+        <div className="common-header-item" onClick={handleRefresh}>
           <RefreshIcon />
           <Typography>最新情報を更新</Typography>
         </div>
       </div>
 
-      <Typography sx={{ fontSize: "150%", fontWeight: "500", paddingBottom: 2 }}>
+      <Typography sx={{ fontSize: "150%", fontWeight: 500, paddingBottom: 2 }}>
         物件一覧
       </Typography>
 
