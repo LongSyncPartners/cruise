@@ -16,7 +16,7 @@ import CustomContextMenu, {
   CellContextMenuState,
 } from "../shared/CustomContextMenu";
 
-import { formatUSD, parseCurrency } from "../shared/utils";
+import { formatUSD, parseCurrency, parseCurrencyInput } from "../shared/utils";
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -43,7 +43,7 @@ import { createFilterableHeader } from "../shared/createFilterableHeader";
 import "./index.style.css";
 import PropertyHeader from "./PropertyHeader";
 import { createStickyColumnSx } from "../shared/stickColumn.styles";
-import { calculateRunningBalance, parseCurrencyInput } from "./utils";
+import { calculateRunningBalance } from "./utils";
 import { useParams } from "react-router-dom";
 import CommonToast from "../shared/CommonToast";
 import { downloadCsvStub } from "../shared/csv";
@@ -280,7 +280,7 @@ function PropertyDataGrid() {
                 sortable: false,
                 filterable: false,
                 valueFormatter: (value) => formatUSD(value as number),
-                valueParser: (value) => parseCurrency(value),
+                valueParser: (value) => parseCurrencyInput(value),
             }),
             withContextMenu({
                 field: "expense",
@@ -290,7 +290,7 @@ function PropertyDataGrid() {
                 sortable: false,
                 filterable: false,
                 valueFormatter: (value) => formatUSD(value as number),
-                valueParser: (value) => parseCurrency(value),
+                valueParser: (value) => parseCurrencyInput(value),
             }),
             withContextMenu({
                 field: "balance",

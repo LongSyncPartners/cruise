@@ -20,7 +20,8 @@ export const formatCurrency = (
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(num);
 };
 
@@ -39,6 +40,23 @@ export const parseCurrency = (value: unknown): number => {
   const num = Number(raw);
 
   return Number.isNaN(num) ? 0 : num;
+};
+
+export const parseCurrencyInput = (value: unknown): string => {
+  if (value == null) return "";
+
+  const raw = String(value);
+
+  let sanitized = raw.replace(/[^0-9.-]/g, "");
+
+  sanitized = sanitized.replace(/(?!^)-/g, "");
+
+  const parts = sanitized.split(".");
+  if (parts.length > 2) {
+    sanitized = `${parts[0]}.${parts.slice(1).join("")}`;
+  }
+
+  return sanitized;
 };
 
 // Get the previous month in "YYYY/MM" format
