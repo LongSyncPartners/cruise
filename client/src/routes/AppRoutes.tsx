@@ -26,7 +26,7 @@ export default function AppRoutes() {
                     <Route path="/forecast" element={<Forecast />} />
                     <Route path="/properties" element={<Properties />} />
                     <Route
-                        path="/properties/:propertyCode/finance"
+                        path="/properties/finance"
                         element={<PropertyIncomeExpenseDetail />}
                     />
                 </Route>

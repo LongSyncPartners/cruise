@@ -48,6 +48,7 @@ import { useParams } from "react-router-dom";
 import CommonToast from "../shared/CommonToast";
 import { downloadCsvStub } from "../shared/csv";
 import LoadingDialog from "../shared/LoadingDialog";
+import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 
 function PropertyDataGrid() {
     const stickySx = createStickyColumnSx([80, 100, 110, 100]);
@@ -451,7 +452,9 @@ function PropertyDataGrid() {
 }
 
 export default function PropertyIncomeExpenseDetail() {
-    const { propertyCode } = useParams();
+    const propertyCode = usePropertySelectionStore(
+        (state) => state.selectedPropertyCode
+    );
 
     const [loading, setLoading] = useState(false);
     
