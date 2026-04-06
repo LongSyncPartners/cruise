@@ -49,6 +49,7 @@ import CommonToast from "../shared/CommonToast";
 import { downloadCsvStub } from "../shared/csv";
 import LoadingDialog from "../shared/LoadingDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
+import { v4 as uuidv4 } from "uuid";
 
 function PropertyDataGrid() {
     const stickySx = createStickyColumnSx([80, 100, 110, 100]);
@@ -105,7 +106,7 @@ function PropertyDataGrid() {
             const index = prev.findIndex((r) => r.id === menu.rowId);
 
             const newRow = {
-                id: crypto.randomUUID(),
+                id: uuidv4(),
                 yearMonth: "",
                 expectedAmount: 0,
                 managementCompanyAmount: 0,
@@ -159,7 +160,7 @@ function PropertyDataGrid() {
 
             const newRow = {
                 ...copiedRow,
-                id: crypto.randomUUID(),
+                id: uuidv4(),
             };
 
             const newRows = [...prev];
