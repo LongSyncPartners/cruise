@@ -20,6 +20,7 @@ export type PropertiesGridState = {
   setPaginationModel: Dispatch<SetStateAction<GridPaginationModel>>;
   setRowSelectionModel: Dispatch<SetStateAction<GridRowSelectionModel>>;
 
+  resetGridView: () => void;
   clearGridState: () => void;
 };
 
@@ -28,27 +29,35 @@ const createInitialRowSelectionModel = (): GridRowSelectionModel => ({
   ids: new Set<GridRowId>(),
 });
 
-const initialState = {
+const createInitialGridState = () => ({
   filterModel: { items: [] } as GridFilterModel,
   sortModel: [] as GridSortModel,
   paginationModel: { page: 0, pageSize: 20 } as GridPaginationModel,
   rowSelectionModel: createInitialRowSelectionModel(),
-};
+});
 
 export const usePropertiesGridStore = create<PropertiesGridState>()(
   persist(
     (set) => ({
-      ...initialState,
+      ...createInitialGridState(),
 
       setFilterModel: (value) =>
         set((state) => ({
           filterModel:
             typeof value === "function" ? value(state.filterModel) : value,
+          paginationModel: {
+            ...state.paginationModel,
+            page: 0,
+          },
         })),
 
       setSortModel: (value) =>
         set((state) => ({
           sortModel: typeof value === "function" ? value(state.sortModel) : value,
+          paginationModel: {
+            ...state.paginationModel,
+            page: 0,
+          },
         })),
 
       setPaginationModel: (value) =>
@@ -65,10 +74,18 @@ export const usePropertiesGridStore = create<PropertiesGridState>()(
               : value,
         })),
 
+      resetGridView: () =>
+        set((state) => ({
+          paginationModel: {
+            ...state.paginationModel,
+            page: 0,
+          },
+          rowSelectionModel: createInitialRowSelectionModel(),
+        })),
+
       clearGridState: () =>
         set({
-          ...initialState,
-          rowSelectionModel: createInitialRowSelectionModel(),
+          ...createInitialGridState(),
         }),
     }),
     {
@@ -86,12 +103,13 @@ export const usePropertiesGridStore = create<PropertiesGridState>()(
       }),
 
       merge: (persistedState, currentState) => {
-        const typedPersistedState = persistedState as Partial<PropertiesGridState> & {
-          rowSelectionModel?: {
-            type: "include" | "exclude";
-            ids: GridRowId[];
+        const typedPersistedState =
+          persistedState as Partial<PropertiesGridState> & {
+            rowSelectionModel?: {
+              type: "include" | "exclude";
+              ids: GridRowId[];
+            };
           };
-        };
 
         return {
           ...currentState,
