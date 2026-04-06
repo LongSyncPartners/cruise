@@ -30,6 +30,7 @@ import { getPreviousMonthLabel } from "../shared/utils";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
 import { usePropertySelectionStore } from "../../stores/propertySelectionStore";
 import { usePropertiesGridStore, PropertiesGridState } from "@/stores/propertiesGridStore";
+import PropertiesPaginationFooter from "./PropertiesPaginationFooter";
 
 function PropertyDataGrid() {
   const [rows, setRows] = useState<PropertyRow[]>(paggingdata);
@@ -43,9 +44,6 @@ function PropertyDataGrid() {
 
   const setSelectedProperty = usePropertySelectionStore(
     (state) => state.setSelectedProperty
-  );
-  const clearSelectedProperty = usePropertySelectionStore(
-    (state) => state.clearSelectedProperty
   );
 
   const filterModel = usePropertiesGridStore((state) => state.filterModel);
@@ -65,12 +63,6 @@ function PropertyDataGrid() {
   const setRowSelectionModel = usePropertiesGridStore(
     (state) => state.setRowSelectionModel
   );
-
-  const rowCount = rows.length;
-
-  useEffect(() => {
-    clearSelectedProperty();
-  }, [clearSelectedProperty]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -265,18 +257,10 @@ function PropertyDataGrid() {
         onProcessRowUpdateError={console.error}
         slots={{
           footer: () => (
-            <CustomPagination
-              page={paginationModel.page}
-              pageSize={paginationModel.pageSize}
-              rowCount={rowCount}
-              totalCountLabel="総物件数"
-              onPageChange={(newPage) =>
-                setPaginationModel({
-                  ...paginationModel,
-                  page: newPage,
-                })
-              }
-            />
+           <PropertiesPaginationFooter
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          />
           ),
         }}
         onRowClick={handleRowClick}
