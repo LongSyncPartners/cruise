@@ -51,182 +51,42 @@ import { getPreviousMonthLabel } from "../shared/utils";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
 
 function PropertyDataGrid() {
-    const stickySx = createStickyColumnSx([100, 120, 120]);
-    
-    const [open, setOpen] = useState(false);
-
     const [rows, setRows] = useState<PropertyRow[]>(paggingdata);
 
     const [filterModel, setFilterModel] = useState<GridFilterModel>({
         items: [],
       });
     
-      const [sortModel, setSortModel] = useState<GridSortModel>([]);
-    
-      const renderFilterableHeader = useMemo(
-        () =>
-          createFilterableHeader({
-            filterModel,
-            setFilterModel,
-            sortModel,
-            setSortModel,
-            debounceMs: 400,
-          }),
-        [filterModel, sortModel]
-      );
+    const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-
-    const [contextMenu, setContextMenu] =
-        useState<CellContextMenuState>(null);
-
-    const handleCloseContextMenu = () => {
-            setContextMenu(null);
-        };
-
-    const handleCellContextMenu = (
-        params: GridRenderCellParams<PropertyRow>,
-        event: React.MouseEvent<HTMLElement>
-    ) => {
-        
-        event.preventDefault();
-        event.stopPropagation();
-
-        setRowSelectionModel({
-            type: "include",
-            ids: new Set([params.id]),
-        });
-
-        setContextMenu({
-            mouseX: event.clientX,
-            mouseY: event.clientY - 25,
-            rowId: params.id,
-            field: params.field,
-            row: params.row,
-            value: params.value,
-        });
-    };
-
-    const handleAdd = (menu: NonNullable<CellContextMenuState>) => {
-        setRows((prev) => {
-            const index = prev.findIndex((r) => r.id === menu.rowId);
-
-            const newRow = {
-                id: crypto.randomUUID(),
-                propertyCode: "",
-                managementType: "",
-                propertyType: "",
-                managementCompany: "",
-                managementStartDate: "",
-                managementEndDate: "",
-                managementDate: "",
-                propertyStatus: "",
-                ownerName: "",
-                processingStatus: "",
-            };
-
-            const newRows = [...prev];
-            newRows.splice(index + 1, 0, newRow);
-
-            return newRows;
-        });
-    };
-
-    const handleDelete = (menu: NonNullable<CellContextMenuState>) => {
-        setRows((prev) => prev.filter((row) => row.id !== menu.rowId));
-    };
-
-    const [copiedRow, setCopiedRow] = useState<PropertyRow | null>(null);
-    const handleCopy = (menu: NonNullable<CellContextMenuState>) => {
-        setCopiedRow(menu.row as PropertyRow);
-    };
-
-    const handlePaste = (menu: NonNullable<CellContextMenuState>) => {
-        if (!copiedRow) return;
-
-        setRows((prev) =>
-            prev.map((row) =>
-            row.id === menu.rowId
-                ? {
-                    ...copiedRow,
-                    id: row.id,
-                }
-                : row
-            )
-        );
-
-        setCopiedRow(null);
-    };
-
-    const handlePasteBelow = (menu: NonNullable<CellContextMenuState>) => {
-        if (!copiedRow) return;
-
-        setRows((prev) => {
-            const index = prev.findIndex((r) => r.id === menu.rowId);
-
-            const newRow = {
-                ...copiedRow,
-                id: crypto.randomUUID(),
-            };
-
-            const newRows = [...prev];
-            newRows.splice(index + 1, 0, newRow);
-
-            return newRows;
-        });
-
-        setCopiedRow(null);
-    };
-    
-    useEffect(() => {
-        if (!contextMenu) return;
-
-        const handleGlobalContextMenu = (event: MouseEvent) => {
-            event.preventDefault();
-            setContextMenu(null);
-        };
-
-        window.addEventListener("contextmenu", handleGlobalContextMenu);
-
-        return () => {
-            window.removeEventListener("contextmenu", handleGlobalContextMenu);
-        };
-    }, [contextMenu]);
-
-    const withContextMenu = (
-        col: GridColDef<PropertyRow>
-    ): GridColDef<PropertyRow> => ({
-        ...col,
-        renderCell: (params) => (
-            <span
-                onContextMenu={(event) => handleCellContextMenu(params, event)}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                    }}
-            >
-                {params.formattedValue ?? params.value ?? ""}
-            </span>
-        ),
-    });
+    const renderFilterableHeader = useMemo(
+    () =>
+        createFilterableHeader({
+        filterModel,
+        setFilterModel,
+        sortModel,
+        setSortModel,
+        debounceMs: 400,
+        }),
+    [filterModel, sortModel]
+    );
 
     const columns = useMemo<GridColDef<PropertyRow>[]>(
         () => [
-            withContextMenu({
+            ({
                 field: "propertyCode",
                 headerName: "物件番号",
-                width: 100,
-                editable: true,
+                width: 90,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "managementType",
                 headerName: "管理種別",
-                width: 120,
-                editable: true,
+                width: 90,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 type: "singleSelect",
@@ -234,11 +94,11 @@ function PropertyDataGrid() {
                 filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "propertyType",
                 headerName: "建物種別",
-                width: 120,
-                editable: true,
+                width: 90,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 type: "singleSelect",
@@ -246,29 +106,29 @@ function PropertyDataGrid() {
                 filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "managementCompany",
                 headerName: "管理会社",
-                width: 180,
-                editable: true,
+                width: 160,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "managementDate",
                 headerName: "管理開始～終了日",
-                width: 200,
-                editable: true,
+                width: 190,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "propertyStatus",
                 headerName: "物件ステータス",
-                width: 150,
-                editable: true,
+                width: 140,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 type: "singleSelect",
@@ -276,21 +136,21 @@ function PropertyDataGrid() {
                 filterOperators: [singleSelectContainsOperator],
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({   
+            ({   
                 field: "ownerName",
                 headerName: "オーナー名",
-                width: 180,
-                editable: true,
+                width: 190,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 renderHeader: renderFilterableHeader,
             }),
-            withContextMenu({
+            ({
                 field: "processingStatus",
                 headerName:  `処理ステータス（${getPreviousMonthLabel()}）`,
                 flex: 1,
                 minWidth: 280,
-                editable: true,
+                editable: false,
                 sortable: false,
                 filterable: false,
                 type: "singleSelect",
@@ -322,11 +182,12 @@ function PropertyDataGrid() {
             ids: new Set<GridRowId>(),
         });
 
-
     const [openProcessingStatusDialog, setOpenProcessingStatusDialog] = useState(false);
+    const [propertyCode, setPropertyCode] = useState<string | null>(null);
 
-    const handleOpenProcessingStatusDialog = () => {
+    const handleOpenProcessingStatusDialog = (propertyCode: string) => {
         setOpenProcessingStatusDialog(true);
+        setPropertyCode(propertyCode);
     };
 
     const handleCloseProcessingStatusDialog = () => {
@@ -334,7 +195,7 @@ function PropertyDataGrid() {
     };
 
     return (
-    <Box sx={{ width: "auto", height: 500}}>
+    <Box sx={{ width: "auto", height: 700}}>
         <DataGrid
             rows={rows}
             columns={columns}
@@ -348,7 +209,6 @@ function PropertyDataGrid() {
             initialState={{
                 pagination: { paginationModel: { pageSize: 20, page: 0 } },
             }}
-
             disableColumnMenu
             pageSizeOptions={[20]}
             checkboxSelection={false}
@@ -395,23 +255,15 @@ function PropertyDataGrid() {
                     />
                 ),
             }}
-        />
-        <CustomContextMenu
-            contextMenu={contextMenu}
-            onClose={handleCloseContextMenu}
-            onOpenProcessingStatusDialog={handleOpenProcessingStatusDialog}
-            onCopy={handleCopy}
-            onPaste={handlePaste}
-            onPasteBelow={handlePasteBelow}
-            onAdd={handleAdd}
-            onDelete={handleDelete}
-            screenId={ScreenId.PROPERTY_LIST}
-            canPaste={!!copiedRow}
+            onRowDoubleClick={(params) => {
+                handleOpenProcessingStatusDialog(params.row.propertyCode);
+            }}
         />
 
         <ProcessingStatusStateDialog
                 open={openProcessingStatusDialog}
                 onClose={handleCloseProcessingStatusDialog}
+                propertyCode={propertyCode ?? undefined}
         />
     </Box>
     );
@@ -419,50 +271,7 @@ function PropertyDataGrid() {
 
 export default function Properties() {
 
-    const [open, setOpen] = useState(false);
-    const [file, setFile] = useState<File | null>(null);
-
-    /**
-     * Open dialog
-     * ダイアログを開く
-     */
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    /**
-     * Close dialog
-     * ダイアログを閉じる
-     */
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    /**
-     * Submit upload
-     * アップロード処理
-     */
-    const handleSubmit = () => {
-        if (!file) return;
-
-        console.log("upload file =", file);
-
-        // TODO: call API here
-
-        setOpen(false);
-    };
-
     const [loading, setLoading] = useState(false);
-
-    const handleUpdate = async () => {
-        try {
-            setLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            showToast("保存しました。");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleLoading = async () => {
         try {
@@ -473,54 +282,12 @@ export default function Properties() {
         }
     };
 
-    const [toast, setToast] = useState<{
-        open: boolean;
-        message: string;
-        severity: AlertColor;
-    }>({
-        open: false,
-        message: "",
-        severity: "success",
-    });
-    
-    const showToast = (message: string, severity: AlertColor = "success") => {
-        setToast({ open: true, message, severity });
-    };
-
-    const handleDownload = async () => {
-        try {
-            setLoading(true);
-
-            await downloadCsvStub("data.csv");
-
-            showToast("CSVをダウンロードしました。");
-        } catch (e) {
-            showToast("ダウンロードに失敗しました。", "error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    
-
     return (
         <div className="properties-container">
             <div className="properties-common-header">
                 <div className="common-header-item" onClick={handleLoading}>
                     <RefreshIcon />
                     <Typography>最新情報を更新</Typography>
-                </div>
-                <div className="common-header-item">
-                    <FileUploadIcon />
-                    <Typography onClick={handleOpen}>CSV形式でアップロードする</Typography>
-                </div>
-                <div className="common-header-item" onClick={handleDownload}>
-                    <SaveAltIcon />
-                    <Typography>CSV形式でダウンロードする</Typography>
-                </div>
-                <div className="common-header-item-logout">
-                <LogoutIcon />
-                <Typography>ログアウト</Typography>
                 </div>
             </div>
 
@@ -532,49 +299,9 @@ export default function Properties() {
                 <PropertyDataGrid />
             </div>
 
-            <div className="properties-footer">
-                <Button variant="contained" color="success" onClick={handleUpdate} disabled={loading}>
-                保存
-                </Button>
-
-                <Button variant="contained" color="warning" onClick={handleLoading}>
-                キャンセル
-                </Button>
-            </div>
-
-            {/* Dialog */}
-            <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-                <DialogTitle>CSV形式でアップロード</DialogTitle>
-
-                <DialogContent>
-                <Stack mt={1}>
-                    <CsvUpload value={file} onChange={setFile} />
-                </Stack>
-                </DialogContent>
-
-                <DialogActions>
-                <Button onClick={handleClose}>キャンセル</Button>
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={!file}
-                >
-                    アップロード
-                </Button>
-                </DialogActions>
-            </Dialog>
-
             <LoadingDialog
                 open={loading}
             />
-
-            <CommonToast
-                open={toast.open}
-                message={toast.message}
-                severity={toast.severity}
-                onClose={() => setToast((prev) => ({ ...prev, open: false }))}
-            />
-
             
         </div>
   );

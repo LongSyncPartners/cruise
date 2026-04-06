@@ -20,12 +20,14 @@ import { PROCESSING_STATUS_STATE_ROWS } from "./property";
 type Props = {
   open: boolean;
   onClose: () => void;
+  propertyCode?: string;
   rows?: ProcessingStatusStateRow[];
 };
 
 export default function ProcessingStatusStateDialog({
   open,
   onClose,
+  propertyCode = "",
   rows = PROCESSING_STATUS_STATE_ROWS,
 }: Props) {
   return (
