@@ -6,8 +6,7 @@ export const dataGridCommonSx: SystemStyleObject<Theme> = {
     whiteSpace: "normal",
     wordBreak: "break-word",
     lineHeight: "1",
-    py: 1,
-    alignItems: "flex-start",
+    alignItems: "center",
     display: "flex",
   },
   "& .MuiDataGrid-columnHeaderTitle": {

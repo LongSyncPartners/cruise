@@ -5,6 +5,7 @@ import type {
   GridFilterModel,
   GridFilterOperator,
   GridSortModel,
+  ValueOptions,
 } from "@mui/x-data-grid";
 import HeaderFilterCell from "./HeaderFilterCell";
 import {
@@ -22,6 +23,41 @@ type CreateFilterableHeaderParams = {
   debounceMs?: number;
 };
 
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+type SingleSelectColDefLike = {
+  type?: string;
+  valueOptions?: ValueOptions[];
+};
+
+function normalizeValueOptions(valueOptions?: ValueOptions[]): SelectOption[] {
+  if (!valueOptions) return [];
+
+  return valueOptions.map((option) => {
+    if (
+      typeof option === "object" &&
+      option !== null &&
+      "value" in option
+    ) {
+      const value = String(option.value ?? "");
+      const label =
+        "label" in option
+          ? String(option.label ?? option.value ?? "")
+          : value;
+
+      return { value, label };
+    }
+
+    return {
+      value: String(option),
+      label: String(option),
+    };
+  });
+}
+
 export function createFilterableHeader({
   filterModel,
   setFilterModel,
@@ -32,8 +68,13 @@ export function createFilterableHeader({
   return (params) => {
     const field = params.field;
     const label = params.colDef.headerName ?? field;
-
     const operator = "contains";
+
+    const colDef = params.colDef as SingleSelectColDefLike;
+    const isSingleSelect = colDef.type === "singleSelect";
+    const valueOptions = isSingleSelect
+      ? normalizeValueOptions(colDef.valueOptions)
+      : [];
 
     return (
       <HeaderFilterCell
@@ -41,14 +82,15 @@ export function createFilterableHeader({
         value={getFilterValue(filterModel, field)}
         sortDirection={getSortDirection(sortModel, field) ?? null}
         debounceMs={debounceMs}
+        filterType={isSingleSelect ? "select" : "text"}
+        options={valueOptions}
         onChange={(nextValue) => {
-          setFilterModel((prev) => upsertContainsFilter(prev, field, nextValue, operator));
+          setFilterModel((prev) =>
+            upsertContainsFilter(prev, field, nextValue, operator)
+          );
         }}
         onSort={() => {
-          setSortModel((prev) => {
-                const next = toggleSortModel(prev, field);
-                return next;
-            });
+          setSortModel((prev) => toggleSortModel(prev, field));
         }}
       />
     );

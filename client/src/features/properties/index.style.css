@@ -54,6 +54,7 @@ div.common-header-item-logout {
 .properties-grid-contaniner div.MuiDataGrid-columnHeader {
     background-color: #1976d2;
     color: white;
+    padding-right: 0px;
 }
 
 .properties-grid-contaniner div.MuiDataGrid-columnSeparator {

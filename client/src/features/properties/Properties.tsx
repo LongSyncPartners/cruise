@@ -115,7 +115,7 @@ function PropertyDataGrid() {
       {
         field: "managementType",
         headerName: "管理種別",
-        width: 90,
+        width: 100,
         editable: false,
         sortable: false,
         filterable: false,
@@ -127,7 +127,7 @@ function PropertyDataGrid() {
       {
         field: "propertyType",
         headerName: "建物種別",
-        width: 90,
+        width: 100,
         editable: false,
         sortable: false,
         filterable: false,
@@ -179,7 +179,7 @@ function PropertyDataGrid() {
         field: "processingStatus",
         headerName: `処理ステータス（${getPreviousMonthLabel()}）`,
         flex: 1,
-        minWidth: 280,
+        minWidth: 230,
         editable: false,
         sortable: false,
         filterable: false,
@@ -197,7 +197,7 @@ function PropertyDataGrid() {
       <DataGrid
         rows={rows}
         columns={columns}
-        rowHeight={50}
+        rowHeight={45}
         columnHeaderHeight={40}
         className="properties-grid"
         localeText={{
