@@ -31,18 +31,35 @@ import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import PropertiesPaginationFooter from "./PropertiesPaginationFooter";
 import { useProperties } from "@/hooks/useProperties";
 
+/**
+ * PropertyDataGrid
+ *
+ * Main grid component for displaying property list.
+ * Handles:
+ * - Data rendering
+ * - Filtering / sorting / pagination
+ * - Row selection
+ * - Cell editing
+ * - Dialog interaction
+ */
 function PropertyDataGrid() {
+  // Dialog state for processing status
   const [openProcessingStatusDialog, setOpenProcessingStatusDialog] =
     useState(false);
   const [dialogPropertyCode, setDialogPropertyCode] = useState<string | null>(
     null
   );
+
+  // Local editable rows (UI state)
   const [localRows, setLocalRows] = useState<PropertyRow[]>([]);
 
+  // DataGrid API reference (used for manual control like resetting row height)
   const apiRef = useGridApiRef();
 
+  // Fetch data using React Query
   const { data } = useProperties();
 
+  // Zustand store: selected property
   const setSelectedProperty = usePropertySelectionStore(
     (state) => state.setSelectedProperty
   );
@@ -50,6 +67,7 @@ function PropertyDataGrid() {
     (state) => state.clearSelectedProperty
   );
 
+  // Zustand store: grid states
   const filterModel = usePropertiesGridStore((state) => state.filterModel);
   const sortModel = usePropertiesGridStore((state) => state.sortModel);
   const paginationModel = usePropertiesGridStore(
@@ -59,6 +77,7 @@ function PropertyDataGrid() {
     (state) => state.rowSelectionModel
   );
 
+  // Zustand setters
   const setFilterModel = usePropertiesGridStore((state) => state.setFilterModel);
   const setSortModel = usePropertiesGridStore((state) => state.setSortModel);
   const setPaginationModel = usePropertiesGridStore(
@@ -68,14 +87,17 @@ function PropertyDataGrid() {
     (state) => state.setRowSelectionModel
   );
 
-  useEffect(() => {
-    clearSelectedProperty();
-  }, [clearSelectedProperty]);
-
+  /**
+   * Sync fetched data into local editable rows
+   */
   useEffect(() => {
     setLocalRows(data ?? []);
   }, [data]);
 
+  /**
+   * Reset row height after data changes
+   * (fix for auto height rendering issues)
+   */
   useEffect(() => {
     const timer = window.setTimeout(() => {
       apiRef.current?.resetRowHeights();
@@ -84,6 +106,9 @@ function PropertyDataGrid() {
     return () => window.clearTimeout(timer);
   }, [apiRef, localRows]);
 
+  /**
+   * Create custom header with filter + sort UI
+   */
   const renderFilterableHeader = useMemo(
     () =>
       createFilterableHeader({
@@ -96,6 +121,9 @@ function PropertyDataGrid() {
     [filterModel, setFilterModel, sortModel, setSortModel]
   );
 
+  /**
+   * Open processing status dialog
+   */
   const handleOpenProcessingStatusDialog = useCallback(
     (propertyCode: string) => {
       setDialogPropertyCode(propertyCode);
@@ -104,10 +132,16 @@ function PropertyDataGrid() {
     []
   );
 
+  /**
+   * Close processing status dialog
+   */
   const handleCloseProcessingStatusDialog = useCallback(() => {
     setOpenProcessingStatusDialog(false);
   }, []);
 
+  /**
+   * Update selected rows (checkbox / selection state)
+   */
   const handleRowSelectionModelChange = useCallback(
     (newSelection: GridRowSelectionModel) => {
       setRowSelectionModel(newSelection);
@@ -115,6 +149,9 @@ function PropertyDataGrid() {
     [setRowSelectionModel]
   );
 
+  /**
+   * Update pagination state
+   */
   const handlePaginationModelChange = useCallback(
     (newModel: GridPaginationModel) => {
       setPaginationModel(newModel);
@@ -122,6 +159,10 @@ function PropertyDataGrid() {
     [setPaginationModel]
   );
 
+  /**
+   * Handle inline cell edit
+   * Update localRows only (not server yet)
+   */
   const handleProcessRowUpdate = useCallback((updatedRow: PropertyRow) => {
     setLocalRows((prevRows) =>
       prevRows.map((row) => (row.id === updatedRow.id ? updatedRow : row))
@@ -130,6 +171,9 @@ function PropertyDataGrid() {
     return updatedRow;
   }, []);
 
+  /**
+   * Handle row click (select property)
+   */
   const handleRowClick = useCallback(
     (params: { id: PropertyRow["id"]; row: PropertyRow }) => {
       setSelectedProperty(params.id, params.row.propertyCode);
@@ -137,6 +181,11 @@ function PropertyDataGrid() {
     [setSelectedProperty]
   );
 
+  /**
+   * Handle row double click:
+   * - Select row
+   * - Open processing status dialog
+   */
   const handleRowDoubleClick = useCallback(
     (params: { id: PropertyRow["id"]; row: PropertyRow }) => {
       setRowSelectionModel({
@@ -150,24 +199,21 @@ function PropertyDataGrid() {
     [handleOpenProcessingStatusDialog, setRowSelectionModel, setSelectedProperty]
   );
 
+  /**
+   * Column definitions for DataGrid
+   */
   const columns = useMemo<GridColDef<PropertyRow>[]>(
     () => [
       {
         field: "propertyCode",
         headerName: "物件番号",
         width: 90,
-        editable: false,
-        sortable: false,
-        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "managementType",
         headerName: "管理種別",
         width: 100,
-        editable: false,
-        sortable: false,
-        filterable: false,
         type: "singleSelect",
         valueOptions: MANAGEMENT_TYPE_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -177,9 +223,6 @@ function PropertyDataGrid() {
         field: "propertyType",
         headerName: "建物種別",
         width: 100,
-        editable: false,
-        sortable: false,
-        filterable: false,
         type: "singleSelect",
         valueOptions: PROPERTY_TYPE_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -189,27 +232,18 @@ function PropertyDataGrid() {
         field: "managementCompany",
         headerName: "管理会社",
         width: 160,
-        editable: false,
-        sortable: false,
-        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "managementDate",
         headerName: "管理開始～終了日",
         width: 190,
-        editable: false,
-        sortable: false,
-        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "propertyStatus",
         headerName: "物件ステータス",
         width: 140,
-        editable: false,
-        sortable: false,
-        filterable: false,
         type: "singleSelect",
         valueOptions: PROPERTY_STATUS_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -219,9 +253,6 @@ function PropertyDataGrid() {
         field: "ownerName",
         headerName: "オーナー名",
         width: 190,
-        editable: false,
-        sortable: false,
-        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
@@ -229,9 +260,6 @@ function PropertyDataGrid() {
         headerName: `処理ステータス（${getPreviousMonthLabel()}）`,
         flex: 1,
         minWidth: 230,
-        editable: false,
-        sortable: false,
-        filterable: false,
         type: "singleSelect",
         valueOptions: PROCESSING_STATUS_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -246,23 +274,7 @@ function PropertyDataGrid() {
       <DataGrid
         rows={localRows}
         columns={columns}
-        rowHeight={45}
-        columnHeaderHeight={40}
-        className="properties-grid"
-        localeText={{
-          noRowsLabel: "データがありません",
-          noResultsOverlayLabel: "データがありません",
-        }}
-        disableColumnMenu
-        pageSizeOptions={[20]}
-        checkboxSelection={false}
-        disableRowSelectionOnClick={false}
-        disableColumnFilter
-        disableColumnSelector
-        disableDensitySelector
-        editMode="cell"
         apiRef={apiRef}
-        sx={[dataGridCommonSx]}
         rowSelectionModel={rowSelectionModel}
         onRowSelectionModelChange={handleRowSelectionModelChange}
         paginationModel={paginationModel}
@@ -273,6 +285,8 @@ function PropertyDataGrid() {
         onSortModelChange={setSortModel}
         processRowUpdate={handleProcessRowUpdate}
         onProcessRowUpdateError={console.error}
+        onRowClick={handleRowClick}
+        onRowDoubleClick={handleRowDoubleClick}
         slots={{
           footer: () => (
             <PropertiesPaginationFooter
@@ -281,10 +295,9 @@ function PropertyDataGrid() {
             />
           ),
         }}
-        onRowClick={handleRowClick}
-        onRowDoubleClick={handleRowDoubleClick}
       />
 
+      {/* Processing status dialog */}
       <ProcessingStatusStateDialog
         open={openProcessingStatusDialog}
         onClose={handleCloseProcessingStatusDialog}
@@ -294,11 +307,17 @@ function PropertyDataGrid() {
   );
 }
 
+/**
+ * Properties screen (main container)
+ */
 export default function Properties() {
   const { isLoading, isFetching, refetch } = useProperties();
 
   const resetGridView = usePropertiesGridStore((state) => state.resetGridView);
 
+  /**
+   * Refresh data from server and reset grid state
+   */
   const handleRefresh = useCallback(async () => {
     await refetch();
     resetGridView();
@@ -321,6 +340,7 @@ export default function Properties() {
         <PropertyDataGrid />
       </div>
 
+      {/* Global loading indicator */}
       <LoadingDialog open={isLoading || isFetching} />
     </div>
   );
