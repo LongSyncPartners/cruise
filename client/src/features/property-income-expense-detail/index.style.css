@@ -1,89 +1,120 @@
-/* Container */
+/* ================================
+   Main Container
+   - Wrapper for the whole screen
+   - Controls layout width and spacing
+================================ */
 .property-income-expense-detail-container {
-  padding-left: 50px;
-  max-width: 1200px;
+  padding-left: 50px;     /* Add left spacing for layout alignment */
+  max-width: 1200px;      /* Limit max width for better readability */
 }
 
-/* Header */
+/* ================================
+   Header Section
+   - Contains search area and title
+================================ */
 .property-income-expense-detail-container .search-header {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 32px;              /* Space between elements */
   margin-bottom: 24px;
 }
 
+/* Screen title style */
 .property-income-expense-detail-container p.property-income-expense-detail-title {
-    font-size: 150%;
-    font-weight: 600;
+  font-size: 150%;
+  font-weight: 600;
 }
 
+/* ================================
+   Common Header (Top action bar)
+   - Contains refresh, download, etc.
+================================ */
 div.property-income-expense-detail-common-header {
-    border-bottom: 1px solid rgb(204, 204, 204);
-    margin-bottom: 20px;
-    display: flex;
-
+  border-bottom: 1px solid rgb(204, 204, 204); /* Bottom border */
+  margin-bottom: 20px;
+  display: flex;
 }
 
+/* Icon style inside header */
 div.property-income-expense-detail-common-header svg {
-    color: #467ABA;
-    padding-right: 2px;
+  color: #467ABA;         /* Primary icon color */
+  padding-right: 2px;
 }
 
-div.common-header-item, div.common-header-item-logout{
-    display: flex;
-    padding: 5px 10px;
+/* Header item (clickable action) */
+div.common-header-item,
+div.common-header-item-logout {
+  display: flex;
+  padding: 5px 10px;
 }
 
-div.common-header-item:hover, div.common-header-item-logout:hover {
+/* Hover effect for header items */
+div.common-header-item:hover,
+div.common-header-item-logout:hover {
   background-color: #eae9e9;
 }
 
+/* Logout button aligned to the right */
 div.common-header-item-logout {
-    margin-left: auto;
+  margin-left: auto;
 }
 
-/* 検索結果 Component Grid */
+/* ================================
+   DataGrid Custom Styles
+   - Override default MUI DataGrid styles
+================================ */
+
+/* Row background reset */
 .property-income-expense-detail-grid-contaniner .MuiDataGrid-row {
-    background-color: transparent;
+  background-color: transparent;
 }
 
+/* Input inside grid cell takes full width */
 .property-income-expense-detail-grid-contaniner .MuiDataGrid-row .form-input {
-    width: 100%;
+  width: 100%;
 }
 
+/* Column header style */
 .property-income-expense-detail-grid-contaniner div.MuiDataGrid-columnHeader {
-    background-color: #1976d2;
-    color: white;
+  background-color: #1976d2; /* MUI primary color */
+  color: white;
 }
 
+/* Hide column separator line */
 .property-income-expense-detail-grid-contaniner div.MuiDataGrid-columnSeparator {
   display: none;
 }
 
+/* Checkbox style (header) */
 .property-income-expense-detail-grid-contaniner
   .MuiDataGrid-columnHeaderCheckbox
   .MuiCheckbox-root {
   color: #eff1f3;
 }
 
+/* Checkbox style when checked */
 .property-income-expense-detail-grid-contaniner
   .MuiDataGrid-columnHeaderCheckbox
   .MuiCheckbox-root.Mui-checked {
   color: #eff1f3;
 }
 
-.property-income-expense-detail-grid-contaniner  div.form-input {
-    margin-top: 5px;
+/* Adjust spacing for input inside grid */
+.property-income-expense-detail-grid-contaniner div.form-input {
+  margin-top: 5px;
 }
 
-/*　フッター　*/
+/* ================================
+   Footer Section
+   - Contains Save / Cancel buttons
+================================ */
 .property-income-expense-detail-footer {
-    padding-top: 20px;
-    text-align: center;
+  padding-top: 20px;
+  text-align: center;
 }
 
+/* Button style in footer */
 .property-income-expense-detail-footer button {
-    width: 120px;
-    margin-right: 30px;
+  width: 120px;
+  margin-right: 30px;
 }
-
