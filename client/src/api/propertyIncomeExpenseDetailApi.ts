@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import type { PropertyIncomeExpenseDetailRow } from "@/features/property-income-expense-detail/types";
 import {
   initialPropertyTabs,
   getPropertyTabByCode,
@@ -62,6 +63,20 @@ export const fetchPropertyIncomeExpenseRows = async (propertyCode: string) => {
 export const fetchPropertyIncomeExpenseDetail = async (propertyCode: string) => {
   const res = await apiClient.get("/property-income-expense-detail/detail", {
     params: { propertyCode },
+  });
+  return res.data;
+};
+
+/**
+ * Save edited rows by propertyCode
+ */
+export const savePropertyIncomeExpenseRows = async (
+  propertyCode: string,
+  rows: PropertyIncomeExpenseDetailRow[]
+) => {
+  const res = await apiClient.post("/property-income-expense-detail/rows", {
+    propertyCode,
+    rows,
   });
   return res.data;
 };
@@ -139,4 +154,21 @@ export async function fetchPropertyIncomeExpenseDetailFromStubApi(
   }
 
   return detail;
+}
+
+/**
+ * Save edited rows by propertyCode to stub
+ */
+export async function savePropertyIncomeExpenseRowsToStubApi(
+  propertyCode: string,
+  rows: PropertyIncomeExpenseDetailRow[]
+) {
+  await sleep(800);
+  throw new Error("この機能は開発中です。"); // for testing error handling
+
+  return {
+    propertyCode,
+    rows,
+    message: "Saved successfully.",
+  };
 }

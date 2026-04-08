@@ -12,4 +12,7 @@ export const propertyIncomeExpenseDetailKeys = {
 
   detail: (propertyCode: string) =>
     [...propertyIncomeExpenseDetailKeys.all, "detail", propertyCode] as const,
+  
+  saveRows: (propertyCode: string) =>
+    [...propertyIncomeExpenseDetailKeys.all, "saveRows", propertyCode] as const,
 };

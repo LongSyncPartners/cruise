@@ -19,6 +19,8 @@ import { downloadCsvStub } from "../shared/csv";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
+import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
+import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
@@ -50,13 +52,19 @@ export default function PropertyIncomeExpenseDetail() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [editedRows, setEditedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
+  const [isDirty, setIsDirty] = useState(false);
+  const [pendingTab, setPendingTab] = useState<number | null>(null);
+  const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
+
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
+    description?: string;
     severity: AlertColor;
   }>({
     open: false,
     message: "",
+    description: "",
     severity: "success",
   });
 
@@ -73,7 +81,6 @@ export default function PropertyIncomeExpenseDetail() {
   const propertyTabs = propertyTabsData ?? EMPTY_TABS;
 
   const activeProperty = useMemo<PropertyTabSummary | undefined>(() => {
-    console.log("1", "activeTab:", activeTab);
     return propertyTabs[activeTab];
   }, [propertyTabs, activeTab]);
 
@@ -101,23 +108,93 @@ export default function PropertyIncomeExpenseDetail() {
 
   useEffect(() => {
     setEditedRows(fetchedRows);
+    setIsDirty(false);
   }, [fetchedRows]);
 
-  const showToast = (message: string, severity: AlertColor = "success") => {
-    setToast({ open: true, message, severity });
+  const showToast = (message: string, severity: AlertColor = "success", description?: string) => {
+    setToast({ open: true, message, description, severity  });
   };
 
   const updateActiveRows = (nextRows: PropertyIncomeExpenseDetailRow[]) => {
     setEditedRows(nextRows);
+    setIsDirty(true);
   };
 
-  const handleUpdate = async () => {
-    if (!activeProperty) return;
+  const handleTabChange = (nextTab: number) => {
+    if (nextTab === activeTab) return;
+
+    if (isDirty) {
+      setPendingTab(nextTab);
+      setConfirmTabChangeOpen(true);
+      return;
+    }
+
+    setActiveTab(nextTab);
+  };
+
+  const handleSaveAndTabChange = async () => {
+    if (!activePropertyCode || pendingTab === null) return;
 
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      showToast(`${activeProperty.header.propertyCode} を保存しました。`);
+
+      await saveRows({
+        propertyCode: activePropertyCode,
+        rows: editedRows,
+      });
+
+      showToast(`${activePropertyCode} を保存しました。`);
+      setIsDirty(false);
+      setConfirmTabChangeOpen(false);
+      setActiveTab(pendingTab);
+      setPendingTab(null);
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast(error.message, "error");
+      } else {
+        showToast("保存に失敗しました。", "error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDiscardTabChange = () => {
+    if (pendingTab === null) return;
+
+    setConfirmTabChangeOpen(false);
+    setIsDirty(false);
+    setActiveTab(pendingTab);
+    setPendingTab(null);
+  };
+
+  const handleCancelTabChange = () => {
+    setPendingTab(null);
+    setConfirmTabChangeOpen(false);
+  };
+
+  const { mutateAsync: saveRows, isPending: isSaving } = useSavePropertyIncomeExpenseRows();
+  
+  const handleUpdate = async () => {
+    if (!activePropertyCode) return;
+
+    try {
+      setLoading(true);
+
+      await saveRows({
+        propertyCode: activePropertyCode,
+        rows: editedRows,
+      });
+
+      setIsDirty(false);
+
+      showToast(`${activePropertyCode} を保存しました。`);
+    } catch (error) {
+        if (error instanceof Error) {
+          showToast(`保存に失敗しました。` , "error", error.message);
+        } else {
+          showToast(`保存に失敗しました。` , "error", `${error}`);
+        }
     } finally {
       setLoading(false);
     }
@@ -129,6 +206,7 @@ export default function PropertyIncomeExpenseDetail() {
       const res = await refetchRows();
       if (res.data) {
         setEditedRows(res.data); // reset edited rows to fetched rows after refresh
+        setIsDirty(false);
       }
       await refetchTabs();
     } finally {
@@ -150,7 +228,7 @@ export default function PropertyIncomeExpenseDetail() {
     }
   };
 
-  const isScreenLoading = loading || isTabsLoading || isRowsLoading;
+  const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
 
   return (
     <div className="property-income-expense-detail-container">
@@ -173,7 +251,7 @@ export default function PropertyIncomeExpenseDetail() {
       <PropertyIncomeExpenseTabs
         activeTab={activeTab}
         propertyTabs={propertyTabs}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
       />
 
       {propertyTabs.map((propertyTab, index) => (
@@ -186,31 +264,47 @@ export default function PropertyIncomeExpenseDetail() {
         />
       ))}
 
-      <div className="property-income-expense-detail-footer">
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleUpdate}
-          disabled={isScreenLoading}
-        >
-          保存
-        </Button>
+      {!selectedPropertyCode ? (
+        <Typography sx={{ mt: 4, color: "text.secondary" }}>
+          物件一覧画面から物件を選択してください。
+        </Typography>
+      ) : (
+        <div className="property-income-expense-detail-footer">
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleUpdate}
+            disabled={isScreenLoading}
+          >
+            保存
+          </Button>
 
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={handleRefresh}
-          disabled={isScreenLoading}
-        >
-          キャンセル
-        </Button>
-      </div>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleRefresh}
+            disabled={isScreenLoading}
+          >
+            キャンセル
+          </Button>
+        </div>
+      )}
+      
+
+      <UnsavedChangesDialog
+        open={confirmTabChangeOpen}
+        message="変更内容が保存されていません。保存してから移動しますか？"
+        onSave={handleSaveAndTabChange}
+        onDiscard={handleDiscardTabChange}
+        onCancel={handleCancelTabChange}
+      />
 
       <LoadingDialog open={isScreenLoading} />
 
       <CommonToast
         open={toast.open}
         message={toast.message}
+        description={toast.description}
         severity={toast.severity}
         onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
