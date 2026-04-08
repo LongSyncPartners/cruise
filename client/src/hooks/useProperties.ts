@@ -7,5 +7,6 @@ export const useProperties = () => {
     queryKey: propertyKeys.lists(),
     queryFn: fetchPropertiesFromStubApi,
     staleTime: 5 * 60 * 1000, // cache 5 minutes
+    refetchOnWindowFocus: false,
   });
 };
