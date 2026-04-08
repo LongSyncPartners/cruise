@@ -1,5 +1,10 @@
 import { addDays, format } from "date-fns";
-import { type PropertyHeaderProps, type PropertyIncomeExpenseDetailRow, type PropertyTabData } from "./types";
+import {
+  type PropertyHeaderProps,
+  type PropertyIncomeExpenseDetailRow,
+  type PropertyTabData,
+  type PropertyTabSummary,
+} from "./types";
 
 const today = new Date();
 
@@ -7,6 +12,8 @@ const PROPERTY_TYPES = ["一戸建て", "アパート", "マンション"] as co
 const MANAGEMENT_TYPES = ["一般管理", "サブリース", "自主管理"] as const;
 
 const pad2 = (value: number) => value.toString().padStart(2, "0");
+
+const createPropertyCode = (seed: number) => seed % 3 === 0 ? `C-${pad2(seed + 1)}` : seed % 3 === 1 ? `H-${pad2(seed + 1)}` : `T-${pad2(seed + 1)}`;
 
 const createBaseRows = (seed: number): PropertyIncomeExpenseDetailRow[] => {
   let running = 0;
@@ -61,7 +68,7 @@ const createBaseRows = (seed: number): PropertyIncomeExpenseDetailRow[] => {
 };
 
 const createPropertyHeader = (seed: number): PropertyHeaderProps => {
-  const propertyCode = `C-${pad2(seed + 1)}`;
+  const propertyCode = createPropertyCode(seed);
 
   return {
     propertyCode,
@@ -73,12 +80,71 @@ const createPropertyHeader = (seed: number): PropertyHeaderProps => {
   };
 };
 
-export const createPropertyTabs = (count = 30): PropertyTabData[] =>
+export const createPropertyTabSummaries = (count = 90): PropertyTabSummary[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `property-tab-${index + 1}`,
     label: `物件${pad2(index + 1)}`,
     header: createPropertyHeader(index),
-    rows: createBaseRows(index),
   }));
 
-export const initialPropertyTabs = createPropertyTabs();
+/**
+ * Tab list only
+ */
+export const initialPropertyTabs = createPropertyTabSummaries();
+
+/**
+ * Get one tab summary by propertyCode
+ */
+export const getPropertyTabByCode = (
+  propertyCode: string
+): PropertyTabSummary | undefined => {
+  return initialPropertyTabs.find(
+    (tab) => tab.header.propertyCode === propertyCode
+  );
+};
+
+/**
+ * Get list of tab summaries by propertyCode
+ */
+export const getPropertyTabsByCode = (
+  propertyCode: string
+): PropertyTabSummary[] => {
+  return initialPropertyTabs.filter(
+    (tab) => tab.header.propertyCode.includes(propertyCode.charAt(0)) // crude filter for demo
+  );
+};
+
+/**
+ * Get row list by propertyCode
+ */
+export const getPropertyRowsByCode = (
+  propertyCode: string
+): PropertyIncomeExpenseDetailRow[] => {
+  const index = initialPropertyTabs.findIndex(
+    (tab) => tab.header.propertyCode === propertyCode
+  );
+
+  if (index < 0) {
+    return [];
+  }
+
+  return createBaseRows(index);
+};
+
+/**
+ * Get full detail by propertyCode
+ */
+export const getPropertyTabDetailByCode = (
+  propertyCode: string
+): PropertyTabData | undefined => {
+  const tab = getPropertyTabByCode(propertyCode);
+
+  if (!tab) {
+    return undefined;
+  }
+
+  return {
+    ...tab,
+    rows: getPropertyRowsByCode(propertyCode),
+  };
+};

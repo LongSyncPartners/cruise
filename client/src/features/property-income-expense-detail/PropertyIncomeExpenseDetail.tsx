@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertColor, Button, Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 
 import "./index.style.css";
-import { initialPropertyTabs } from "./data.dump";
-import { type PropertyIncomeExpenseDetailRow, type PropertyTabData } from "./types";
+import {
+  type PropertyHeaderProps,
+  type PropertyIncomeExpenseDetailRow,
+  type PropertyTabSummary,
+} from "./types";
 import PropertyHeader from "./PropertyHeader";
 import PropertyIncomeExpenseDetailGrid from "./PropertyIncomeExpenseDetailGrid";
 import PropertyIncomeExpenseTabs from "./PropertyIncomeExpenseTabs";
@@ -14,12 +17,12 @@ import CommonToast from "../shared/CommonToast";
 import LoadingDialog from "../shared/LoadingDialog";
 import { downloadCsvStub } from "../shared/csv";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
+import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
+import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
 
-/**
- * TabPanel component
- * - Render content only when the tab is active
- * - This prevents unnecessary rendering of all tabs
- */
+const EMPTY_TABS: PropertyTabSummary[] = [];
+const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
+
 const TabPanel = ({
   active,
   header,
@@ -27,19 +30,15 @@ const TabPanel = ({
   onRowsChange,
 }: {
   active: boolean;
-  header: PropertyTabData["header"];
+  header?: PropertyHeaderProps;
   rows: PropertyIncomeExpenseDetailRow[];
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
 }) => {
-  // Do not render if not active
-  if (!active) return null;
+  if (!active || !header) return null;
 
   return (
     <>
-      {/* Property header section */}
       <PropertyHeader {...header} />
-
-      {/* DataGrid container */}
       <div className="property-income-expense-detail-grid-contaniner">
         <PropertyIncomeExpenseDetailGrid rows={rows} onRowsChange={onRowsChange} />
       </div>
@@ -47,25 +46,10 @@ const TabPanel = ({
   );
 };
 
-/**
- * Main screen: PropertyIncomeExpenseDetail
- * Responsibilities:
- * - Manage tab state
- * - Manage loading / toast
- * - Handle user actions (refresh, download, save)
- * - Compose UI (Tabs + Grid + Footer)
- */
 export default function PropertyIncomeExpenseDetail() {
-  // Loading state for async actions (save, download, refresh)
   const [loading, setLoading] = useState(false);
-
-  // Current active tab index
   const [activeTab, setActiveTab] = useState(0);
-
-  // Tabs data (each tab contains header + rows)
-  const [propertyTabs, setPropertyTabs] = useState<PropertyTabData[]>(initialPropertyTabs);
-
-  // Toast notification state
+  const [editedRows, setEditedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
@@ -76,92 +60,88 @@ export default function PropertyIncomeExpenseDetail() {
     severity: "success",
   });
 
-  /**
-   * Get selected propertyCode from global store (Zustand)
-   * Used to sync tab selection when navigating from another screen
-   */
-  const propertyCode = usePropertySelectionStore((state) => state.selectedPropertyCode);
+  const selectedPropertyCode = usePropertySelectionStore(
+    (state) => state.selectedPropertyCode
+  );
 
-  /**
-   * Sync active tab when propertyCode changes
-   */
+  const {
+    data: propertyTabsData,
+    isLoading: isTabsLoading,
+    refetch: refetchTabs,
+  } = usePropertyIncomeExpenseTabs(selectedPropertyCode ?? undefined);;
+
+  const propertyTabs = propertyTabsData ?? EMPTY_TABS;
+
+  const activeProperty = useMemo<PropertyTabSummary | undefined>(() => {
+    console.log("1", "activeTab:", activeTab);
+    return propertyTabs[activeTab];
+  }, [propertyTabs, activeTab]);
+
+  const activePropertyCode = activeProperty?.header.propertyCode;
+
+  const {
+    data: fetchedRowsData,
+    isLoading: isRowsLoading,
+    refetch: refetchRows,
+  } = usePropertyIncomeExpenseRows(activePropertyCode);
+
+  const fetchedRows = fetchedRowsData ?? EMPTY_ROWS;
+
   useEffect(() => {
-    if (!propertyCode) return;
+    if (!selectedPropertyCode || propertyTabs.length === 0) return;
 
     const index = propertyTabs.findIndex(
-      (tab) => tab.header.propertyCode === propertyCode
+      (tab) => tab.header.propertyCode === selectedPropertyCode
     );
 
-    if (index !== -1) {
+    if (index !== -1 && index !== activeTab) {
       setActiveTab(index);
     }
-  }, [propertyCode, propertyTabs]);
+  }, [selectedPropertyCode, propertyTabs]);
 
-  // Current active tab data
-  const activeProperty = propertyTabs[activeTab];
+  useEffect(() => {
+    setEditedRows(fetchedRows);
+  }, [fetchedRows]);
 
-  /**
-   * Show toast notification
-   */
   const showToast = (message: string, severity: AlertColor = "success") => {
     setToast({ open: true, message, severity });
   };
 
-  /**
-   * Update rows of current active tab
-   */
   const updateActiveRows = (nextRows: PropertyIncomeExpenseDetailRow[]) => {
-    setPropertyTabs((prev) =>
-      prev.map((tab, index) =>
-        index === activeTab
-          ? {
-              ...tab,
-              rows: nextRows,
-            }
-          : tab
-      )
-    );
+    setEditedRows(nextRows);
   };
 
-  /**
-   * Handle Save action
-   */
   const handleUpdate = async () => {
+    if (!activeProperty) return;
+
     try {
       setLoading(true);
-
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       showToast(`${activeProperty.header.propertyCode} を保存しました。`);
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * Handle Refresh action
-   */
-  const handleLoading = async () => {
+  const handleRefresh = async () => {
     try {
       setLoading(true);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const res = await refetchRows();
+      if (res.data) {
+        setEditedRows(res.data); // reset edited rows to fetched rows after refresh
+      }
+      await refetchTabs();
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * Handle CSV download
-   */
   const handleDownload = async () => {
+    if (!activeProperty) return;
+
     try {
       setLoading(true);
-
       await downloadCsvStub(`${activeProperty.header.propertyCode}.csv`);
-
       showToast("CSVをダウンロードしました。");
     } catch (_error) {
       showToast("ダウンロードに失敗しました。", "error");
@@ -170,11 +150,12 @@ export default function PropertyIncomeExpenseDetail() {
     }
   };
 
+  const isScreenLoading = loading || isTabsLoading || isRowsLoading;
+
   return (
     <div className="property-income-expense-detail-container">
-      {/* ===== Header Actions ===== */}
       <div className="property-income-expense-detail-common-header">
-        <div className="common-header-item" onClick={handleLoading}>
+        <div className="common-header-item" onClick={handleRefresh}>
           <RefreshIcon />
           <Typography>最新情報を更新</Typography>
         </div>
@@ -185,44 +166,48 @@ export default function PropertyIncomeExpenseDetail() {
         </div>
       </div>
 
-      {/* ===== Title ===== */}
       <Typography sx={{ fontSize: "150%", fontWeight: "500", paddingBottom: 2 }}>
         物件収支明細
       </Typography>
 
-      {/* ===== Tabs ===== */}
       <PropertyIncomeExpenseTabs
         activeTab={activeTab}
         propertyTabs={propertyTabs}
         onChange={setActiveTab}
       />
 
-      {/* ===== Tab Panels ===== */}
       {propertyTabs.map((propertyTab, index) => (
         <TabPanel
           key={propertyTab.id}
           active={index === activeTab}
           header={propertyTab.header}
-          rows={propertyTab.rows}
+          rows={index === activeTab ? editedRows : EMPTY_ROWS}
           onRowsChange={updateActiveRows}
         />
       ))}
 
-      {/* ===== Footer Actions ===== */}
       <div className="property-income-expense-detail-footer">
-        <Button variant="contained" color="success" onClick={handleUpdate} disabled={loading}>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleUpdate}
+          disabled={isScreenLoading}
+        >
           保存
         </Button>
 
-        <Button variant="contained" color="warning" onClick={handleLoading} disabled={loading}>
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={handleRefresh}
+          disabled={isScreenLoading}
+        >
           キャンセル
         </Button>
       </div>
 
-      {/* ===== Loading Dialog ===== */}
-      <LoadingDialog open={loading} />
+      <LoadingDialog open={isScreenLoading} />
 
-      {/* ===== Toast Notification ===== */}
       <CommonToast
         open={toast.open}
         message={toast.message}

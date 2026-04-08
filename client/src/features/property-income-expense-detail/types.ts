@@ -1,6 +1,6 @@
 import { type GridRowId } from "@mui/x-data-grid";
 
-// 物件収支明細データ
+// Property income/expense detail row
 export type PropertyIncomeExpenseDetailRow = {
   id: GridRowId;
   yearMonth: string;
@@ -25,9 +25,18 @@ export type PropertyHeaderProps = {
   owner?: string;
 };
 
-export type PropertyTabData = {
+/**
+ * Tab summary only
+ */
+export type PropertyTabSummary = {
   id: string;
   label: string;
   header: PropertyHeaderProps;
+};
+
+/**
+ * Full tab detail
+ */
+export type PropertyTabData = PropertyTabSummary & {
   rows: PropertyIncomeExpenseDetailRow[];
 };

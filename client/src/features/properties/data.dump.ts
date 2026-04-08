@@ -6,7 +6,8 @@ const today = new Date();
 
 export const paggingdata: PropertyRow[] = Array.from({ length: 400 }, (_, i) => ({
     id: i + 1,
-    propertyCode: `C-${(i + 1).toString().padStart(2, "0")}`,
+    propertyCode: i % 3 === 0 ? `C-${(i + 1).toString().padStart(2, "0")}` : 
+        i % 3 === 1 ? `H-${(i + 1).toString().padStart(2, "0")}`  : `T-${(i + 1).toString().padStart(2, "0")}`,
     managementType: MANAGEMENT_TYPE_OPTIONS[i % 2].value,
     propertyType: PROPERTY_TYPE_OPTIONS[i % 3].value,
     managementCompany: `株式会社ウッドストック${i + 1}`,

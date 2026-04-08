@@ -1,10 +1,10 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import { type PropertyTabData } from "./types";
+import { PropertyTabSummary } from "./types";
 import { useCenteredScrollableTabs } from "./useCenteredScrollableTabs";
 
 type PropertyIncomeExpenseTabsProps = {
   activeTab: number;
-  propertyTabs: PropertyTabData[];
+  propertyTabs: PropertyTabSummary[];
   onChange: (newValue: number) => void;
 };
 
@@ -27,7 +27,7 @@ export default function PropertyIncomeExpenseTabs({
       }}
     >
       <Box sx={{ px: 0, whiteSpace: "nowrap", flexShrink: 0 }}>
-        物件グループ：C
+        物件グループ：{propertyTabs?.[activeTab]?.header.propertyCode.charAt(0) || ""}
       </Box>
 
       <Tabs
