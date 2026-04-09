@@ -45,6 +45,7 @@ const createBaseRows = (seed: number): PropertyIncomeExpenseDetailRow[] => {
       expense,
       balance,
       note: i % 3 === 0 ? "特記事項あり" : "",
+      executedState: false, // For context menu toggle demo
     };
   });
 };

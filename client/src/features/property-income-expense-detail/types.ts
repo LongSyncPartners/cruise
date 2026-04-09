@@ -13,6 +13,7 @@ export type PropertyIncomeExpenseDetailRow = {
   expense: number;
   balance: number;
   note?: string;
+  executedState: boolean; // For context menu toggle
 };
 
 export type PropertyHeaderProps = {

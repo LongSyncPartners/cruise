@@ -11,16 +11,19 @@ import CurrencyCell from "../shared/CurrencyCell";
 import MultilineCell from "../shared/MultilineCell";
 import DateCell from "../shared/DateCell";
 import DateEditCell from "../shared/DateEditCell";
+import YearMonthCell from "../shared/YearMonthCell";
 
 type CreateColumnsParams = {
   onCellContextMenu: (
     params: GridRenderCellParams<PropertyIncomeExpenseDetailRow>,
     event: React.MouseEvent<HTMLElement>
   ) => void;
+  onToggleExecutedState: (rowId: string | number) => void;
 };
 
 export const createPropertyIncomeExpenseDetailColumns = ({
   onCellContextMenu,
+  onToggleExecutedState,
 }: CreateColumnsParams): GridColDef<PropertyIncomeExpenseDetailRow>[] => {
   const withContextMenu = (
     col: GridColDef<PropertyIncomeExpenseDetailRow>
@@ -57,6 +60,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       headerClassName: "sticky-col sticky-col-0",
       cellClassName: "sticky-col sticky-col-0",
+      renderCell: (params) => <YearMonthCell {...params} onToggleExecutedState={onToggleExecutedState}/>,
     }),
     withContextMenu({
       field: "expectedAmount",

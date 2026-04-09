@@ -183,6 +183,23 @@ export default function PropertyIncomeExpenseDetailGrid({
     setCopiedRow(null);
   };
 
+  const handleToggleExecutedState = useCallback(
+    (rowId: string | number) => {
+      const nextRows = rows.map((row) =>
+        row.id === rowId
+          ? {
+              ...row,
+              executedState: !row.executedState,
+            }
+          : row
+      );
+
+      onRowsChange(nextRows);
+      onDirtyChange?.();
+    },
+    [rows, onRowsChange, onDirtyChange]
+  );
+
   /**
    * Columns definition (memoized)
    */
@@ -190,8 +207,9 @@ export default function PropertyIncomeExpenseDetailGrid({
     () =>
       createPropertyIncomeExpenseDetailColumns({
         onCellContextMenu: handleCellContextMenu,
+        onToggleExecutedState: handleToggleExecutedState,
       }),
-    []
+    [handleToggleExecutedState]
   );
 
   /**
