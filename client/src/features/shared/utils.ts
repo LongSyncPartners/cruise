@@ -85,3 +85,29 @@ export const isValidDate = (value: string): boolean => {
     date.getDate() === day
   );
 };
+
+/**
+ * Compare two date strings (yyyy/MM/dd) and check if they are in the same month.
+ */
+export const isSameMonth = (date1: string, date2: string): boolean => {
+  if (!date1 || !date2) return false;
+
+  const [y1, m1] = date1.split("/");
+  const [y2, m2] = date2.split("/");
+
+  return y1 === y2 && m1 === m2;
+};
+
+/**
+ * Get month (MM) from date string format "yyyy/MM"
+ */
+export const getMonth = (date: string): string => {
+  if (!date) return "";
+
+  const [, month] = date.split("/");
+  return month ?? "";
+};
+
+export const getYearMonth = (date: string): string => {
+  return date?.slice(0, 7) ?? "";
+};

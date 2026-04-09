@@ -22,10 +22,18 @@ import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRo
 import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
 import { usePropertyIncomeExpenseValidation } from "./usePropertyIncomeExpenseValidation";
+import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
 
+/**
+ * Fallback empty values to avoid recreating new empty arrays on every render.
+ */
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
 
+/**
+ * Tab panel component for displaying the selected property's header and editable grid.
+ * Only the active tab is rendered.
+ */
 const TabPanel = ({
   active,
   header,
@@ -39,27 +47,48 @@ const TabPanel = ({
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
 }) => {
+  // Do not render anything when the tab is inactive
+  // or when header information is not available.
   if (!active || !header) return null;
 
   return (
     <>
+      {/* Property summary section */}
       <PropertyHeader {...header} />
+
+      {/* Editable detail grid */}
       <div className="property-income-expense-detail-grid-contaniner">
-        <PropertyIncomeExpenseDetailGrid rows={rows} onRowsChange={onRowsChange} onDirtyChange={onDirtyChange} />
+        <PropertyIncomeExpenseDetailGrid
+          rows={rows}
+          onRowsChange={onRowsChange}
+          onDirtyChange={onDirtyChange}
+        />
       </div>
     </>
   );
 };
 
 export default function PropertyIncomeExpenseDetail() {
+  /**
+   * Local UI state
+   */
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [editedRows, setEditedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
+  const { recalculateRows } = usePropertyIncomeExpenseCalculation();
+
+  /**
+   * Validation hook for all editable rows.
+   * Currently prepared for save validation.
+   */
   const { validateRows } = usePropertyIncomeExpenseValidation();
 
+  /**
+   * Toast state for success / error notifications.
+   */
   const [toast, setToast] = useState<{
     open: boolean;
     message: string;
@@ -72,24 +101,40 @@ export default function PropertyIncomeExpenseDetail() {
     severity: "success",
   });
 
+  /**
+   * Selected property code from global store.
+   * This is usually set from the property list screen.
+   */
   const selectedPropertyCode = usePropertySelectionStore(
     (state) => state.selectedPropertyCode
   );
 
+  /**
+   * Fetch property tab list based on selected property code.
+   */
   const {
     data: propertyTabsData,
     isLoading: isTabsLoading,
     refetch: refetchTabs,
-  } = usePropertyIncomeExpenseTabs(selectedPropertyCode ?? undefined);;
+  } = usePropertyIncomeExpenseTabs(selectedPropertyCode ?? undefined);
 
   const propertyTabs = propertyTabsData ?? EMPTY_TABS;
 
+  /**
+   * Resolve the currently active property tab.
+   */
   const activeProperty = useMemo<PropertyTabSummary | undefined>(() => {
     return propertyTabs[activeTab];
   }, [propertyTabs, activeTab]);
 
+  /**
+   * Active property code used to fetch row details and save data.
+   */
   const activePropertyCode = activeProperty?.header.propertyCode;
 
+  /**
+   * Fetch detail rows for the active property tab.
+   */
   const {
     data: fetchedRowsData,
     isLoading: isRowsLoading,
@@ -98,31 +143,28 @@ export default function PropertyIncomeExpenseDetail() {
 
   const fetchedRows = fetchedRowsData ?? EMPTY_ROWS;
 
-  useEffect(() => {
-    if (!selectedPropertyCode || propertyTabs.length === 0) return;
-
-    const index = propertyTabs.findIndex(
-      (tab) => tab.header.propertyCode === selectedPropertyCode
-    );
-
-    if (index !== -1 && index !== activeTab) {
-      setActiveTab(index);
-    }
-  }, [selectedPropertyCode, propertyTabs]);
-
-  useEffect(() => {
-    setEditedRows(fetchedRows);
-    setIsDirty(false);
-  }, [fetchedRows]);
-
-  const showToast = (message: string, severity: AlertColor = "success", description?: string) => {
-    setToast({ open: true, message, description, severity  });
+  /**
+   * Open toast message.
+   */
+  const showToast = (
+    message: string,
+    severity: AlertColor = "success",
+    description?: string
+  ) => {
+    setToast({ open: true, message, description, severity });
   };
 
+  /**
+   * Update editable rows from child grid.
+   */
   const updateActiveRows = (nextRows: PropertyIncomeExpenseDetailRow[]) => {
     setEditedRows(nextRows);
   };
 
+  /**
+   * Handle tab switching.
+   * If the current tab has unsaved changes, show confirmation dialog first.
+   */
   const handleTabChange = (nextTab: number) => {
     if (nextTab === activeTab) return;
 
@@ -135,6 +177,9 @@ export default function PropertyIncomeExpenseDetail() {
     setActiveTab(nextTab);
   };
 
+  /**
+   * Save current tab data, then move to the pending tab.
+   */
   const handleSaveAndTabChange = async () => {
     if (!activePropertyCode || pendingTab === null) return;
 
@@ -171,6 +216,9 @@ export default function PropertyIncomeExpenseDetail() {
     }
   };
 
+  /**
+   * Discard current edits and move to the pending tab.
+   */
   const handleDiscardTabChange = () => {
     if (pendingTab === null) return;
 
@@ -180,13 +228,23 @@ export default function PropertyIncomeExpenseDetail() {
     setPendingTab(null);
   };
 
+  /**
+   * Close unsaved changes dialog without changing tab.
+   */
   const handleCancelTabChange = () => {
     setPendingTab(null);
     setConfirmTabChangeOpen(false);
   };
 
-  const { mutateAsync: saveRows, isPending: isSaving } = useSavePropertyIncomeExpenseRows();
-  
+  /**
+   * Mutation hook for saving rows to the backend.
+   */
+  const { mutateAsync: saveRows, isPending: isSaving } =
+    useSavePropertyIncomeExpenseRows();
+
+  /**
+   * Save the current editable rows.
+   */
   const handleUpdate = async () => {
     if (!activePropertyCode) return;
 
@@ -207,38 +265,51 @@ export default function PropertyIncomeExpenseDetail() {
       });
 
       setIsDirty(false);
-
       showToast(`${activePropertyCode} を保存しました。`);
     } catch (error) {
-        if (error instanceof Error) {
-          showToast(`保存に失敗しました。` , "error", error.message);
-        } else {
-          showToast(`保存に失敗しました。` , "error", `${error}`);
-        }
+      if (error instanceof Error) {
+        showToast("保存に失敗しました。", "error", error.message);
+      } else {
+        showToast("保存に失敗しました。", "error", `${error}`);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Refresh both detail rows and tab summary data from the server.
+   * If row data is returned, overwrite local edits and clear dirty state.
+   */
   const handleRefresh = async () => {
     try {
       setLoading(true);
+
       const res = await refetchRows();
+
       if (res.data) {
-        setEditedRows(res.data); // reset edited rows to fetched rows after refresh
+        // Reset local edited rows with latest fetched data
+        setEditedRows(res.data);
         setIsDirty(false);
       }
+
       await refetchTabs();
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Cancel current edits and restore the latest fetched rows.
+   */
   const handleCancel = () => {
     setEditedRows((fetchedRows ?? []).map((row) => ({ ...row })));
     setIsDirty(false);
   };
 
+  /**
+   * Download CSV for the currently active property.
+   */
   const handleDownload = async () => {
     if (!activeProperty) return;
 
@@ -253,10 +324,43 @@ export default function PropertyIncomeExpenseDetail() {
     }
   };
 
+  /**
+   * Combined loading flag for the whole screen.
+   */
   const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
 
+  /**
+   * When the selected property code changes from the store,
+   * switch to the corresponding tab if it exists.
+   */
+  useEffect(() => {
+    if (!selectedPropertyCode || propertyTabs.length === 0) return;
+
+    const index = propertyTabs.findIndex(
+      (tab) => tab.header.propertyCode === selectedPropertyCode
+    );
+
+    if (index !== -1 && index !== activeTab) {
+      setActiveTab(index);
+    }
+  }, [selectedPropertyCode, propertyTabs]);
+
+  /**
+   * Reset editable rows whenever fresh rows are fetched.
+   * Also clear dirty state because the screen is now synced with server data.
+   */
+  useEffect(() => {
+    setEditedRows(recalculateRows(fetchedRows));
+    setIsDirty(false);
+  }, [fetchedRows, recalculateRows]);
+  
+  /**
+   * Recalculate balances and expected amounts for all rows when any row is updated.
+     * This is a simplified example of how to trigger recalculation from the main component.
+   */
   return (
     <div className="property-income-expense-detail-container">
+      {/* Common action header */}
       <div className="property-income-expense-detail-common-header">
         <div className="common-header-item" onClick={handleRefresh}>
           <RefreshIcon />
@@ -269,16 +373,19 @@ export default function PropertyIncomeExpenseDetail() {
         </div>
       </div>
 
+      {/* Screen title */}
       <Typography sx={{ fontSize: "150%", fontWeight: "500", paddingBottom: 2 }}>
         物件収支明細
       </Typography>
 
+      {/* Property tab selector */}
       <PropertyIncomeExpenseTabs
         activeTab={activeTab}
         propertyTabs={propertyTabs}
         onChange={handleTabChange}
       />
 
+      {/* Render tab content */}
       {propertyTabs.map((propertyTab, index) => (
         <TabPanel
           key={propertyTab.id}
@@ -290,11 +397,13 @@ export default function PropertyIncomeExpenseDetail() {
         />
       ))}
 
+      {/* Show guidance when no property is selected */}
       {!selectedPropertyCode ? (
         <Typography sx={{ mt: 4, color: "text.secondary" }}>
           物件一覧画面から物件を選択してください。
         </Typography>
       ) : (
+        /* Footer actions */
         <div className="property-income-expense-detail-footer">
           <Button
             variant="contained"
@@ -315,8 +424,8 @@ export default function PropertyIncomeExpenseDetail() {
           </Button>
         </div>
       )}
-      
 
+      {/* Confirm dialog shown when leaving a tab with unsaved changes */}
       <UnsavedChangesDialog
         open={confirmTabChangeOpen}
         message="変更内容が保存されていません。保存してから移動しますか？"
@@ -325,8 +434,10 @@ export default function PropertyIncomeExpenseDetail() {
         onCancel={handleCancelTabChange}
       />
 
+      {/* Full-screen loading dialog */}
       <LoadingDialog open={isScreenLoading} />
 
+      {/* Common toast notification */}
       <CommonToast
         open={toast.open}
         message={toast.message}

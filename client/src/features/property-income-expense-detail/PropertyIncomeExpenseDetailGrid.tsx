@@ -24,7 +24,9 @@ import { createPropertyIncomeExpenseDetailColumns } from "./propertyIncomeExpens
 import { type PropertyIncomeExpenseDetailRow } from "./types";
 
 import { v4 as uuidv4 } from "uuid";
-import { parseCurrency } from "../shared/utils";
+import { getYearMonth, isSameMonth, parseCurrency } from "../shared/utils";
+import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
+import { shouldRecalculateRow } from "./utils";
 
 /**
  * Props for PropertyIncomeExpenseDetailGrid
@@ -197,48 +199,44 @@ export default function PropertyIncomeExpenseDetailGrid({
    * - Parse currency values
    * - Recalculate balance from current row onward
    */
-  const processRowUpdate = useCallback(
-    (updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>) => {
-      let returnedRow = updatedRow as PropertyIncomeExpenseDetailRow;
+  const { updateRowAndRecalculate } = usePropertyIncomeExpenseCalculation();
 
-      const nextRows = [...rows];
-      const index = nextRows.findIndex((row) => row.id === updatedRow.id);
+const processRowUpdate = useCallback(
+  (updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>) => {
+    const currentRow = rows.find((row) => row.id === updatedRow.id);
 
-      if (index < 0) {
-        return returnedRow;
-      }
+    if (!currentRow) {
+      return updatedRow as PropertyIncomeExpenseDetailRow;
+    }
 
-      // Update row with parsed values
-      nextRows[index] = {
-        ...nextRows[index],
-        ...updatedRow,
-        income: parseCurrency(updatedRow.income),
-        expense: parseCurrency(updatedRow.expense),
-      };
+    // If no calculation-related field changed,
+    // just merge the edited row and return it.
+    if (!shouldRecalculateRow(currentRow, updatedRow)) {
+      const nextRows = rows.map((row) =>
+        row.id === updatedRow.id
+          ? {
+              ...row,
+              ...updatedRow,
+            }
+          : row
+      );
 
-      // Recalculate running balance from this row onward
-      let running = index > 0 ? Number(nextRows[index - 1].balance ?? 0) : 0;
-
-      for (let i = index; i < nextRows.length; i += 1) {
-        const income = Number(nextRows[i].income ?? 0);
-        const expense = Number(nextRows[i].expense ?? 0);
-
-        running += income - expense;
-
-        nextRows[i] = {
-          ...nextRows[i],
-          balance: running,
-        };
-      }
-
-      returnedRow = nextRows[index];
+      const returnedRow =
+        nextRows.find((row) => row.id === updatedRow.id) ??
+        (updatedRow as PropertyIncomeExpenseDetailRow);
 
       onRowsChange(nextRows);
-
       return returnedRow;
-    },
-    [onRowsChange, rows]
-  );
+    }
+
+    // Recalculate only when important fields changed
+    const { nextRows, returnedRow } = updateRowAndRecalculate(rows, updatedRow);
+
+    onRowsChange(nextRows);
+    return returnedRow;
+  },
+  [onRowsChange, rows, updateRowAndRecalculate]
+);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>

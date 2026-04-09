@@ -23,37 +23,19 @@ const createBaseRows = (seed: number): PropertyIncomeExpenseDetailRow[] => {
     const expense = i % 2 !== 0 ? 50000 + i * 500 + seed * 250 : 0;
 
     running += income - expense;
-    const balance = running;
+    const balance = running;  
 
-    let expectedAmount = 120000 + i * 1000 + seed * 1000;
     let managementCompanyAmount = 120000 + i * 1000 + seed * 1000;
 
     const date = addDays(today, (i - 200) * 5);
-    let yearMonth = format(date, "yyyy-MM");
 
-    if (i > 0) {
-      const prevMonth = format(addDays(today, (i - 199) * 5), "yyyy-MM");
-      const nextMonth = format(addDays(today, (i - 201) * 5), "yyyy-MM");
-
-      if (yearMonth !== prevMonth && yearMonth === nextMonth) {
-        // Keep yearMonth and expected values at month break row only.
-      } else {
-        yearMonth = "";
-        expectedAmount = 0;
-        managementCompanyAmount = 0;
-      }
-    } else {
-      yearMonth = "";
-      expectedAmount = 0;
-      managementCompanyAmount = 0;
-    }
 
     return {
       id: `${seed + 1}-${i + 1}`,
-      yearMonth,
-      expectedAmount,
-      managementCompanyAmount,
-      transactionDate: format(date, "yyyy-MM-dd"),
+      yearMonth: "",
+      expectedAmount : 0,
+      managementCompanyAmount:0,
+      transactionDate: format(date, "yyyy/MM/dd"),
       counterparty: `取引先${pad2((i % 9) + 1)}`,
       description:
         i % 2 === 0

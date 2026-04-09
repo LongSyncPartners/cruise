@@ -1,3 +1,5 @@
+import { GridRowModel } from "@mui/x-data-grid";
+import { parseCurrency } from "../shared/utils";
 import { PropertyIncomeExpenseDetailRow } from "./types";
 
 
@@ -17,4 +19,15 @@ export const calculateRunningBalance = (
       balance: runningBalance,
     };
   });
+};
+
+export const shouldRecalculateRow = (
+  currentRow: PropertyIncomeExpenseDetailRow,
+  updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>
+): boolean => {
+  return (
+    parseCurrency(currentRow.income) !== parseCurrency(updatedRow.income) ||
+    parseCurrency(currentRow.expense) !== parseCurrency(updatedRow.expense) ||
+    (currentRow.transactionDate ?? "") !== (updatedRow.transactionDate ?? "")
+  );
 };
