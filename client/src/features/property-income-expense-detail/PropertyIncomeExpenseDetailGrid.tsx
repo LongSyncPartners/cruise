@@ -32,6 +32,7 @@ import { parseCurrency } from "../shared/utils";
 type PropertyIncomeExpenseDetailGridProps = {
   rows: PropertyIncomeExpenseDetailRow[];
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
+  onDirtyChange?: () => void;
 };
 
 /**
@@ -46,6 +47,7 @@ type PropertyIncomeExpenseDetailGridProps = {
 export default function PropertyIncomeExpenseDetailGrid({
   rows,
   onRowsChange,
+  onDirtyChange,
 }: PropertyIncomeExpenseDetailGridProps) {
   // Sticky column styling (left fixed columns)
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
@@ -243,7 +245,7 @@ export default function PropertyIncomeExpenseDetailGrid({
       <DataGrid
         rows={rows}
         columns={columns}
-        rowHeight={40}
+        rowHeight={50}
         columnHeaderHeight={40}
         className="property-income-expense-detail-grid"
         localeText={{
@@ -272,6 +274,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         onProcessRowUpdateError={(error) => {
           console.error(error);
         }}
+        onCellEditStart={onDirtyChange}
         sx={[dataGridCommonSx, stickySx]}
         slots={{
           footer: () => (

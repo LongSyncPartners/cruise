@@ -7,6 +7,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import WarningIcon from '@mui/icons-material/Warning';
+
 type UnsavedChangesDialogProps = {
   open: boolean;
   title?: string;
@@ -31,10 +33,12 @@ export default function UnsavedChangesDialog({
   cancelText = "キャンセル",
 }: UnsavedChangesDialogProps) {
   return (
-    <Dialog open={open} onClose={onCancel}>
+    <Dialog
+      open={open} onClose={onCancel} sx={{ "& .MuiDialog-paper": { padding: 0.5 } }}>
 
-      <DialogContent>
-        <DialogContentText sx={{fontWeight:"500"}}>{message}</DialogContentText>
+      <DialogContent sx={{display:"inline-flex"}}>
+        <WarningIcon sx={{ fontSize: "large", color: "warning.main", verticalAlign: "middle", mr:1 }} />
+        <DialogContentText sx={{ fontWeight: "500" }}>{message}</DialogContentText>
       </DialogContent>
 
       <DialogActions>

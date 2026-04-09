@@ -4,6 +4,13 @@ import React from "react";
 import MultilineEditCell from "../shared/MultilineEditCell";
 import { formatUSD, parseCurrencyInput } from "../shared/utils";
 import { type PropertyIncomeExpenseDetailRow } from "./types";
+import { validate, validateMaxLength, validateRequired } from "../shared/validators";
+import { createDateCellValidator, createTextCellValidator } from "../shared/gridValidators";
+import CurrencyEditCell from "../shared/CurrencyEditCell";
+import CurrencyCell from "../shared/CurrencyCell";
+import MultilineCell from "../shared/MultilineCell";
+import DateCell from "../shared/DateCell";
+import DateEditCell from "../shared/DateEditCell";
 
 type CreateColumnsParams = {
   onCellContextMenu: (
@@ -45,7 +52,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       field: "yearMonth",
       headerName: "年月",
       width: 80,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       headerClassName: "sticky-col sticky-col-0",
@@ -55,20 +62,12 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       field: "expectedAmount",
       headerName: "本来入金額",
       width: 100,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       headerClassName: "sticky-col sticky-col-1",
       cellClassName: "sticky-col sticky-col-1",
-      valueFormatter: (value) => formatUSD(value as number),
-      renderCell: (params) => {
-        const expectedAmount = Number(params.row.expectedAmount ?? 0);
-        return (
-          <span style={{ color: expectedAmount < 0 ? "red" : "inherit" }}>
-            {formatUSD(expectedAmount)}
-          </span>
-        );
-      },
+      renderCell: (params) => (<CurrencyCell {...params} />),
     }),
     withContextMenu({
       field: "managementCompanyAmount",
@@ -80,6 +79,9 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       headerClassName: "sticky-col sticky-col-2",
       cellClassName: "sticky-col sticky-col-2",
       valueFormatter: (value) => formatUSD(value as number),
+      valueParser: (value) => parseCurrencyInput(value),
+      renderCell: (params) => (<CurrencyCell {...params} />),
+      renderEditCell: (params) => (<CurrencyEditCell {...params} />),
     }),
     withContextMenu({
       field: "transactionDate",
@@ -90,6 +92,9 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       headerClassName: "sticky-col sticky-col-3",
       cellClassName: "sticky-col sticky-col-3",
+      renderCell: (params) => <DateCell {...params} />,
+      preProcessEditCellProps: createDateCellValidator({required: true}),
+      renderEditCell: (params) => <DateEditCell {...params} required />,
     }),
     withContextMenu({
       field: "counterparty",
@@ -98,6 +103,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      preProcessEditCellProps: createTextCellValidator({maxLength: 40, required: true,}),
+      renderEditCell: (params) => <MultilineEditCell {...params} maxLength={40} required={true} />,
     }),
     withContextMenu({
       field: "description",
@@ -106,7 +113,9 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderEditCell: (params) => <MultilineEditCell {...params} minRows={2} maxRows={5} />,
+      preProcessEditCellProps: createTextCellValidator({ required: true}),
+      renderCell: (params) => ( <MultilineCell {...params} />),
+      renderEditCell: (params) => <MultilineEditCell {...params} required={true} />,
     }),
     withContextMenu({
       field: "income",
@@ -117,6 +126,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
+      renderCell: (params) => (<CurrencyCell {...params} />),
+      renderEditCell: (params) => (<CurrencyEditCell {...params} />),
     }),
     withContextMenu({
       field: "expense",
@@ -127,6 +138,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
+      renderCell: (params) => (<CurrencyCell {...params} />),
+      renderEditCell: (params) => (<CurrencyEditCell {...params} />),
     }),
     withContextMenu({
       field: "balance",
@@ -135,15 +148,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      valueFormatter: (value) => formatUSD(value as number),
-      renderCell: (params) => {
-        const balance = Number(params.row.balance ?? 0);
-        return (
-          <span style={{ color: balance < 0 ? "red" : "inherit" }}>
-            {formatUSD(balance)}
-          </span>
-        );
-      },
+      renderCell: (params) => (<CurrencyCell {...params} />),
     }),
     withContextMenu({
       field: "note",
@@ -153,7 +158,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderEditCell: (params) => <MultilineEditCell {...params} minRows={2} maxRows={5} />,
+      preProcessEditCellProps: createTextCellValidator({required: true}),
+      renderEditCell: (params) => <MultilineEditCell {...params} required={true} />,
     }),
   ];
 };

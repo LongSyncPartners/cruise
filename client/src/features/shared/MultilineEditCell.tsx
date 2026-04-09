@@ -4,10 +4,14 @@ import {
   useGridApiContext,
 } from "@mui/x-data-grid";
 import TextField from "@mui/material/TextField";
+import { validate, validateMaxLength, validateRequired } from "./validators";
 
 type MultilineEditCellProps = GridRenderEditCellParams & {
   minRows?: number;
   maxRows?: number;
+  maxLength?: number;
+  required?: boolean;
+  lablelName?: string;
 };
 
 export default function MultilineEditCell(
@@ -16,10 +20,13 @@ export default function MultilineEditCell(
   const {
     id,
     field,
+    lablelName,
     value,
     hasFocus,
     minRows = 2,
-    maxRows = 6,
+    maxRows = 5,
+    maxLength = 100,
+    required = false,
   } = props;
 
   const apiRef = useGridApiContext();
@@ -34,12 +41,24 @@ export default function MultilineEditCell(
   const handleChange = async (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+
+    let value = event.target.value;
+
+    if (value.length > maxLength) {
+      value = value.slice(0, maxLength);
+    }
+
     await apiRef.current.setEditCellValue({
       id,
       field,
-      value: event.target.value,
+      value,
     });
   };
+
+  const validation = validate(
+    validateMaxLength(value || "", maxLength, lablelName),
+    required ? validateRequired(value, lablelName) : { isValid: true }
+  );
 
   return (
     <TextField
@@ -67,8 +86,10 @@ export default function MultilineEditCell(
       }}
       onKeyDown={(event) => {
         // cancel Enter event 
-        event.stopPropagation();
+        // event.stopPropagation();
       }}
+      error={!validation.isValid}
+      helperText={validation.errorMessage}
     />
   );
 }

@@ -21,6 +21,7 @@ import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTa
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
 import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
+import { usePropertyIncomeExpenseValidation } from "./usePropertyIncomeExpenseValidation";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
@@ -30,11 +31,13 @@ const TabPanel = ({
   header,
   rows,
   onRowsChange,
+  onDirtyChange,
 }: {
   active: boolean;
   header?: PropertyHeaderProps;
   rows: PropertyIncomeExpenseDetailRow[];
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
+  onDirtyChange?: () => void;
 }) => {
   if (!active || !header) return null;
 
@@ -42,7 +45,7 @@ const TabPanel = ({
     <>
       <PropertyHeader {...header} />
       <div className="property-income-expense-detail-grid-contaniner">
-        <PropertyIncomeExpenseDetailGrid rows={rows} onRowsChange={onRowsChange} />
+        <PropertyIncomeExpenseDetailGrid rows={rows} onRowsChange={onRowsChange} onDirtyChange={onDirtyChange} />
       </div>
     </>
   );
@@ -55,6 +58,7 @@ export default function PropertyIncomeExpenseDetail() {
   const [isDirty, setIsDirty] = useState(false);
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
+  const { validateRows } = usePropertyIncomeExpenseValidation();
 
   const [toast, setToast] = useState<{
     open: boolean;
@@ -117,7 +121,6 @@ export default function PropertyIncomeExpenseDetail() {
 
   const updateActiveRows = (nextRows: PropertyIncomeExpenseDetailRow[]) => {
     setEditedRows(nextRows);
-    setIsDirty(true);
   };
 
   const handleTabChange = (nextTab: number) => {
@@ -134,6 +137,15 @@ export default function PropertyIncomeExpenseDetail() {
 
   const handleSaveAndTabChange = async () => {
     if (!activePropertyCode || pendingTab === null) return;
+
+    /*
+    const validationResult = validateRows(editedRows);
+    if (!validationResult.isValid) {
+      showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
+      setConfirmTabChangeOpen(false);
+      return;
+    }
+    */
 
     try {
       setLoading(true);
@@ -178,6 +190,14 @@ export default function PropertyIncomeExpenseDetail() {
   const handleUpdate = async () => {
     if (!activePropertyCode) return;
 
+    /*
+    const validationResult = validateRows(editedRows);
+    if (!validationResult.isValid) {
+      showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
+      return;
+    }
+    */
+
     try {
       setLoading(true);
 
@@ -212,6 +232,11 @@ export default function PropertyIncomeExpenseDetail() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancel = () => {
+    setEditedRows((fetchedRows ?? []).map((row) => ({ ...row })));
+    setIsDirty(false);
   };
 
   const handleDownload = async () => {
@@ -261,6 +286,7 @@ export default function PropertyIncomeExpenseDetail() {
           header={propertyTab.header}
           rows={index === activeTab ? editedRows : EMPTY_ROWS}
           onRowsChange={updateActiveRows}
+          onDirtyChange={() => setIsDirty(true)}
         />
       ))}
 
@@ -282,7 +308,7 @@ export default function PropertyIncomeExpenseDetail() {
           <Button
             variant="contained"
             color="warning"
-            onClick={handleRefresh}
+            onClick={handleCancel}
             disabled={isScreenLoading}
           >
             キャンセル
