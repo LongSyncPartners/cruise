@@ -220,17 +220,26 @@ export default function PropertyIncomeExpenseDetailGrid({
   );
 
   const handleRowClick = useCallback(
-    (params: { id: string | number }) => {
+    (
+      params: { id: string | number },
+      event: React.MouseEvent
+    ) => {
       setSelectedRowIds((prev) => {
-        const next = new Set(prev);
+        // 👉 Ctrl + click → multi select
+        if (event.ctrlKey) {
+          const next = new Set(prev);
 
-        if (next.has(params.id)) {
-          next.delete(params.id);
-        } else {
-          next.add(params.id);
+          if (next.has(params.id)) {
+            next.delete(params.id);
+          } else {
+            next.add(params.id);
+          }
+
+          return next;
         }
 
-        return next;
+        // 👉 click thường → select 1 row duy nhất
+        return new Set([params.id]);
       });
     },
     []
@@ -280,6 +289,25 @@ export default function PropertyIncomeExpenseDetailGrid({
     [onRowsChange, rows, updateRowAndRecalculate]
   );
 
+  const handleSetSelectedRowsColor = useCallback(
+    (_menu: NonNullable<CellContextMenuState>, color: string) => {
+      const nextRows = rows.map((row) => {
+        if (!selectedRowIds.has(row.id)) {
+          return row;
+        }
+
+        return {
+          ...row,
+          rowColorType: color,
+        };
+      });
+
+      onRowsChange(nextRows);
+      onDirtyChange?.();
+    },
+    [rows, selectedRowIds, onRowsChange, onDirtyChange]
+  );
+
   // sync selected rows to parent component
   useEffect(() => {
     const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
@@ -306,9 +334,24 @@ export default function PropertyIncomeExpenseDetailGrid({
         pageSizeOptions={[20]}
         disableRowSelectionOnClick={true}
         onRowClick={handleRowClick}
-        getRowClassName={(params) =>
-          selectedRowIds.has(params.id) ? "mui-row-selected-custom" : ""
-        }
+        getRowClassName={(params) => {
+          switch (params.row.rowColorType) {
+            case "gray":
+              return "mui-row-color-gray";
+            case "yellow":
+              return "mui-row-color-yellow";
+            case "blue":
+              return "mui-row-color-blue";
+            case "pink":
+              return "mui-row-color-pink";
+            default:
+              if (selectedRowIds.has(params.id)) {
+                return "mui-row-selected-custom";
+              } else {
+                return "";
+              }
+            }
+        }}
         disableColumnFilter
         disableColumnSelector
         disableDensitySelector
@@ -353,6 +396,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         onPasteBelow={handlePasteBelow}
         onAdd={handleAdd}
         onDelete={handleDelete}
+        onSetSelectedRowsColor={handleSetSelectedRowsColor}
         canPaste={!!copiedRow}
       />
     </Box>

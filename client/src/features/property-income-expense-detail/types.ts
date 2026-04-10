@@ -13,6 +13,7 @@ export type PropertyIncomeExpenseDetailRow = {
   expense: number;
   balance: number;
   note?: string;
+  rowColorType?: string; // For custom row coloring
   executedState: boolean; // For context menu toggle
 };
 
