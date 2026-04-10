@@ -208,12 +208,18 @@ function PropertyDataGrid() {
         field: "propertyCode",
         headerName: "物件番号",
         width: 90,
+        editable: false,
+        sortable: false,
+        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "managementType",
         headerName: "管理種別",
         width: 100,
+        editable: false,
+        sortable: false,
+        filterable: false,
         type: "singleSelect",
         valueOptions: MANAGEMENT_TYPE_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -223,6 +229,9 @@ function PropertyDataGrid() {
         field: "propertyType",
         headerName: "建物種別",
         width: 100,
+        editable: false,
+        sortable: false,
+        filterable: false,
         type: "singleSelect",
         valueOptions: PROPERTY_TYPE_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -232,18 +241,27 @@ function PropertyDataGrid() {
         field: "managementCompany",
         headerName: "管理会社",
         width: 160,
+        editable: false,
+        sortable: false,
+        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "managementDate",
         headerName: "管理開始～終了日",
         width: 190,
+        editable: false,
+        sortable: false,
+        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
         field: "propertyStatus",
         headerName: "物件ステータス",
         width: 140,
+        editable: false,
+        sortable: false,
+        filterable: false,
         type: "singleSelect",
         valueOptions: PROPERTY_STATUS_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -253,6 +271,9 @@ function PropertyDataGrid() {
         field: "ownerName",
         headerName: "オーナー名",
         width: 190,
+        editable: false,
+        sortable: false,
+        filterable: false,
         renderHeader: renderFilterableHeader,
       },
       {
@@ -260,6 +281,9 @@ function PropertyDataGrid() {
         headerName: `処理ステータス（${getPreviousMonthLabel()}）`,
         flex: 1,
         minWidth: 230,
+        editable: false,
+        sortable: false,
+        filterable: false,
         type: "singleSelect",
         valueOptions: PROCESSING_STATUS_OPTIONS,
         filterOperators: [singleSelectContainsOperator],
@@ -274,7 +298,23 @@ function PropertyDataGrid() {
       <DataGrid
         rows={localRows}
         columns={columns}
+        rowHeight={45}
+        columnHeaderHeight={40}
+        className="properties-grid"
+        localeText={{
+          noRowsLabel: "データがありません",
+          noResultsOverlayLabel: "データがありません",
+        }}
+        disableColumnMenu
+        pageSizeOptions={[20]}
+        checkboxSelection={false}
+        disableRowSelectionOnClick={false}
+        disableColumnFilter
+        disableColumnSelector
+        disableDensitySelector
+        editMode="cell"
         apiRef={apiRef}
+        sx={[dataGridCommonSx]}
         rowSelectionModel={rowSelectionModel}
         onRowSelectionModelChange={handleRowSelectionModelChange}
         paginationModel={paginationModel}
