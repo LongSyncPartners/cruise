@@ -293,7 +293,7 @@ export default function PropertyIncomeExpenseDetail() {
 
       if (res.data) {
         // Reset local edited rows with latest fetched data
-        setEditedRows(res.data);
+        setEditedRows(recalculateRows(res.data));
         setIsDirty(false);
       }
 
@@ -307,7 +307,7 @@ export default function PropertyIncomeExpenseDetail() {
    * Cancel current edits and restore the latest fetched rows.
    */
   const handleCancel = () => {
-    setEditedRows((fetchedRows ?? []).map((row) => ({ ...row })));
+    setEditedRows(recalculateRows(fetchedRows ?? []).map((row) => ({ ...row })));
     setIsDirty(false);
   };
 
