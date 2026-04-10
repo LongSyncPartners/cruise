@@ -32,4 +32,5 @@ export const createEmptyPropertyIncomeExpenseDetailRow = (
   expense: 0,
   balance,
   note: "",
+  executedState: false,
 });

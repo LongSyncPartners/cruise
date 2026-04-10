@@ -15,7 +15,6 @@ import PropertyIncomeExpenseTabs from "./PropertyIncomeExpenseTabs";
 
 import CommonToast from "../shared/CommonToast";
 import LoadingDialog from "../shared/LoadingDialog";
-import { downloadCsvStub } from "../shared/csv";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
@@ -40,12 +39,14 @@ const TabPanel = ({
   rows,
   onRowsChange,
   onDirtyChange,
+  onSelectedRowsChange,
 }: {
   active: boolean;
   header?: PropertyHeaderProps;
   rows: PropertyIncomeExpenseDetailRow[];
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
+  onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
 }) => {
   // Do not render anything when the tab is inactive
   // or when header information is not available.
@@ -62,6 +63,7 @@ const TabPanel = ({
           rows={rows}
           onRowsChange={onRowsChange}
           onDirtyChange={onDirtyChange}
+          onSelectedRowsChange={onSelectedRowsChange}
         />
       </div>
     </>
@@ -75,6 +77,8 @@ export default function PropertyIncomeExpenseDetail() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [editedRows, setEditedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
+  const [selectedPropertyIncomeExpenseDetailRows, setSelectedPropertyIncomeExpenseDetailRows] =
+  useState<PropertyIncomeExpenseDetailRow[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
@@ -336,7 +340,7 @@ export default function PropertyIncomeExpenseDetail() {
     setEditedRows(recalculateRows(fetchedRows));
     setIsDirty(false);
   }, [fetchedRows, recalculateRows]);
-  
+
   /**
    * Recalculate balances and expected amounts for all rows when any row is updated.
      * This is a simplified example of how to trigger recalculation from the main component.
@@ -372,6 +376,7 @@ export default function PropertyIncomeExpenseDetail() {
           rows={index === activeTab ? editedRows : EMPTY_ROWS}
           onRowsChange={updateActiveRows}
           onDirtyChange={() => setIsDirty(true)}
+          onSelectedRowsChange={setSelectedPropertyIncomeExpenseDetailRows}
         />
       ))}
 

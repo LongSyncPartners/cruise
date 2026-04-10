@@ -104,6 +104,14 @@ div.common-header-item-logout {
   margin-top: 5px;
 }
 
+.property-income-expense-detail-grid-contaniner .MuiDataGrid-row.mui-row-selected-custom {
+  background-color: rgba(25, 118, 210, 0.12);
+}
+
+.mui-row-selected-custom:hover {
+  background-color: rgba(25, 118, 210, 0.18);
+}
+
 /* ================================
    Footer Section
    - Contains Save / Cancel buttons

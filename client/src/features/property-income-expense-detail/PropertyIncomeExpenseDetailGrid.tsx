@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import {
   DataGrid,
+  GridRowSelectionModel,
   useGridApiRef,
   type GridFilterModel,
   type GridRenderCellParams,
@@ -35,6 +36,7 @@ type PropertyIncomeExpenseDetailGridProps = {
   rows: PropertyIncomeExpenseDetailRow[];
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
+  onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
 };
 
 /**
@@ -50,6 +52,7 @@ export default function PropertyIncomeExpenseDetailGrid({
   rows,
   onRowsChange,
   onDirtyChange,
+  onSelectedRowsChange,
 }: PropertyIncomeExpenseDetailGridProps) {
   // Sticky column styling (left fixed columns)
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
@@ -212,6 +215,27 @@ export default function PropertyIncomeExpenseDetailGrid({
     [handleToggleExecutedState]
   );
 
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(
+    new Set()
+  );
+
+  const handleRowClick = useCallback(
+    (params: { id: string | number }) => {
+      setSelectedRowIds((prev) => {
+        const next = new Set(prev);
+
+        if (next.has(params.id)) {
+          next.delete(params.id);
+        } else {
+          next.add(params.id);
+        }
+
+        return next;
+      });
+    },
+    []
+  );
+
   /**
    * Handle row update (cell editing)
    * - Parse currency values
@@ -219,42 +243,48 @@ export default function PropertyIncomeExpenseDetailGrid({
    */
   const { updateRowAndRecalculate } = usePropertyIncomeExpenseCalculation();
 
-const processRowUpdate = useCallback(
+  const processRowUpdate = useCallback(
   (updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>) => {
-    const currentRow = rows.find((row) => row.id === updatedRow.id);
+      const currentRow = rows.find((row) => row.id === updatedRow.id);
 
-    if (!currentRow) {
-      return updatedRow as PropertyIncomeExpenseDetailRow;
-    }
+      if (!currentRow) {
+        return updatedRow as PropertyIncomeExpenseDetailRow;
+      }
 
-    // If no calculation-related field changed,
-    // just merge the edited row and return it.
-    if (!shouldRecalculateRow(currentRow, updatedRow)) {
-      const nextRows = rows.map((row) =>
-        row.id === updatedRow.id
-          ? {
-              ...row,
-              ...updatedRow,
-            }
-          : row
-      );
+      // If no calculation-related field changed,
+      // just merge the edited row and return it.
+      if (!shouldRecalculateRow(currentRow, updatedRow)) {
+        const nextRows = rows.map((row) =>
+          row.id === updatedRow.id
+            ? {
+                ...row,
+                ...updatedRow,
+              }
+            : row
+        );
 
-      const returnedRow =
-        nextRows.find((row) => row.id === updatedRow.id) ??
-        (updatedRow as PropertyIncomeExpenseDetailRow);
+        const returnedRow =
+          nextRows.find((row) => row.id === updatedRow.id) ??
+          (updatedRow as PropertyIncomeExpenseDetailRow);
+
+        onRowsChange(nextRows);
+        return returnedRow;
+      }
+
+      // Recalculate only when important fields changed
+      const { nextRows, returnedRow } = updateRowAndRecalculate(rows, updatedRow);
 
       onRowsChange(nextRows);
       return returnedRow;
-    }
+    },
+    [onRowsChange, rows, updateRowAndRecalculate]
+  );
 
-    // Recalculate only when important fields changed
-    const { nextRows, returnedRow } = updateRowAndRecalculate(rows, updatedRow);
-
-    onRowsChange(nextRows);
-    return returnedRow;
-  },
-  [onRowsChange, rows, updateRowAndRecalculate]
-);
+  // sync selected rows to parent component
+  useEffect(() => {
+    const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
+    onSelectedRowsChange?.(selectedRows);
+  }, [rows, selectedRowIds, onSelectedRowsChange]);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>
@@ -271,9 +301,14 @@ const processRowUpdate = useCallback(
         initialState={{
           pagination: { paginationModel: { pageSize: 20, page: 0 } },
         }}
+        checkboxSelection={false}
         disableColumnMenu
         pageSizeOptions={[20]}
-        disableRowSelectionOnClick
+        disableRowSelectionOnClick={true}
+        onRowClick={handleRowClick}
+        getRowClassName={(params) =>
+          selectedRowIds.has(params.id) ? "mui-row-selected-custom" : ""
+        }
         disableColumnFilter
         disableColumnSelector
         disableDensitySelector
