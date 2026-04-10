@@ -308,23 +308,6 @@ export default function PropertyIncomeExpenseDetail() {
   };
 
   /**
-   * Download CSV for the currently active property.
-   */
-  const handleDownload = async () => {
-    if (!activeProperty) return;
-
-    try {
-      setLoading(true);
-      await downloadCsvStub(`${activeProperty.header.propertyCode}.csv`);
-      showToast("CSVをダウンロードしました。");
-    } catch (_error) {
-      showToast("ダウンロードに失敗しました。", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
    * Combined loading flag for the whole screen.
    */
   const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
@@ -365,11 +348,6 @@ export default function PropertyIncomeExpenseDetail() {
         <div className="common-header-item" onClick={handleRefresh}>
           <RefreshIcon />
           <Typography>最新情報を更新</Typography>
-        </div>
-
-        <div className="common-header-item" onClick={handleDownload}>
-          <SaveAltIcon />
-          <Typography>エクセルでダウンロードする</Typography>
         </div>
       </div>
 
