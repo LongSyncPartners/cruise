@@ -133,8 +133,13 @@ export default function PropertyIncomeExpenseDetailGrid({
   /**
    * Delete selected row
    */
-  const handleDelete = (menu: NonNullable<CellContextMenuState>) => {
-    onRowsChange(recalculateBalances(rows.filter((row) => row.id !== menu.rowId)));
+  const handleDelete = (_menu: NonNullable<CellContextMenuState>) => {
+    if (selectedRowIds.size === 0) return;
+
+    const nextRows = rows.filter((row) => !selectedRowIds.has(row.id));
+
+    onRowsChange(recalculateBalances(nextRows));
+    onDirtyChange?.();
   };
 
   /**

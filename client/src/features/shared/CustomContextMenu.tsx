@@ -239,7 +239,7 @@ export default function CustomContextMenu({
 
       <MenuItem onClick={handleDelete}>
         <DeleteForeverIcon sx={{ mr: 2 }} />
-        この行を削除
+        選択行を削除
       </MenuItem>
     </Menu>
   );
