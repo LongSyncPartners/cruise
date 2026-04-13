@@ -27,6 +27,7 @@ type Props = {
   onClose: () => void;
   onOpenProcessingStatusDialog?: (menu: NonNullable<CellContextMenuState>) => void;
   onCopy?: (menu: NonNullable<CellContextMenuState>) => void;
+  onCopyAll?: () => void;
   onPaste?: (menu: NonNullable<CellContextMenuState>) => void;
   onPasteBelow?: (menu: NonNullable<CellContextMenuState>) => void;
   onAdd?: (menu: NonNullable<CellContextMenuState>) => void;
@@ -44,6 +45,7 @@ export default function CustomContextMenu({
   onClose,
   onOpenProcessingStatusDialog,
   onCopy,
+  onCopyAll,
   onPaste,
   onPasteBelow,
   onAdd,
@@ -70,6 +72,13 @@ export default function CustomContextMenu({
   const handleCopy = () => {
     if (contextMenu && onCopy) {
       onCopy(contextMenu);
+    }
+    onClose();
+  };
+
+  const handleCopyAll = () => {
+    if (contextMenu && onCopyAll) {
+      onCopyAll();
     }
     onClose();
   };
@@ -241,6 +250,14 @@ export default function CustomContextMenu({
         <DeleteForeverIcon sx={{ mr: 2 }} />
         選択行を削除
       </MenuItem>
+
+      <Divider />
+
+      <MenuItem onClick={handleCopyAll}>
+        <ContentCopyIcon sx={{ mr: 2 }} />
+        全ての収支データをコピー
+      </MenuItem>
+
     </Menu>
   );
 }

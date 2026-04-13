@@ -28,6 +28,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getYearMonth, isSameMonth, parseCurrency } from "../shared/utils";
 import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
 import { shouldRecalculateRow } from "./utils";
+import { usePropertyIncomeExpenseDetailStore } from "@/stores/propertyIncomeExpenseDetailStore";
 
 /**
  * Props for PropertyIncomeExpenseDetailGrid
@@ -156,9 +157,31 @@ export default function PropertyIncomeExpenseDetailGrid({
   };
 
   /**
+   * Copy selected row to memory
+   */
+  const setCopiedAll = usePropertyIncomeExpenseDetailStore(
+    (state) => state.setRows
+  );
+
+  const handleCopyAll = () => {
+    setCopiedAll(rows);
+  };
+
+  const copyAllRows = usePropertyIncomeExpenseDetailStore((state) => state.rows);
+
+  const clearCopiedAll = usePropertyIncomeExpenseDetailStore((state) => state.clearRows);
+
+  /**
    * Paste first copied row into current row
    */
   const handlePaste = (_menu: NonNullable<CellContextMenuState>) => {
+    if (copyAllRows.length > 0) {
+      onRowsChange(copyAllRows);
+      clearCopiedAll();
+      onDirtyChange?.();
+      return;
+    }
+    
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
     const firstCopiedRow = copiedRows[0];
@@ -184,6 +207,13 @@ export default function PropertyIncomeExpenseDetailGrid({
    * Paste copied row below current row
    */
   const handlePasteBelow = (_menu: NonNullable<CellContextMenuState>) => {
+    if (copyAllRows.length > 0) {
+      onRowsChange(copyAllRows);
+      clearCopiedAll();
+      onDirtyChange?.();
+      return;
+    }
+
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
     const firstSelectedIndex = rows.findIndex((row) => selectedRowIds.has(row.id));
@@ -253,8 +283,7 @@ export default function PropertyIncomeExpenseDetailGrid({
 
           return next;
         }
-
-        // 👉 click thường → select 1 row duy nhất
+        // 👉 Regular click → single select
         return new Set([params.id]);
       });
     },
@@ -408,12 +437,13 @@ export default function PropertyIncomeExpenseDetailGrid({
         contextMenu={contextMenu}
         onClose={handleCloseContextMenu}
         onCopy={handleCopy}
+        onCopyAll={handleCopyAll}
         onPaste={handlePaste}
         onPasteBelow={handlePasteBelow}
         onAdd={handleAdd}
         onDelete={handleDelete}
         onSetSelectedRowsColor={handleSetSelectedRowsColor}
-        canPaste={copiedRows.length > 0}
+        canPaste={copiedRows.length > 0 || copyAllRows.length > 0}
       />
     </Box>
   );

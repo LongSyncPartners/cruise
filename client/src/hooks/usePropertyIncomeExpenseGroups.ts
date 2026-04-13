@@ -8,6 +8,6 @@ export const usePropertyIncomeExpenseGroups = () => {
     queryFn: async () => {
       return getPropertyGroups();
     },
-    staleTime: 5 * 60 * 1000, // cache 5 phút
+    staleTime: 5 * 60 * 1000, // cache 5 minutes
   });
 };
