@@ -153,9 +153,9 @@ export const getDefaultPropertyCodeByGroupFromDumpData = (group: string): string
     case "C":
       return "C-01";
     case "H":
-      return "H02";
+      return "H-02";
     case "T":
-      return "T03";
+      return "T-03";
     default:
       return "";
   }

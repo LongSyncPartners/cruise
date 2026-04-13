@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { savePropertyIncomeExpenseRowsToStubApi } from "@/api/propertyIncomeExpenseDetailApi";
+import { savePropertyIncomeExpenseRows } from "@/api/propertyIncomeExpenseDetailApi";
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
 import type { PropertyIncomeExpenseDetailRow } from "@/features/property-income-expense-detail/types";
 
@@ -16,7 +16,7 @@ export const useSavePropertyIncomeExpenseRows = () => {
       propertyCode,
       rows,
     }: SavePropertyIncomeExpenseRowsParams) => {
-      return savePropertyIncomeExpenseRowsToStubApi(propertyCode, rows);
+      return savePropertyIncomeExpenseRows(propertyCode, rows);
     },
 
     onSuccess: (_data, variables) => {

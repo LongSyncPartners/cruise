@@ -24,6 +24,11 @@ const sleep = (ms: number) =>
  * Fetch tab list only
  */
 export const fetchPropertyIncomeExpenseTabs = async () => {
+
+  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
+  await sleep(500);
+  return initialPropertyTabs;
+
   const res = await apiClient.get("/property-income-expense-detail/tabs");
   return res.data;
 };
@@ -34,6 +39,10 @@ export const fetchPropertyIncomeExpenseTabs = async () => {
 export const fetchPropertyIncomeExpenseTabsByPropertyCode = async (
   propertyCode: string
 ) => {
+  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
+  await sleep(500);
+  return getPropertyTabsByCode(propertyCode);
+
   const res = await apiClient.get("/property-income-expense-detail/tabs", {
     params: { propertyCode },
   });
@@ -54,6 +63,12 @@ export const fetchPropertyIncomeExpenseTab = async (propertyCode: string) => {
  * Fetch row list by propertyCode
  */
 export const fetchPropertyIncomeExpenseRows = async (propertyCode: string) => {
+
+  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
+  await sleep(500);
+  const rows = getPropertyRowsByCode(propertyCode);
+  return rows;
+
   const res = await apiClient.get("/property-income-expense-detail/rows", {
     params: { propertyCode },
   });
@@ -64,6 +79,12 @@ export const fetchPropertyIncomeExpenseRows = async (propertyCode: string) => {
  * Fetch full detail (tab summary + rows) by propertyCode
  */
 export const fetchPropertyIncomeExpenseDetail = async (propertyCode: string) => {
+
+  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
+  await sleep(500);
+  const detail = getPropertyTabDetailByCode(propertyCode);
+  return detail;
+
   const res = await apiClient.get("/property-income-expense-detail/detail", {
     params: { propertyCode },
   });
@@ -77,6 +98,9 @@ export const savePropertyIncomeExpenseRows = async (
   propertyCode: string,
   rows: PropertyIncomeExpenseDetailRow[]
 ) => {
+  await sleep(800);
+  throw new Error("この機能は開発中です。"); // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
+
   const res = await apiClient.post("/property-income-expense-detail/rows", {
     propertyCode,
     rows,
@@ -86,111 +110,19 @@ export const savePropertyIncomeExpenseRows = async (
 
 /**
  * =========================
- * Stub API
+ * Get list of property groups
  * =========================
  */
-
-/**
- * Fetch tab list only from stub
- */
-export async function fetchPropertyIncomeExpenseTabsFromStubApi() {
-  await sleep(500);
-  return initialPropertyTabs;
-}
-
-/**
- * Fetch tab list by propertyCode from stub
- */
-export async function fetchPropertyIncomeExpenseTabsByPropertyCodeFromStubApi(
-  propertyCode: string
-) {
-  await sleep(500);
-  return getPropertyTabsByCode(propertyCode);
-}
-
-/**
- * Fetch tab list by propertyCode from stub
- */
-export async function fetchPropertyIncomeExpenseTabsByGroupFromStubApi(
-  group: string
-) {
-  await sleep(500);
-  return getPropertyTabsByPropertyGroup(group);
-}
-
-/**
- * Fetch one tab summary by propertyCode from stub
- */
-export async function fetchPropertyIncomeExpenseTabFromStubApi(
-  propertyCode: string
-) {
-  await sleep(500);
-
-  const tab = getPropertyTabByCode(propertyCode);
-
-  if (!tab) {
-    throw new Error(`Property tab not found: ${propertyCode}`);
-  }
-
-  return tab;
-}
-
-/**
- * Fetch row list by propertyCode from stub
- */
-export async function fetchPropertyIncomeExpenseRowsFromStubApi(
-  propertyCode: string
-) {
-  await sleep(500);
-
-  const rows = getPropertyRowsByCode(propertyCode);
-
-  if (!rows.length) {
-    throw new Error(`Property rows not found: ${propertyCode}`);
-  }
-
-  return rows;
-}
-
-/**
- * Fetch full detail (tab summary + rows) by propertyCode from stub
- */
-export async function fetchPropertyIncomeExpenseDetailFromStubApi(
-  propertyCode: string
-) {
-  await sleep(500);
-
-  const detail = getPropertyTabDetailByCode(propertyCode);
-
-  if (!detail) {
-    throw new Error(`Property income/expense detail not found: ${propertyCode}`);
-  }
-
-  return detail;
-}
-
-/**
- * Save edited rows by propertyCode to stub
- */
-export async function savePropertyIncomeExpenseRowsToStubApi(
-  propertyCode: string,
-  rows: PropertyIncomeExpenseDetailRow[]
-) {
-  await sleep(800);
-  throw new Error("この機能は開発中です。"); // for testing error handling
-
-  return {
-    propertyCode,
-    rows,
-    message: "Saved successfully.",
-  };
-}
-
 export async function getPropertyGroups() {
   await sleep(300);
   return getPropertyGroupsFromDumpData();
 }
 
+/**
+ * =========================
+ * Get default property code by group
+ * =========================
+ */
 export async function getDefaultPropertyCodeByGroup(group: string) {
   await sleep(300);
   return getDefaultPropertyCodeByGroupFromDumpData(group);
