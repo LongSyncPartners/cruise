@@ -1,6 +1,15 @@
 export const propertyIncomeExpenseDetailKeys = {
   all: ["propertyIncomeExpenseDetail"] as const,
 
+  groups: () =>
+  [...propertyIncomeExpenseDetailKeys.all, "groups"] as const,
+
+  tabsByGroup: (group: string) =>
+  [...propertyIncomeExpenseDetailKeys.all, "tabsByGroup", group] as const,
+
+  defaultPropertyCode: (group: string) =>
+  [...propertyIncomeExpenseDetailKeys.all, "defaultPropertyCode", group] as const,
+
   tabs: (propertyCode: string) =>
     [...propertyIncomeExpenseDetailKeys.all, "tabs", propertyCode] as const,
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertColor, Button, Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
@@ -22,6 +22,9 @@ import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeE
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
 import { usePropertyIncomeExpenseValidation } from "./usePropertyIncomeExpenseValidation";
 import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
+import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
+import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
+import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -113,6 +116,10 @@ export default function PropertyIncomeExpenseDetail() {
     (state) => state.selectedPropertyCode
   );
 
+  const setSelectedPropertyCode = usePropertySelectionStore(
+    (state) => state.setSelectedPropertyCode
+  );
+
   /**
    * Fetch property tab list based on selected property code.
    */
@@ -157,6 +164,22 @@ export default function PropertyIncomeExpenseDetail() {
   ) => {
     setToast({ open: true, message, description, severity });
   };
+
+  const { data: groups = [] } = usePropertyIncomeExpenseGroups();
+  
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
+
+  const { data: defaultPropertyCode, isFetching } = 
+    useDefaultPropertyCodeByGroup(selectedGroup);
+
+  const handleGroupChange = async (newGroup: string) => {
+     if (newGroup === selectedGroup) return;
+
+    setSelectedGroup(newGroup);
+    setActiveTab(0);
+    setEditedRows([]);
+    setIsDirty(false);
+  }
 
   /**
    * Update editable rows from child grid.
@@ -316,6 +339,12 @@ export default function PropertyIncomeExpenseDetail() {
    */
   const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
 
+  useEffect(() => {
+    if (selectedGroup) {
+      setSelectedPropertyCode(defaultPropertyCode ?? "");
+    }
+  }, [defaultPropertyCode]);
+  
   /**
    * When the selected property code changes from the store,
    * switch to the corresponding tab if it exists.
@@ -362,6 +391,8 @@ export default function PropertyIncomeExpenseDetail() {
 
       {/* Property tab selector */}
       <PropertyIncomeExpenseTabs
+        groups={groups}
+        onGroupChange={handleGroupChange}
         activeTab={activeTab}
         propertyTabs={propertyTabs}
         onChange={handleTabChange}

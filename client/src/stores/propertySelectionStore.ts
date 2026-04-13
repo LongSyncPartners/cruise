@@ -5,6 +5,7 @@ import type { GridRowId } from "@mui/x-data-grid";
 type PropertySelectionState = {
   selectedRowId: GridRowId | null;
   selectedPropertyCode: string | null;
+  setSelectedPropertyCode: (propertyCode: string) => void;
   setSelectedProperty: (rowId: GridRowId, propertyCode: string) => void;
   clearSelectedProperty: () => void;
 };
@@ -14,6 +15,10 @@ export const usePropertySelectionStore = create<PropertySelectionState>()(
     (set) => ({
       selectedRowId: null,
       selectedPropertyCode: null,
+      setSelectedPropertyCode: (propertyCode) =>
+        set({
+          selectedPropertyCode: propertyCode,
+        }),
       setSelectedProperty: (rowId, propertyCode) =>
         set({
           selectedRowId: rowId,

@@ -1,34 +1,51 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import { PropertyTabSummary } from "./types";
 import { useCenteredScrollableTabs } from "./useCenteredScrollableTabs";
 
 type PropertyIncomeExpenseTabsProps = {
+  groups: string[];
+  onGroupChange: (newGroup: string) => void;
   activeTab: number;
   propertyTabs: PropertyTabSummary[];
   onChange: (newValue: number) => void;
 };
 
 export default function PropertyIncomeExpenseTabs({
+  groups,
+  onGroupChange,
   activeTab,
   propertyTabs,
   onChange,
 }: PropertyIncomeExpenseTabsProps) {
   const { tabsRootRef, tabRefs } = useCenteredScrollableTabs(activeTab);
+  const selectedGroup =
+    propertyTabs?.[activeTab]?.header.propertyCode.charAt(0) || "";
 
   return (
     <Box
       sx={{
         borderBottom: 1,
         borderColor: "divider",
-        mb: 2,
         display: "flex",
         alignItems: "center",
-        gap: 2,
       }}
     >
-      <Box sx={{ px: 0, whiteSpace: "nowrap", flexShrink: 0 }}>
-        物件グループ：{propertyTabs?.[activeTab]?.header.propertyCode.charAt(0) || ""}
-      </Box>
+      物件グループ：
+      <Select
+        size="small"
+        value={selectedGroup}
+        onChange={(e) => {
+          const group = e.target.value as string;
+          onGroupChange(group);
+        }}
+        sx={{ minWidth: 60 }}
+      >
+        {groups.map((g) => (
+          <MenuItem key={g} value={g}>
+            {g}
+          </MenuItem>
+        ))}
+      </Select>
 
       <Tabs
         ref={tabsRootRef}

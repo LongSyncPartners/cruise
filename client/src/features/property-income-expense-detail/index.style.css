@@ -121,12 +121,21 @@ div.common-header-item-logout {
   margin-right: 30px;
 }
 
+.property-income-expense-detail-grid-contaniner .line-separator::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #d0d0d0;
+}
 
 /* ================================
    Set selected row background color based on executed state and custom row color type
 ================================ */
 
- 
+
 .property-income-expense-detail-grid-contaniner .MuiDataGrid-row.mui-row-selected-custom {
   background-color: rgba(70, 156, 243, 0.12);
 }

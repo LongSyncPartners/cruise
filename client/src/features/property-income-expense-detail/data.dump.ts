@@ -98,6 +98,18 @@ export const getPropertyTabsByCode = (
 };
 
 /**
+ * Get list of tab summaries by propertyGroup
+ */
+export const getPropertyTabsByPropertyGroup = (
+  group: string
+): PropertyTabSummary[] => {
+  return initialPropertyTabs.filter(
+    (tab) => tab.header.propertyCode.includes(group)
+  );
+};
+
+
+/**
  * Get row list by propertyCode
  */
 export const getPropertyRowsByCode = (
@@ -130,4 +142,21 @@ export const getPropertyTabDetailByCode = (
     ...tab,
     rows: getPropertyRowsByCode(propertyCode),
   };
+};
+
+export const getPropertyGroupsFromDumpData = () => {
+  return ["C", "H", "T"];
+};
+
+export const getDefaultPropertyCodeByGroupFromDumpData = (group: string): string => {
+  switch (group) {
+    case "C":
+      return "C-01";
+    case "H":
+      return "H02";
+    case "T":
+      return "T03";
+    default:
+      return "";
+  }
 };

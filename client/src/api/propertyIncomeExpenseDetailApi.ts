@@ -6,6 +6,9 @@ import {
   getPropertyRowsByCode,
   getPropertyTabDetailByCode,
   getPropertyTabsByCode,
+  getPropertyTabsByPropertyGroup,
+  getDefaultPropertyCodeByGroupFromDumpData,
+  getPropertyGroupsFromDumpData,
 } from "@/features/property-income-expense-detail/data.dump";
 
 const sleep = (ms: number) =>
@@ -106,6 +109,16 @@ export async function fetchPropertyIncomeExpenseTabsByPropertyCodeFromStubApi(
 }
 
 /**
+ * Fetch tab list by propertyCode from stub
+ */
+export async function fetchPropertyIncomeExpenseTabsByGroupFromStubApi(
+  group: string
+) {
+  await sleep(500);
+  return getPropertyTabsByPropertyGroup(group);
+}
+
+/**
  * Fetch one tab summary by propertyCode from stub
  */
 export async function fetchPropertyIncomeExpenseTabFromStubApi(
@@ -172,3 +185,14 @@ export async function savePropertyIncomeExpenseRowsToStubApi(
     message: "Saved successfully.",
   };
 }
+
+export async function getPropertyGroups() {
+  await sleep(300);
+  return getPropertyGroupsFromDumpData();
+}
+
+export async function getDefaultPropertyCodeByGroup(group: string) {
+  await sleep(300);
+  return getDefaultPropertyCodeByGroupFromDumpData(group);
+}
+

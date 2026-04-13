@@ -76,6 +76,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      headerClassName: "line-separator",
+      cellClassName: "line-separator",
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => (<CurrencyCell {...params} />),
