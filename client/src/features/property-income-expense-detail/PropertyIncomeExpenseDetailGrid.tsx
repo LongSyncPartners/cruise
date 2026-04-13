@@ -61,7 +61,7 @@ export default function PropertyIncomeExpenseDetailGrid({
   const [filterModel, setFilterModel] = useState<GridFilterModel>({ items: [] });
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
-  const [copiedRow, setCopiedRow] = useState<PropertyIncomeExpenseDetailRow | null>(null);
+  const [copiedRows, setCopiedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 20 });
 
   // MUI DataGrid API reference
@@ -145,50 +145,61 @@ export default function PropertyIncomeExpenseDetailGrid({
   /**
    * Copy selected row to memory
    */
-  const handleCopy = (menu: NonNullable<CellContextMenuState>) => {
-    setCopiedRow(menu.row as PropertyIncomeExpenseDetailRow);
+  const handleCopy = (_menu: NonNullable<CellContextMenuState>) => {
+    if (selectedRowIds.size === 0) return;
+
+    const nextCopiedRows = rows
+      .filter((row) => selectedRowIds.has(row.id))
+      .map((row) => ({ ...row }));
+
+    setCopiedRows(nextCopiedRows);
   };
 
   /**
-   * Paste copied row into current row
+   * Paste first copied row into current row
    */
-  const handlePaste = (menu: NonNullable<CellContextMenuState>) => {
-    if (!copiedRow) return;
+  const handlePaste = (_menu: NonNullable<CellContextMenuState>) => {
+    if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
-    onRowsChange(
-      recalculateBalances(
-        rows.map((row) =>
-          row.id === menu.rowId
-            ? {
-                ...copiedRow,
-                id: row.id, // keep current row id
-              }
-            : row
-        )
-      )
+    const firstCopiedRow = copiedRows[0];
+    const firstSelectedId = rows.find((row) => selectedRowIds.has(row.id))?.id;
+
+    if (!firstSelectedId) return;
+
+    const nextRows = rows.map((row) =>
+      row.id === firstSelectedId
+        ? {
+            ...firstCopiedRow,
+            id: row.id,
+          }
+        : row
     );
 
-    setCopiedRow(null);
+    onRowsChange(recalculateBalances(nextRows));
+    onDirtyChange?.();
+    setCopiedRows([]);
   };
 
   /**
    * Paste copied row below current row
    */
-  const handlePasteBelow = (menu: NonNullable<CellContextMenuState>) => {
-    if (!copiedRow) return;
+  const handlePasteBelow = (_menu: NonNullable<CellContextMenuState>) => {
+    if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
-    const index = rows.findIndex((row) => row.id === menu.rowId);
-    if (index < 0) return;
+    const firstSelectedIndex = rows.findIndex((row) => selectedRowIds.has(row.id));
+    if (firstSelectedIndex < 0) return;
+
+    const rowsToInsert = copiedRows.map((row) => ({
+      ...row,
+      id: uuidv4(),
+    }));
 
     const nextRows = [...rows];
-
-    nextRows.splice(index + 1, 0, {
-      ...copiedRow,
-      id: uuidv4(), // new unique id
-    });
+    nextRows.splice(firstSelectedIndex + 1, 0, ...rowsToInsert);
 
     onRowsChange(recalculateBalances(nextRows));
-    setCopiedRow(null);
+    onDirtyChange?.();
+    setCopiedRows([]);
   };
 
   const handleToggleExecutedState = useCallback(
@@ -402,7 +413,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         onAdd={handleAdd}
         onDelete={handleDelete}
         onSetSelectedRowsColor={handleSetSelectedRowsColor}
-        canPaste={!!copiedRow}
+        canPaste={copiedRows.length > 0}
       />
     </Box>
   );

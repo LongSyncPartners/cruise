@@ -165,7 +165,7 @@ export default function CustomContextMenu({
 
       <MenuItem onClick={handleCopy}>
         <ContentCopyIcon sx={{ mr: 2 }} />
-        この行をコピー
+        選択行をコピー
       </MenuItem>
 
       <MenuItem onClick={handlePaste} disabled={!canPaste}>
