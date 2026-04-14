@@ -38,9 +38,9 @@ export default function CurrencyCell(props: CurrencyCellProps) {
       width: "100%",
       height: "100%",
       display: "flex",
-      alignItems: "center",      // 👉 vertical center
-      justifyContent: "flex-end", // 👉 align right
-      paddingRight: 8,            // 👉 khoảng cách cho đẹp
+      alignItems: "center",      // vertical center
+      justifyContent: "flex-end", // align right
+      paddingRight: 0,            // 
       color: value < 0 ? "red" : "inherit",
       backgroundColor : showNotZeroBackgroundColor && value !== 0 ? "#f0ee8a" : "transparent",
     }}

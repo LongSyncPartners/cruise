@@ -54,6 +54,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "yearMonth",
       headerName: "年月",
+      headerClassName: "align-right-header",
       width: 80,
       editable: false,
       sortable: false,
@@ -63,6 +64,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "expectedAmount",
       headerName: "本来入金額",
+      headerClassName: "align-right-header",
       width: 100,
       editable: false,
       sortable: false,
@@ -72,11 +74,11 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "managementCompanyAmount",
       headerName: "管理会社入金",
-      width: 110,
+      width: 120,
       editable: true,
       sortable: false,
       filterable: false,
-      headerClassName: "line-separator",
+      headerClassName: "line-separator align-right-header",
       cellClassName: "line-separator",
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
@@ -118,6 +120,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "income",
       headerName: "Income",
+      headerClassName: "align-right-header",
       width: 100,
       editable: true,
       sortable: false,
@@ -130,6 +133,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "expense",
       headerName: "Expense",
+      headerClassName: "align-right-header",
       width: 100,
       editable: true,
       sortable: false,
@@ -142,6 +146,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     withContextMenu({
       field: "balance",
       headerName: "Balance",
+      headerClassName: "align-right-header",
       width: 100,
       editable: false,
       sortable: false,
