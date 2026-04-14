@@ -175,3 +175,19 @@ div.common-header-item-logout {
 .property-income-expense-detail-grid-contaniner .MuiDataGrid-row.mui-row-color-pink:hover {
   background-color: #f06292;
 }
+
+/* Total row style */
+.property-income-expense-detail-grid-contaniner .MuiDataGrid-row.summary-total-row {
+  background-color: #aad5f1;
+  font-weight: 400;
+}
+
+.property-income-expense-detail-grid-contaniner .MuiDataGrid-row.summary-total-row:hover {
+  background-color: #c3dff1;
+}
+
+.align-right-header .MuiDataGrid-columnHeaderTitleContainer{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}

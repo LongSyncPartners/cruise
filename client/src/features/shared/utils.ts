@@ -25,12 +25,15 @@ export const formatCurrency = (
   }).format(num);
 };
 
-export const formatUSD = (value?: number | string | null) =>
+export const formatUSD = (
+  value?: number | string | null,
+  options?: { hideZero?: boolean }
+) =>
   formatCurrency(value, {
     locale: "en-US",
     currency: "USD",
-    hideZero: true,
-});
+    hideZero: options?.hideZero ?? false, // ❗ default = false
+  });
 
 // parse input "$1,000" → 1000
 export const parseCurrency = (value: unknown): number => {

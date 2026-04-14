@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertColor, Button, Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import SubjectIcon from '@mui/icons-material/Subject';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 import "./index.style.css";
 import {
@@ -375,15 +378,7 @@ export default function PropertyIncomeExpenseDetail() {
      * This is a simplified example of how to trigger recalculation from the main component.
    */
   return (
-    <div className="property-income-expense-detail-container">
-      {/* Common action header */}
-      <div className="property-income-expense-detail-common-header">
-        <div className="common-header-item" onClick={handleRefresh}>
-          <RefreshIcon />
-          <Typography>最新情報を更新</Typography>
-        </div>
-      </div>
-
+    <div>
       {/* Screen title */}
       <Typography sx={{ fontSize: "150%", fontWeight: "500", paddingBottom: 2 }}>
         物件収支明細

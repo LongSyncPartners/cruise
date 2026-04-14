@@ -1,5 +1,6 @@
 import { addDays, format } from "date-fns";
 import {
+  PropertyIncomeExpenseSummaryRow,
   type PropertyHeaderProps,
   type PropertyIncomeExpenseDetailRow,
   type PropertyTabData,
@@ -160,3 +161,134 @@ export const getDefaultPropertyCodeByGroupFromDumpData = (group: string): string
       return "";
   }
 };
+
+
+/**
+ * Generate summary rows (stub)
+ * - diff có đủ: =0, >0, <0
+ * - yearMonth format: yyyy年MM月
+ */
+export const getPropertyIncomeExpenseSummaryRows = (
+  year: number
+): PropertyIncomeExpenseSummaryRow[] => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
+  const rows = Array.from({ length: 12 }, (_, i) => {
+    const month = i + 1;
+
+    const hasData =
+      year < currentYear ? true : year === currentYear ? month <= currentMonth : false;
+
+    if (!hasData) {
+      return {
+        id: `${year}-${pad2(month)}`,
+        yearMonth: `${year}年${pad2(month)}月`,
+        expectedAmount1: null,
+        managementCompanyAmount1: null,
+        difference1: null,
+        expectedAmount2: null,
+        managementCompanyAmount2: null,
+        difference2: null,
+        expectedAmount3: null,
+        managementCompanyAmount3: null,
+        difference3: null,
+      };
+    }
+
+    const base = 100000 + i * 5000;
+    const pattern = i % 3;
+
+    const calc = (expected: number) => {
+      if (pattern === 0) {
+        const actual = expected;
+        return { expected, actual, diff: 0 };
+      }
+      if (pattern === 1) {
+        const actual = expected - 10000;
+        return { expected, actual, diff: expected - actual };
+      }
+      const actual = expected + 10000;
+      return { expected, actual, diff: expected - actual };
+    };
+
+    const g2 = calc(base + 20000);
+    const g3 = calc(base + 40000);
+
+    const g1 = {
+      expected: g2.expected + g3.expected,
+      actual: g2.actual + g3.actual,
+      diff: g2.diff + g3.diff,
+    };
+
+    return {
+      id: `${year}-${pad2(month)}`,
+      yearMonth: `${year}年${pad2(month)}月`,
+
+      expectedAmount1: g1.expected,
+      managementCompanyAmount1: g1.actual,
+      difference1: g1.diff,
+
+      expectedAmount2: g2.expected,
+      managementCompanyAmount2: g2.actual,
+      difference2: g2.diff,
+
+      expectedAmount3: g3.expected,
+      managementCompanyAmount3: g3.actual,
+      difference3: g3.diff,
+    };
+  });
+
+  const totalExpected2 = rows.reduce((sum, r) => sum + (r.expectedAmount2 ?? 0), 0);
+  const totalActual2 = rows.reduce(
+    (sum, r) => sum + (r.managementCompanyAmount2 ?? 0),
+    0
+  );
+
+  const totalExpected3 = rows.reduce((sum, r) => sum + (r.expectedAmount3 ?? 0), 0);
+  const totalActual3 = rows.reduce(
+    (sum, r) => sum + (r.managementCompanyAmount3 ?? 0),
+    0
+  );
+
+  const totalRow: PropertyIncomeExpenseSummaryRow = {
+    id: `${year}-total`,
+    yearMonth: `${year}年合計`,
+
+    expectedAmount1: totalExpected2 + totalExpected3,
+    managementCompanyAmount1: totalActual2 + totalActual3,
+    difference1: (totalExpected2 + totalExpected3) - (totalActual2 + totalActual3),
+
+    expectedAmount2: totalExpected2,
+    managementCompanyAmount2: totalActual2,
+    difference2: totalExpected2 - totalActual2,
+
+    expectedAmount3: totalExpected3,
+    managementCompanyAmount3: totalActual3,
+    difference3: totalExpected3 - totalActual3,
+  };
+
+  return [...rows, totalRow];
+};
+
+
+export const getYears = () => [2026, 2025, 2024];
+export const getTabs = () => [
+    "物件グループ：A",
+    "物件グループ：B",
+    "物件グループ：C",
+    "物件グループ：D",
+    "物件グループ：E",
+    "物件グループ：F",
+    "物件グループ：G",
+    "物件グループ：H",
+    "物件グループ：I",
+    "物件グループ：J",
+  ];
+
+export const getManagementCompanies = () => [
+    "001  XXXXXXXXXXXXXXXXXXXX", 
+    "002  XXXXXXXXXXXXXXXXXXXX",
+    "003  XXXXXXXXXXXXXXXXXXXX"
+];
