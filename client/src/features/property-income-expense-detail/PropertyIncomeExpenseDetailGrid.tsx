@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import {
   DataGrid,
@@ -63,30 +63,14 @@ export default function PropertyIncomeExpenseDetailGrid({
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
   const [copiedRows, setCopiedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 20 });
+  const PAGE_SIZE = 20;
+  const [paginationModel, setPaginationModel] = useState(() => ({
+    pageSize: PAGE_SIZE,
+    page: Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1),
+  }));
 
   // MUI DataGrid API reference
   const apiRef = useGridApiRef();
-
-  /**
-   * Reset row height when data changes
-   * Needed when using dynamic row height (auto)
-   */
-  useEffect(() => {
-    setTimeout(() => {
-      apiRef.current?.resetRowHeights();
-    }, 0);
-  }, [apiRef, rows]);
-
-  /**
-   * Ensure pagination is always within valid range
-   */
-  useEffect(() => {
-    const maxPage = Math.max(0, Math.ceil(rows.length / paginationModel.pageSize) - 1);
-    if (paginationModel.page > maxPage) {
-      setPaginationModel((prev) => ({ ...prev, page: maxPage }));
-    }
-  }, [paginationModel.page, paginationModel.pageSize, rows.length]);
 
   /**
    * Close context menu
@@ -353,11 +337,34 @@ export default function PropertyIncomeExpenseDetailGrid({
     [rows, selectedRowIds, onRowsChange, onDirtyChange]
   );
 
+    /**
+   * Reset row height when data changes
+   * Needed when using dynamic row height (auto)
+   */
+  useEffect(() => {
+    setTimeout(() => {
+      apiRef.current?.resetRowHeights();
+    }, 0);
+  }, [apiRef, rows]);
+  
   // sync selected rows to parent component
   useEffect(() => {
-    const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
-    onSelectedRowsChange?.(selectedRows);
-  }, [rows, selectedRowIds, onSelectedRowsChange]);
+      const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
+      onSelectedRowsChange?.(selectedRows);
+    }, [rows, selectedRowIds, onSelectedRowsChange]);
+
+    // When rows data changes, if current page exceeds total pages, jump to last page
+  useEffect(() => {
+    const lastPage = Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1);
+
+    setPaginationModel((prev) => {
+      return {
+        page: lastPage,
+        pageSize: PAGE_SIZE,
+      };
+    });
+
+  }, [rows]);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>
@@ -371,12 +378,9 @@ export default function PropertyIncomeExpenseDetailGrid({
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",
         }}
-        initialState={{
-          pagination: { paginationModel: { pageSize: 20, page: 0 } },
-        }}
         checkboxSelection={false}
         disableColumnMenu
-        pageSizeOptions={[20]}
+        pageSizeOptions={[PAGE_SIZE]}
         disableRowSelectionOnClick={true}
         onRowClick={handleRowClick}
         getRowClassName={(params) => {
@@ -401,7 +405,6 @@ export default function PropertyIncomeExpenseDetailGrid({
         disableColumnSelector
         disableDensitySelector
         paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
         editMode="cell"
         apiRef={apiRef}
         getRowHeight={() => "auto"}
@@ -410,25 +413,24 @@ export default function PropertyIncomeExpenseDetailGrid({
         sortModel={sortModel}
         onSortModelChange={setSortModel}
         processRowUpdate={processRowUpdate}
-        onProcessRowUpdateError={(error) => {
-          console.error(error);
-        }}
         onCellEditStart={onDirtyChange}
         sx={[dataGridCommonSx, stickySx]}
         slots={{
-          footer: () => (
-            <CustomPagination
-              page={paginationModel.page}
-              pageSize={paginationModel.pageSize}
-              rowCount={rows.length}
-              onPageChange={(newPage) =>
-                setPaginationModel((prev) => ({
-                  ...prev,
-                  page: newPage,
-                }))
-              }
-            />
-          ),
+          footer: () => {
+              return (
+                <CustomPagination
+                  page={paginationModel.page}
+                  pageSize={paginationModel.pageSize}
+                  rowCount={rows.length}
+                  onPageChange={(newPage) =>
+                    setPaginationModel((prev) => ({
+                      ...prev,
+                      page: newPage,
+                    }))
+                  }
+                />
+              );
+            }
         }}
       />
 

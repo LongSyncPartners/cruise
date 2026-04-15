@@ -19,7 +19,9 @@ const createPropertyCode = (seed: number) => seed % 3 === 0 ? `C-${pad2(seed + 1
 const createBaseRows = (seed: number): PropertyIncomeExpenseDetailRow[] => {
   let running = 0;
 
-  return Array.from({ length: 200 }, (_, i) => {
+  const length = 200 + Math.floor(Math.random() * 200) + 1; // 1 → 200
+
+  return Array.from({ length: length }, (_, i) => {
     const income = i % 2 === 0 ? 40000 + i * 1000 + seed * 500 : 0;
     const expense = i % 2 !== 0 ? 50000 + i * 500 + seed * 250 : 0;
 

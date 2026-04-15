@@ -66,6 +66,7 @@ const TabPanel = ({
       {/* Editable detail grid */}
       <div className="property-income-expense-detail-grid-contaniner">
         <PropertyIncomeExpenseDetailGrid
+          key={header.propertyCode}
           rows={rows}
           onRowsChange={onRowsChange}
           onDirtyChange={onDirtyChange}
