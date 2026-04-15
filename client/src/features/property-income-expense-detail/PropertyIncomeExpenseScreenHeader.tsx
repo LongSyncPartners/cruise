@@ -11,11 +11,11 @@ type PropertyIncomeExpenseViewHeaderProps = {
 export default function PropertyIncomeExpenseScreenHeader({ viewMode, onChange }: PropertyIncomeExpenseViewHeaderProps) {
   return (
     <div className="property-income-expense-detail-common-header">
-        <div className="common-header-item" onClick={() => onChange("detail")}>
+        <div className={`common-header-item ${viewMode === "detail" ? "active" : ""}`} onClick={() => onChange("detail")}>
           <SubjectIcon />
           <Typography>物件収支明細</Typography>
         </div>
-        <div className="common-header-item" onClick={() => onChange("summary")}>
+        <div className={`common-header-item ${viewMode === "summary" ? "active" : ""}`} onClick={() => onChange("summary")}>
           <SummarizeIcon />
           <Typography>管理会社別サマリー</Typography>
         </div>

@@ -24,4 +24,13 @@ export const propertyIncomeExpenseDetailKeys = {
   
   saveRows: (propertyCode: string) =>
     [...propertyIncomeExpenseDetailKeys.all, "saveRows", propertyCode] as const,
+
+   managementCompanies: () =>
+    [...propertyIncomeExpenseDetailKeys.all, "managementCompanies"] as const,
+
+  groupTabs: (companyCode: string) =>
+    [...propertyIncomeExpenseDetailKeys.all, "tabs", companyCode] as const,
+
+  propertyIncomeExpenseSummaryRows: (companyCode: string, year: number) =>
+    [...propertyIncomeExpenseDetailKeys.all, "rows", companyCode, year] as const,
 };

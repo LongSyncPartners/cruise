@@ -1,38 +1,118 @@
-import { useState } from "react";
-import { Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import PropertyIncomeExpenseSummaryHeader from "./PropertyIncomeExpenseSummaryHeader";
 import PropertyIncomeExpenseSummaryGrid from "./PropertyIncomeExpenseSummaryGrid";
-import { getManagementCompanies, getPropertyIncomeExpenseSummaryRows, getTabs, getYears } from "./data.dump";
-import "./index.style.css";
 
+import "./index.style.css";
+import { useManagementCompanies } from "@/hooks/useManagementCompanies";
+import { usePropertyIncomeExpenseSummaryTabs } from "@/hooks/usePropertyIncomeExpenseSummaryTabs";
+import { usePropertyIncomeExpenseSummaryRows } from "@/hooks/usePropertyIncomeExpenseSummaryRows";
+import LoadingDialog from "../shared/LoadingDialog";
+
+import {
+  buildSummaryRows,
+  extractPropertyGroups,
+  getVisibleGroups,
+  getYears,
+} from "./usePropertyIncomeExpenseSummaryPage";
 
 export default function PropertyIncomeExpenseSummaryPage() {
-  
-  const managementCompanies = getManagementCompanies();
-  const [selectedManagementCompany, setSelectedManagementCompany] =
-    useState<string>(managementCompanies[0]);
-
   const years = getYears();
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
 
-  const tabs = getTabs();
+  const {
+    data: managementCompanies = [],
+    isLoading: isManagementCompaniesLoading,
+  } = useManagementCompanies();
+
+  const [selectedManagementCompany, setSelectedManagementCompany] =
+    useState<string>("");
+
+  const [selectedYear, setSelectedYear] = useState<number>(
+    years[0] || new Date().getFullYear()
+  );
+
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  const {
+    data: fetchedTabs = [],
+    isLoading: isTabsLoading,
+  } = usePropertyIncomeExpenseSummaryTabs(selectedManagementCompany);
+
+  const {
+    data: summaryItems = [],
+    isLoading: isRowsLoading,
+  } = usePropertyIncomeExpenseSummaryRows(
+    selectedManagementCompany,
+    selectedYear
+  );
+
+  /**
+   * Use tabs from API if available.
+   * Otherwise fallback to extracted property groups from row items.
+   */
+  const tabs = useMemo(() => {
+    if (fetchedTabs.length > 0) {
+      return fetchedTabs;
+    }
+
+    return extractPropertyGroups(summaryItems);
+  }, [fetchedTabs, summaryItems]);
+
+  const visibleGroups = useMemo(() => {
+    return getVisibleGroups(tabs, activeTabIndex);
+  }, [tabs, activeTabIndex]);
+
+  const rows = useMemo(() => {
+    return buildSummaryRows(
+      summaryItems,
+      visibleGroups.propertyGroup1,
+      visibleGroups.propertyGroup2
+    );
+  }, [summaryItems, visibleGroups]);
 
   const handleClickPrev = () => {
-    console.log("click prev");
+    setActiveTabIndex((prev) => Math.max(0, prev - 1));
   };
 
   const handleClickNext = () => {
-    console.log("click next");
+    const maxIndex = Math.max(0, tabs.length - 2);
+    setActiveTabIndex((prev) => Math.min(maxIndex, prev + 1));
   };
 
-  const rows = getPropertyIncomeExpenseSummaryRows(selectedYear);
+  const isScreenLoading =
+    isManagementCompaniesLoading || isTabsLoading || isRowsLoading;
+
+  /**
+   * Reset active tab when management company / year changes.
+   */
+  useEffect(() => {
+    setActiveTabIndex(0);
+  }, [selectedManagementCompany, selectedYear]);
+
+  /**
+   * Keep activeTabIndex within valid range.
+   * Since 2 group columns are shown at once,
+   * the last valid start index is tabs.length - 2.
+   */
+  useEffect(() => {
+    const maxIndex = Math.max(0, tabs.length - 2);
+
+    if (activeTabIndex > maxIndex) {
+      setActiveTabIndex(maxIndex);
+    }
+  }, [activeTabIndex, tabs.length]);
+
+    /**
+   * Set default selected management company
+   * after management company list is loaded.
+   */
+  useEffect(() => {
+    if (managementCompanies.length === 0) return;
+
+    setSelectedManagementCompany((prev) => prev || managementCompanies[0]);
+  }, [managementCompanies]);
 
   return (
     <div>
-      <Typography sx={{ fontSize: "150%", fontWeight: "500", pb: 2 }}>
-        管理会社別サマリー
-      </Typography>
-
       <PropertyIncomeExpenseSummaryHeader
         managementCompanies={managementCompanies}
         selectedManagementCompany={selectedManagementCompany}
@@ -44,11 +124,12 @@ export default function PropertyIncomeExpenseSummaryPage() {
         onClickPrev={handleClickPrev}
         onClickNext={handleClickNext}
       />
-        <div className="property-income-expense-detail-grid-contaniner">
-      <PropertyIncomeExpenseSummaryGrid
-        rows={rows}
-      />
+
+      <div className="property-income-expense-detail-grid-contaniner">
+        <PropertyIncomeExpenseSummaryGrid rows={rows} />
       </div>
+
+      <LoadingDialog open={isScreenLoading} />
     </div>
   );
 }

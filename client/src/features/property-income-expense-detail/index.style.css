@@ -186,8 +186,19 @@ div.common-header-item-logout {
   background-color: #c3dff1;
 }
 
-.align-right-header .MuiDataGrid-columnHeaderTitleContainer{
+.property-income-expense-detail-grid-contaniner .align-right-header .MuiDataGrid-columnHeaderTitleContainer{
   display: flex;
   justify-content: flex-end;
   padding-right: 10px;
+}
+
+/* active */
+.property-income-expense-detail-common-header .common-header-item.active {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* icon */
+.property-income-expense-detail-common-header .common-header-item.active svg {
+  color: white;
 }

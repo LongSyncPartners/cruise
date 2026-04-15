@@ -9,6 +9,10 @@ import {
   getPropertyTabsByPropertyGroup,
   getDefaultPropertyCodeByGroupFromDumpData,
   getPropertyGroupsFromDumpData,
+  getManagementCompanies,
+  getPropertyIncomeExpenseSummaryRows,
+  getTabs,
+  getPropertyIncomeExpenseSummaryItems,
 } from "@/features/property-income-expense-detail/data.dump";
 
 const sleep = (ms: number) =>
@@ -125,6 +129,20 @@ export async function getPropertyGroups() {
  */
 export async function getDefaultPropertyCodeByGroup(group: string) {
   await sleep(300);
-  return getDefaultPropertyCodeByGroupFromDumpData(group);
+  return getDefaultPropertyCodeByGroup(group);
 }
 
+export async function fetchManagementCompanies() {
+  await sleep(300);
+  return getManagementCompanies();
+}
+
+export async function fetchPropertyIncomeExpenseSummaryTabs(companyCode: string) {
+  await sleep(300);
+  return getTabs();
+}
+
+export async function fetchPropertyIncomeExpenseSummaryRows(companyCode: string, year: number) {
+  await sleep(500);
+  return getPropertyIncomeExpenseSummaryItems(year);
+}

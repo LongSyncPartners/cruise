@@ -31,3 +31,11 @@ export const shouldRecalculateRow = (
     (currentRow.transactionDate ?? "") !== (updatedRow.transactionDate ?? "")
   );
 };
+
+export const formatYearMonth = (ym: string) => {
+  const year = ym.slice(0, 4);
+  const month = ym.slice(4, 6);
+  return `${year}年${month}月`;
+};
+
+export const extractYear = (ym: string) => ym.slice(0, 4);

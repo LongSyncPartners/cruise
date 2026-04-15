@@ -124,7 +124,7 @@ export default function PropertyIncomeExpenseSummaryHeader({
                 pointerEvents: "none",
                 }}
             >
-                {tab}
+                物件グループ：{tab}
             </Box>
             ))}
         </Box>

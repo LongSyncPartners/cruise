@@ -1,5 +1,6 @@
 import { addDays, format } from "date-fns";
 import {
+  PropertyIncomeExpenseSummaryItem,
   PropertyIncomeExpenseSummaryRow,
   type PropertyHeaderProps,
   type PropertyIncomeExpenseDetailRow,
@@ -187,15 +188,15 @@ export const getPropertyIncomeExpenseSummaryRows = (
       return {
         id: `${year}-${pad2(month)}`,
         yearMonth: `${year}年${pad2(month)}月`,
+        expectedAmountSummary: null,
+        managementCompanyAmountSummary: null,
+        differenceSummary: null,
         expectedAmount1: null,
         managementCompanyAmount1: null,
         difference1: null,
         expectedAmount2: null,
         managementCompanyAmount2: null,
         difference2: null,
-        expectedAmount3: null,
-        managementCompanyAmount3: null,
-        difference3: null,
       };
     }
 
@@ -228,19 +229,25 @@ export const getPropertyIncomeExpenseSummaryRows = (
       id: `${year}-${pad2(month)}`,
       yearMonth: `${year}年${pad2(month)}月`,
 
-      expectedAmount1: g1.expected,
-      managementCompanyAmount1: g1.actual,
-      difference1: g1.diff,
+      expectedAmountSummary: g1.expected,
+      managementCompanyAmountSummary: g1.actual,
+      differenceSummary: g1.diff,
 
-      expectedAmount2: g2.expected,
-      managementCompanyAmount2: g2.actual,
-      difference2: g2.diff,
+      expectedAmount1: g2.expected,
+      managementCompanyAmount1: g2.actual,
+      difference1: g2.diff,
 
-      expectedAmount3: g3.expected,
-      managementCompanyAmount3: g3.actual,
-      difference3: g3.diff,
+      expectedAmount2: g3.expected,
+      managementCompanyAmount2: g3.actual,
+      difference2: g3.diff,
     };
   });
+
+  const totalExpected1 = rows.reduce((sum, r) => sum + (r.expectedAmount1 ?? 0), 0);
+  const totalActual1 = rows.reduce(
+    (sum, r) => sum + (r.managementCompanyAmount1 ?? 0),
+    0
+  );
 
   const totalExpected2 = rows.reduce((sum, r) => sum + (r.expectedAmount2 ?? 0), 0);
   const totalActual2 = rows.reduce(
@@ -248,45 +255,31 @@ export const getPropertyIncomeExpenseSummaryRows = (
     0
   );
 
-  const totalExpected3 = rows.reduce((sum, r) => sum + (r.expectedAmount3 ?? 0), 0);
-  const totalActual3 = rows.reduce(
-    (sum, r) => sum + (r.managementCompanyAmount3 ?? 0),
-    0
-  );
-
   const totalRow: PropertyIncomeExpenseSummaryRow = {
     id: `${year}-total`,
     yearMonth: `${year}年合計`,
 
-    expectedAmount1: totalExpected2 + totalExpected3,
-    managementCompanyAmount1: totalActual2 + totalActual3,
-    difference1: (totalExpected2 + totalExpected3) - (totalActual2 + totalActual3),
+    expectedAmountSummary: totalExpected1 + totalExpected2,
+    managementCompanyAmountSummary: totalActual1 + totalActual2,
+    differenceSummary: (totalExpected1 + totalExpected2) - (totalActual1 + totalActual2),
+
+    expectedAmount1: totalExpected1,
+    managementCompanyAmount1: totalActual1,
+    difference1: totalExpected1 - totalActual1,
 
     expectedAmount2: totalExpected2,
     managementCompanyAmount2: totalActual2,
     difference2: totalExpected2 - totalActual2,
-
-    expectedAmount3: totalExpected3,
-    managementCompanyAmount3: totalActual3,
-    difference3: totalExpected3 - totalActual3,
   };
 
   return [...rows, totalRow];
 };
 
-
 export const getYears = () => [2026, 2025, 2024];
 export const getTabs = () => [
-    "物件グループ：A",
-    "物件グループ：B",
-    "物件グループ：C",
-    "物件グループ：D",
-    "物件グループ：E",
-    "物件グループ：F",
-    "物件グループ：G",
-    "物件グループ：H",
-    "物件グループ：I",
-    "物件グループ：J",
+    "A",
+    "B",
+    "C",
   ];
 
 export const getManagementCompanies = () => [
@@ -294,3 +287,83 @@ export const getManagementCompanies = () => [
     "002  XXXXXXXXXXXXXXXXXXXX",
     "003  XXXXXXXXXXXXXXXXXXXX"
 ];
+
+
+export const getPropertyIncomeExpenseSummaryItems = (
+  year: number
+): PropertyIncomeExpenseSummaryItem[] => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const propertyGroups = ["A", "B", "C"]; // 👉 có thể đổi theo data thật
+
+  const items: PropertyIncomeExpenseSummaryItem[] = [];
+
+  for (let i = 0; i < 12; i++) {
+    const month = i + 1;
+
+    const hasData =
+      year < currentYear
+        ? true
+        : year === currentYear
+        ? month <= currentMonth
+        : false;
+
+    for (const group of propertyGroups) {
+      if (!hasData) {
+        items.push({
+          yearMonth: `${year}${pad2(month)}`,
+          propertyGroup: group,
+          expectedAmount: null,
+          managementCompanyAmount: null,
+          difference: null,
+        });
+        continue;
+      }
+
+      const base = 100000 + i * 5000;
+      const pattern = i % 3;
+
+      const calc = (expected: number) => {
+        if (pattern === 0) {
+          const actual = expected;
+          return { expected, actual, diff: 0 };
+        }
+        if (pattern === 1) {
+          const actual = expected - 10000;
+          return { expected, actual, diff: expected - actual };
+        }
+        const actual = expected + 10000;
+        return { expected, actual, diff: expected - actual };
+      };
+
+      let value;
+
+      // 👉 mỗi group có scale khác nhau
+      switch (group) {
+        case "A":
+          value = calc(base);
+          break;
+        case "B":
+          value = calc(base + 20000);
+          break;
+        case "C":
+          value = calc(base + 40000);
+          break;
+        default:
+          value = calc(base);
+      }
+
+      items.push({
+        yearMonth: `${year}${pad2(month)}`,
+        propertyGroup: group,
+        expectedAmount: value.expected,
+        managementCompanyAmount: value.actual,
+        difference: value.diff,
+      });
+    }
+  }
+
+  return items;
+};

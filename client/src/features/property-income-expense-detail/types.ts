@@ -43,11 +43,24 @@ export type PropertyTabData = PropertyTabSummary & {
   rows: PropertyIncomeExpenseDetailRow[];
 };
 
+export type PropertyIncomeExpenseSummaryItem = {
+  yearMonth: string;           // YYYYMM
+  propertyGroup: string;       // グループ
+  expectedAmount: number | null;
+  managementCompanyAmount: number | null;
+  difference: number | null;
+};
+
 export type PropertyIncomeExpenseSummaryRow = {
   id: GridRowId;
 
   // 年月 (YYYYMM string format)
   yearMonth: string;
+
+  // サマリー
+  expectedAmountSummary: number | null;
+  managementCompanyAmountSummary: number | null;
+  differenceSummary: number | null;
 
   // グループ1
   expectedAmount1: number | null;
@@ -58,11 +71,6 @@ export type PropertyIncomeExpenseSummaryRow = {
   expectedAmount2: number | null;
   managementCompanyAmount2: number | null;
   difference2: number | null;
-
-  // グループ3
-  expectedAmount3: number | null;
-  managementCompanyAmount3: number | null;
-  difference3: number | null;
 };
 
 export type PropertyIncomeExpenseSummaryHeaderProps = {

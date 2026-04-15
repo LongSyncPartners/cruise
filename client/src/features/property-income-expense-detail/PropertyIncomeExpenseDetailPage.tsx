@@ -380,11 +380,6 @@ export default function PropertyIncomeExpenseDetail() {
    */
   return (
     <div>
-      {/* Screen title */}
-      <Typography sx={{ fontSize: "150%", fontWeight: "500", paddingBottom: 2 }}>
-        物件収支明細
-      </Typography>
-
       {/* Property tab selector */}
       <PropertyIncomeExpenseTabs
         groups={groups}
@@ -410,7 +405,7 @@ export default function PropertyIncomeExpenseDetail() {
       {/* Show guidance when no property is selected */}
       {!selectedPropertyCode ? (
         <Typography sx={{ mt: 4, color: "text.secondary" }}>
-          物件一覧画面から物件を選択してください。
+          物件グループをお選択ください。
         </Typography>
       ) : (
         /* Footer actions */
