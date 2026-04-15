@@ -103,13 +103,17 @@ export default function PropertyIncomeExpenseDetailGrid({
   /**
    * Add a new empty row below selected row
    */
-  const handleAdd = (menu: NonNullable<CellContextMenuState>) => {
+  const handleAdd = (menu: NonNullable<CellContextMenuState>, addRowCount: number) => {
     onRowsChange(
       recalculateBalances(
         rows.flatMap((row) => {
           if (row.id !== menu.rowId) return [row];
 
-          return [row, createEmptyPropertyIncomeExpenseDetailRow(row.balance)];
+          const newRows = Array.from({ length: addRowCount }, () =>
+            createEmptyPropertyIncomeExpenseDetailRow(row.balance)
+          );
+
+          return [row, ...newRows];
         })
       )
     );
@@ -255,7 +259,7 @@ export default function PropertyIncomeExpenseDetailGrid({
       event: React.MouseEvent
     ) => {
       setSelectedRowIds((prev) => {
-        // 👉 Ctrl + click → multi select
+        // Ctrl + click → multi select
         if (event.ctrlKey) {
           const next = new Set(prev);
 
@@ -267,7 +271,7 @@ export default function PropertyIncomeExpenseDetailGrid({
 
           return next;
         }
-        // 👉 Regular click → single select
+        // Regular click → single select
         return new Set([params.id]);
       });
     },
@@ -363,6 +367,14 @@ export default function PropertyIncomeExpenseDetailGrid({
         pageSize: PAGE_SIZE,
       };
     });
+
+    if (rows.length === 0) return;
+
+    setTimeout(() => {
+        apiRef.current?.scrollToIndexes({
+        rowIndex: rows.length - 1,
+      });
+    }, 0);
 
   }, [rows]);
 

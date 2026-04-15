@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Divider, Menu, MenuItem } from "@mui/material";
+import { Divider, Menu, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import type { GridRowId } from "@mui/x-data-grid";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -30,7 +30,7 @@ type Props = {
   onCopyAll?: () => void;
   onPaste?: (menu: NonNullable<CellContextMenuState>) => void;
   onPasteBelow?: (menu: NonNullable<CellContextMenuState>) => void;
-  onAdd?: (menu: NonNullable<CellContextMenuState>) => void;
+  onAdd?: (menu: NonNullable<CellContextMenuState>, rowCount: number) => void;
   onDelete?: (menu: NonNullable<CellContextMenuState>) => void;
   onSetSelectedRowsColor?: (
     menu: NonNullable<CellContextMenuState>,
@@ -97,9 +97,11 @@ export default function CustomContextMenu({
     onClose();
   };
 
-  const handleAdd = () => {
+  const [addRowCount, setAddRowCount] = useState<number>(2);
+
+  const handleAddMultiple = () => {
     if (contextMenu && onAdd) {
-      onAdd(contextMenu);
+      onAdd(contextMenu, addRowCount);
     }
     onClose();
   };
@@ -241,9 +243,33 @@ export default function CustomContextMenu({
 
       <Divider />
 
-      <MenuItem onClick={handleAdd}>
+      <MenuItem onClick={handleAddMultiple}>
         <ControlPointIcon sx={{ mr: 2 }} />
-        下行を追加
+        下に
+        <Select
+          size="small"
+          value={String(addRowCount)}
+          onChange={(e: SelectChangeEvent<string>) =>
+            setAddRowCount(Number(e.target.value))
+          }
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          variant="standard"
+          sx={{
+            fontSize: 14,
+            "& .MuiSelect-select": {
+              py: 0,
+              pr: 2,
+            },
+            textAlign: "right",
+          }}
+        >
+          <MenuItem value="1">1</MenuItem>
+          <MenuItem value="2">2</MenuItem>
+          <MenuItem value="5">5</MenuItem>
+          <MenuItem value="10">10</MenuItem>
+        </Select>
+        行を追加
       </MenuItem>
 
       <MenuItem onClick={handleDelete}>
