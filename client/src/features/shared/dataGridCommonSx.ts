@@ -2,6 +2,9 @@ import { Theme } from "@mui/material/styles";
 import { SystemStyleObject } from "@mui/system";
 
 export const dataGridCommonSx: SystemStyleObject<Theme> = {
+  "& .MuiDataGrid-row:last-of-type": {
+    borderBottom: "1px solid #e0e0e0",
+  },
   "& .MuiDataGrid-cell": {
     whiteSpace: "normal",
     wordBreak: "break-word",

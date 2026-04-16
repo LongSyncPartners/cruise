@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import {
   DataGrid,
-  GridRowSelectionModel,
   useGridApiRef,
   type GridFilterModel,
   type GridRenderCellParams,
@@ -25,7 +24,6 @@ import { createPropertyIncomeExpenseDetailColumns } from "./propertyIncomeExpens
 import { type PropertyIncomeExpenseDetailRow } from "./types";
 
 import { v4 as uuidv4 } from "uuid";
-import { getYearMonth, isSameMonth, parseCurrency } from "../shared/utils";
 import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
 import { shouldRecalculateRow } from "./utils";
 import { usePropertyIncomeExpenseDetailStore } from "@/stores/propertyIncomeExpenseDetailStore";
@@ -55,34 +53,30 @@ export default function PropertyIncomeExpenseDetailGrid({
   onDirtyChange,
   onSelectedRowsChange,
 }: PropertyIncomeExpenseDetailGridProps) {
-  // Sticky column styling (left fixed columns)
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
 
-  // Grid states
   const [filterModel, setFilterModel] = useState<GridFilterModel>({ items: [] });
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
   const [copiedRows, setCopiedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(
+    new Set()
+  );
+
   const PAGE_SIZE = 20;
   const [paginationModel, setPaginationModel] = useState(() => ({
     pageSize: PAGE_SIZE,
     page: Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1),
   }));
 
-  // MUI DataGrid API reference
+  const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+
   const apiRef = useGridApiRef();
 
-  /**
-   * Close context menu
-   */
   const handleCloseContextMenu = () => {
     setContextMenu(null);
   };
 
-  /**
-   * Handle right-click on cell
-   * Show custom context menu
-   */
   const handleCellContextMenu = (
     params: GridRenderCellParams<PropertyIncomeExpenseDetailRow>,
     event: React.MouseEvent<HTMLElement>
@@ -100,10 +94,17 @@ export default function PropertyIncomeExpenseDetailGrid({
     });
   };
 
-  /**
-   * Add a new empty row below selected row
-   */
-  const handleAdd = (menu: NonNullable<CellContextMenuState>, addRowCount: number) => {
+  const handleRenameHeader = useCallback((field: string, headerName: string) => {
+    setHeaderNames((prev) => ({
+      ...prev,
+      [field]: headerName,
+    }));
+  }, []);
+
+  const handleAdd = (
+    menu: NonNullable<CellContextMenuState>,
+    addRowCount: number
+  ) => {
     onRowsChange(
       recalculateBalances(
         rows.flatMap((row) => {
@@ -117,11 +118,9 @@ export default function PropertyIncomeExpenseDetailGrid({
         })
       )
     );
+    onDirtyChange?.();
   };
 
-  /**
-   * Delete selected row
-   */
   const handleDelete = (_menu: NonNullable<CellContextMenuState>) => {
     if (selectedRowIds.size === 0) return;
 
@@ -131,9 +130,6 @@ export default function PropertyIncomeExpenseDetailGrid({
     onDirtyChange?.();
   };
 
-  /**
-   * Copy selected row to memory
-   */
   const handleCopy = (_menu: NonNullable<CellContextMenuState>) => {
     if (selectedRowIds.size === 0) return;
 
@@ -144,24 +140,18 @@ export default function PropertyIncomeExpenseDetailGrid({
     setCopiedRows(nextCopiedRows);
   };
 
-  /**
-   * Copy selected row to memory
-   */
   const setCopiedAll = usePropertyIncomeExpenseDetailStore(
     (state) => state.setRows
   );
-
   const handleCopyAll = () => {
     setCopiedAll(rows);
   };
 
   const copyAllRows = usePropertyIncomeExpenseDetailStore((state) => state.rows);
+  const clearCopiedAll = usePropertyIncomeExpenseDetailStore(
+    (state) => state.clearRows
+  );
 
-  const clearCopiedAll = usePropertyIncomeExpenseDetailStore((state) => state.clearRows);
-
-  /**
-   * Paste first copied row into current row
-   */
   const handlePaste = (_menu: NonNullable<CellContextMenuState>) => {
     if (copyAllRows.length > 0) {
       onRowsChange(copyAllRows);
@@ -169,7 +159,7 @@ export default function PropertyIncomeExpenseDetailGrid({
       onDirtyChange?.();
       return;
     }
-    
+
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
     const firstCopiedRow = copiedRows[0];
@@ -191,9 +181,6 @@ export default function PropertyIncomeExpenseDetailGrid({
     setCopiedRows([]);
   };
 
-  /**
-   * Paste copied row below current row
-   */
   const handlePasteBelow = (_menu: NonNullable<CellContextMenuState>) => {
     if (copyAllRows.length > 0) {
       onRowsChange(copyAllRows);
@@ -237,29 +224,26 @@ export default function PropertyIncomeExpenseDetailGrid({
     [rows, onRowsChange, onDirtyChange]
   );
 
-  /**
-   * Columns definition (memoized)
-   */
-  const columns = useMemo(
+  const baseColumns = useMemo(
     () =>
       createPropertyIncomeExpenseDetailColumns({
         onCellContextMenu: handleCellContextMenu,
         onToggleExecutedState: handleToggleExecutedState,
+        onRenameHeader: handleRenameHeader,
       }),
-    [handleToggleExecutedState]
+    [handleToggleExecutedState, handleRenameHeader]
   );
 
-  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(
-    new Set()
-  );
+  const columns = useMemo(() => {
+    return baseColumns.map((col) => ({
+      ...col,
+      headerName: headerNames[col.field] ?? col.headerName,
+    }));
+  }, [baseColumns, headerNames]);
 
   const handleRowClick = useCallback(
-    (
-      params: { id: string | number },
-      event: React.MouseEvent
-    ) => {
+    (params: { id: string | number }, event: React.MouseEvent) => {
       setSelectedRowIds((prev) => {
-        // Ctrl + click → multi select
         if (event.ctrlKey) {
           const next = new Set(prev);
 
@@ -271,30 +255,23 @@ export default function PropertyIncomeExpenseDetailGrid({
 
           return next;
         }
-        // Regular click → single select
+
         return new Set([params.id]);
       });
     },
     []
   );
 
-  /**
-   * Handle row update (cell editing)
-   * - Parse currency values
-   * - Recalculate balance from current row onward
-   */
   const { updateRowAndRecalculate } = usePropertyIncomeExpenseCalculation();
 
   const processRowUpdate = useCallback(
-  (updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>) => {
+    (updatedRow: GridRowModel<PropertyIncomeExpenseDetailRow>) => {
       const currentRow = rows.find((row) => row.id === updatedRow.id);
 
       if (!currentRow) {
         return updatedRow as PropertyIncomeExpenseDetailRow;
       }
 
-      // If no calculation-related field changed,
-      // just merge the edited row and return it.
       if (!shouldRecalculateRow(currentRow, updatedRow)) {
         const nextRows = rows.map((row) =>
           row.id === updatedRow.id
@@ -313,7 +290,6 @@ export default function PropertyIncomeExpenseDetailGrid({
         return returnedRow;
       }
 
-      // Recalculate only when important fields changed
       const { nextRows, returnedRow } = updateRowAndRecalculate(rows, updatedRow);
 
       onRowsChange(nextRows);
@@ -341,27 +317,21 @@ export default function PropertyIncomeExpenseDetailGrid({
     [rows, selectedRowIds, onRowsChange, onDirtyChange]
   );
 
-    /**
-   * Reset row height when data changes
-   * Needed when using dynamic row height (auto)
-   */
   useEffect(() => {
     setTimeout(() => {
       apiRef.current?.resetRowHeights();
     }, 0);
   }, [apiRef, rows]);
-  
-  // sync selected rows to parent component
-  useEffect(() => {
-      const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
-      onSelectedRowsChange?.(selectedRows);
-    }, [rows, selectedRowIds, onSelectedRowsChange]);
 
-    // When rows data changes, if current page exceeds total pages, jump to last page
+  useEffect(() => {
+    const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
+    onSelectedRowsChange?.(selectedRows);
+  }, [rows, selectedRowIds, onSelectedRowsChange]);
+
   useEffect(() => {
     const lastPage = Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1);
 
-    setPaginationModel((prev) => {
+    setPaginationModel(() => {
       return {
         page: lastPage,
         pageSize: PAGE_SIZE,
@@ -371,12 +341,11 @@ export default function PropertyIncomeExpenseDetailGrid({
     if (rows.length === 0) return;
 
     setTimeout(() => {
-        apiRef.current?.scrollToIndexes({
+      apiRef.current?.scrollToIndexes({
         rowIndex: rows.length - 1,
       });
     }, 0);
-
-  }, [rows]);
+  }, [rows, apiRef]);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>
@@ -393,7 +362,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         checkboxSelection={false}
         disableColumnMenu
         pageSizeOptions={[PAGE_SIZE]}
-        disableRowSelectionOnClick={true}
+        disableRowSelectionOnClick
         onRowClick={handleRowClick}
         getRowClassName={(params) => {
           switch (params.row.rowColorType) {
@@ -406,12 +375,8 @@ export default function PropertyIncomeExpenseDetailGrid({
             case "pink":
               return "mui-row-color-pink";
             default:
-              if (selectedRowIds.has(params.id)) {
-                return "mui-row-selected-custom";
-              } else {
-                return "";
-              }
-            }
+              return selectedRowIds.has(params.id) ? "mui-row-selected-custom" : "";
+          }
         }}
         disableColumnFilter
         disableColumnSelector
@@ -429,24 +394,23 @@ export default function PropertyIncomeExpenseDetailGrid({
         sx={[dataGridCommonSx, stickySx]}
         slots={{
           footer: () => {
-              return (
-                <CustomPagination
-                  page={paginationModel.page}
-                  pageSize={paginationModel.pageSize}
-                  rowCount={rows.length}
-                  onPageChange={(newPage) =>
-                    setPaginationModel((prev) => ({
-                      ...prev,
-                      page: newPage,
-                    }))
-                  }
-                />
-              );
-            }
+            return (
+              <CustomPagination
+                page={paginationModel.page}
+                pageSize={paginationModel.pageSize}
+                rowCount={rows.length}
+                onPageChange={(newPage) =>
+                  setPaginationModel((prev) => ({
+                    ...prev,
+                    page: newPage,
+                  }))
+                }
+              />
+            );
+          },
         }}
       />
 
-      {/* Context menu for row actions */}
       <CustomContextMenu
         contextMenu={contextMenu}
         onClose={handleCloseContextMenu}

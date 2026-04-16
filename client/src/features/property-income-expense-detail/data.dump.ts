@@ -294,7 +294,7 @@ export const getPropertyIncomeExpenseSummaryItems = (
 ): PropertyIncomeExpenseSummaryItem[] => {
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth() + 1;
+  const currentMonth = now.getMonth();
 
   const propertyGroups = ["A", "B", "C"]; // 👉 có thể đổi theo data thật
 

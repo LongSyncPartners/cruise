@@ -2,10 +2,29 @@ import type { GridColDef } from "@mui/x-data-grid";
 
 import CurrencyCell from "../shared/CurrencyCell";
 import YearMonthCell from "../shared/YearMonthCell";
+import CreateHeaderEditable from "../shared/CreateHeaderEditable";
 import { PropertyIncomeExpenseSummaryRow } from "./types";
 
-export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpenseSummaryRow>[] =
-  [
+type CreatePropertyIncomeExpenseSummaryColumnsParams = {
+  onRenameHeader?: (field: string, headerName: string) => void;
+};
+
+const createEditableHeader =
+  (onRenameHeader?: (field: string, headerName: string) => void) =>
+  (params: Parameters<NonNullable<GridColDef["renderHeader"]>>[0]) =>
+    (
+      <CreateHeaderEditable
+        value={params.colDef.headerName ?? ""}
+        onChange={(newValue) => onRenameHeader?.(params.field, newValue)}
+      />
+    );
+
+export const createPropertyIncomeExpenseSummaryColumns = ({
+  onRenameHeader,
+}: CreatePropertyIncomeExpenseSummaryColumnsParams = {}): GridColDef<PropertyIncomeExpenseSummaryRow>[] => {
+  const renderEditableHeader = createEditableHeader(onRenameHeader);
+
+  return [
     {
       field: "yearMonth",
       headerName: "年月",
@@ -14,6 +33,7 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
+      renderHeader: renderEditableHeader,
     },
     {
       field: "expectedAmountSummary",
@@ -24,7 +44,8 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero={true}/>,
+      renderHeader: renderEditableHeader,
+      renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
       field: "managementCompanyAmountSummary",
@@ -35,6 +56,7 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
+      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -46,7 +68,14 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero={true} showNotZeroBackgroundColor={true} />,
+      renderHeader: renderEditableHeader,
+      renderCell: (params) => (
+        <CurrencyCell
+          {...params}
+          showZero={true}
+          showNotZeroBackgroundColor={true}
+        />
+      ),
     },
     {
       field: "expectedAmount1",
@@ -57,6 +86,7 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
+      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -68,6 +98,7 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
+      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -79,7 +110,14 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero={true} showNotZeroBackgroundColor={true} />,
+      renderHeader: renderEditableHeader,
+      renderCell: (params) => (
+        <CurrencyCell
+          {...params}
+          showZero={true}
+          showNotZeroBackgroundColor={true}
+        />
+      ),
     },
     {
       field: "expectedAmount2",
@@ -90,6 +128,7 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
+      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -101,7 +140,8 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero={true}/>,
+      renderHeader: renderEditableHeader,
+      renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
       field: "difference2",
@@ -111,8 +151,16 @@ export const propertyIncomeExpenseSummaryColumns: GridColDef<PropertyIncomeExpen
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero={true} showNotZeroBackgroundColor={true} />,
+      renderHeader: renderEditableHeader,
+      renderCell: (params) => (
+        <CurrencyCell
+          {...params}
+          showZero={true}
+          showNotZeroBackgroundColor={true}
+        />
+      ),
     },
   ];
+};
 
 export type { PropertyIncomeExpenseSummaryRow };

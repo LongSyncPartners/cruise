@@ -1,38 +1,64 @@
 import { Box } from "@mui/material";
 import { DataGrid, GridRowId } from "@mui/x-data-grid";
+import { useCallback, useMemo, useState } from "react";
 
 import { dataGridCommonSx } from "../shared/dataGridCommonSx";
 import {
-  propertyIncomeExpenseSummaryColumns,
+  createPropertyIncomeExpenseSummaryColumns,
   PropertyIncomeExpenseSummaryRow,
 } from "./propertyIncomeExpenseSummaryColumns";
-import { useMemo } from "react";
 
-export default function PropertyIncomeExpenseSummaryGrid({ rows }: { rows: PropertyIncomeExpenseSummaryRow[]
+export default function PropertyIncomeExpenseSummaryGrid({
+  rows,
+}: {
+  rows: PropertyIncomeExpenseSummaryRow[];
 }) {
-    const selectedRowId = useMemo<GridRowId | undefined>(() => {
-        return [...rows]
-        .reverse()
-        .find(
+  const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+
+  const handleRenameHeader = useCallback((field: string, headerName: string) => {
+    setHeaderNames((prev) => ({
+      ...prev,
+      [field]: headerName,
+    }));
+  }, []);
+
+  const baseColumns = useMemo(
+    () =>
+      createPropertyIncomeExpenseSummaryColumns({
+        onRenameHeader: handleRenameHeader,
+      }),
+    [handleRenameHeader]
+  );
+
+  const columns = useMemo(() => {
+    return baseColumns.map((col) => ({
+      ...col,
+      headerName: headerNames[col.field] ?? col.headerName,
+    }));
+  }, [baseColumns, headerNames]);
+
+  const selectedRowId = useMemo<GridRowId | undefined>(() => {
+    return [...rows]
+      .reverse()
+      .find(
         (row) =>
-            !row.id.toString().includes("total") &&
-            row.expectedAmount1 !== null
-        )?.id;
-    }, [rows]);
+          !row.id.toString().includes("total") && row.expectedAmount1 !== null
+      )?.id;
+  }, [rows]);
 
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
         rows={rows}
-        columns={propertyIncomeExpenseSummaryColumns}
+        columns={columns}
         rowHeight={40}
         columnHeaderHeight={40}
         getRowClassName={(params) =>
-            params.id.toString().includes("total") ? "summary-total-row" : ""
+          params.id.toString().includes("total") ? "summary-total-row" : ""
         }
         rowSelectionModel={{
-            type: "include",
-            ids: selectedRowId ? new Set([selectedRowId]) : new Set(),
+          type: "include",
+          ids: selectedRowId ? new Set([selectedRowId]) : new Set(),
         }}
         localeText={{
           noRowsLabel: "データがありません",
