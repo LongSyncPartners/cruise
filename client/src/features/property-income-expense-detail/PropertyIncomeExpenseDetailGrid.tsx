@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box } from "@mui/material";
 import {
   DataGrid,
@@ -36,6 +36,7 @@ type PropertyIncomeExpenseDetailGridProps = {
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
+  isScreenLoading: boolean;
 };
 
 /**
@@ -52,6 +53,7 @@ export default function PropertyIncomeExpenseDetailGrid({
   onRowsChange,
   onDirtyChange,
   onSelectedRowsChange,
+  isScreenLoading,
 }: PropertyIncomeExpenseDetailGridProps) {
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
 
@@ -328,24 +330,27 @@ export default function PropertyIncomeExpenseDetailGrid({
     onSelectedRowsChange?.(selectedRows);
   }, [rows, selectedRowIds, onSelectedRowsChange]);
 
+  const didInitScrollRef = useRef(false);
   useEffect(() => {
+    if (didInitScrollRef.current) return;
+    if (isScreenLoading) return;
+    if (rows.length === 0) return;
+
+    didInitScrollRef.current = true;
+
     const lastPage = Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1);
 
-    setPaginationModel(() => {
-      return {
-        page: lastPage,
-        pageSize: PAGE_SIZE,
-      };
+    setPaginationModel({
+      page: lastPage,
+      pageSize: PAGE_SIZE,
     });
-
-    if (rows.length === 0) return;
 
     setTimeout(() => {
       apiRef.current?.scrollToIndexes({
         rowIndex: rows.length - 1,
       });
     }, 0);
-  }, [rows, apiRef]);
+  }, [rows.length, isScreenLoading]);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>

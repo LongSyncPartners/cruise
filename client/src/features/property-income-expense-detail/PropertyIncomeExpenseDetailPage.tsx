@@ -46,6 +46,7 @@ const TabPanel = ({
   onRowsChange,
   onDirtyChange,
   onSelectedRowsChange,
+  isScreenLoading,
 }: {
   active: boolean;
   header?: PropertyHeaderProps;
@@ -53,6 +54,7 @@ const TabPanel = ({
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
+  isScreenLoading: boolean;
 }) => {
   // Do not render anything when the tab is inactive
   // or when header information is not available.
@@ -71,6 +73,7 @@ const TabPanel = ({
           onRowsChange={onRowsChange}
           onDirtyChange={onDirtyChange}
           onSelectedRowsChange={onSelectedRowsChange}
+          isScreenLoading={isScreenLoading}
         />
       </div>
     </>
@@ -399,6 +402,7 @@ export default function PropertyIncomeExpenseDetail() {
           onRowsChange={updateActiveRows}
           onDirtyChange={() => setIsDirty(true)}
           onSelectedRowsChange={setSelectedPropertyIncomeExpenseDetailRows}
+          isScreenLoading={isScreenLoading}
         />
       ))}
 
