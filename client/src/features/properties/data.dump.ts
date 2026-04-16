@@ -54,7 +54,9 @@ export const PROPERTY_COLUMN_SOURCES: PropertyColumnSource[] = [
   { field: "propertyAddress", headerName: "物件住所", visible: false },
 ];
 
-export const PROPERTY_COLUMN_SOURCE_OPTIONS = PROPERTY_COLUMN_SOURCES.map(
+export const PROPERTY_COLUMN_SOURCE_OPTIONS = PROPERTY_COLUMN_SOURCES
+.filter(({ visible }) => visible == false)
+.map(
   ({ field, headerName, visible }) => ({
     value: field,
     label: headerName,

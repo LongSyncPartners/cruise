@@ -129,6 +129,7 @@ export default function CustomContextMenuHeader({
           ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
           : undefined
       }
+      sx={{width:260}}
     >
       <MenuItem
         onClick={handleToggleRename}
