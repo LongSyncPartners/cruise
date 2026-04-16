@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import {
   DataGrid,
   useGridApiRef,
+  type GridColDef,
   type GridPaginationModel,
   type GridRowSelectionModel,
 } from "@mui/x-data-grid";
@@ -10,25 +11,49 @@ import {
 import type { PropertyRow } from "./types";
 
 import { dataGridCommonSx } from "../shared/dataGridCommonSx";
-import { createFilterableHeader } from "../shared/createFilterableHeader";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
 import PropertiesPaginationFooter from "./PropertiesPaginationFooter";
+import CustomContextMenuHeader, {
+  type HeaderContextMenuState,
+} from "../shared/CustomContextMenuHeader";
 
 import { usePropertySelectionStore } from "../../stores/propertySelectionStore";
 import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import { useProperties } from "@/hooks/useProperties";
-import { createPropertyColumns } from "./propertyColumns";
 
-type Props = {
-  height?: number;
+type HeaderOption = {
+  value: string;
+  label: string;
 };
 
-export default function PropertyDataGrid({ height = 700 }: Props) {
+type PropertyDataGridProps = {
+  height?: number;
+  columns: GridColDef<PropertyRow>[];
+  dataSourceOptions?: HeaderOption[];
+  onRenameHeader?: (field: string, headerName: string) => void;
+  onDeleteHeader?: (field: string) => void;
+  onAddHeader?: (
+    afterField: string,
+    headerName: string,
+    dataSource?: string
+  ) => void;
+};
+
+export default function PropertyDataGrid({
+  height = 700,
+  columns,
+  dataSourceOptions,
+  onRenameHeader,
+  onDeleteHeader,
+  onAddHeader,
+}: PropertyDataGridProps) {
   const [openProcessingStatusDialog, setOpenProcessingStatusDialog] =
     useState(false);
   const [dialogPropertyCode, setDialogPropertyCode] = useState<string | null>(
     null
   );
+  const [headerContextMenu, setHeaderContextMenu] =
+    useState<HeaderContextMenuState>(null);
 
   const [localRows, setLocalRows] = useState<PropertyRow[]>([]);
 
@@ -67,19 +92,7 @@ export default function PropertyDataGrid({ height = 700 }: Props) {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [apiRef, localRows]);
-
-  const renderFilterableHeader = useMemo(
-    () =>
-      createFilterableHeader({
-        filterModel,
-        setFilterModel,
-        sortModel,
-        setSortModel,
-        debounceMs: 400,
-      }),
-    [filterModel, setFilterModel, sortModel, setSortModel]
-  );
+  }, [apiRef, localRows, columns]);
 
   const handleOpenProcessingStatusDialog = useCallback(
     (propertyCode: string) => {
@@ -130,13 +143,26 @@ export default function PropertyDataGrid({ height = 700 }: Props) {
     [handleOpenProcessingStatusDialog, setRowSelectionModel, setSelectedProperty]
   );
 
-  const columns = useMemo(
-    () =>
-      createPropertyColumns({
-        renderFilterableHeader,
-      }),
-    [renderFilterableHeader]
+  const handleHeaderContextMenu = useCallback(
+    (
+      params: { field: string; colDef: { headerName?: string } },
+      event: React.MouseEvent
+    ) => {
+      event.preventDefault();
+
+      setHeaderContextMenu({
+        mouseX: event.clientX - 2,
+        mouseY: event.clientY - 4,
+        field: params.field,
+        headerName: params.colDef.headerName ?? "",
+      });
+    },
+    []
   );
+
+  const handleCloseHeaderContextMenu = useCallback(() => {
+    setHeaderContextMenu(null);
+  }, []);
 
   return (
     <Box sx={{ width: "auto", height }}>
@@ -164,6 +190,7 @@ export default function PropertyDataGrid({ height = 700 }: Props) {
         processRowUpdate={handleProcessRowUpdate}
         onRowClick={handleRowClick}
         onRowDoubleClick={handleRowDoubleClick}
+        onColumnHeaderContextMenu={handleHeaderContextMenu}
         slots={{
           footer: () => (
             <PropertiesPaginationFooter
@@ -172,6 +199,15 @@ export default function PropertyDataGrid({ height = 700 }: Props) {
             />
           ),
         }}
+      />
+
+      <CustomContextMenuHeader
+        contextMenu={headerContextMenu}
+        headerOptions={dataSourceOptions}
+        onClose={handleCloseHeaderContextMenu}
+        onRenameHeader={onRenameHeader}
+        onDeleteHeader={onDeleteHeader}
+        onAddHeader={onAddHeader}
       />
 
       <ProcessingStatusStateDialog

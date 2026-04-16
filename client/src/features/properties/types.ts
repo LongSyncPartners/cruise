@@ -12,6 +12,8 @@ export type PropertyRow = {
     propertyStatus: string;
     ownerName: string;
     processingStatus: string;
+    propertyName : string;
+    propertyAddress : string;
 };
 
 export type ProcessingStatusStateRow = {
