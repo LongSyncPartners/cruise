@@ -202,3 +202,8 @@ div.common-header-item-logout {
 .property-income-expense-detail-common-header .common-header-item.active svg {
   color: white;
 }
+
+.property-income-expense-detail-common-header .common-header-item {
+  padding-left: 10px;
+  padding-right: 40px;
+}
