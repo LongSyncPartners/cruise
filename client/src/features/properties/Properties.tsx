@@ -22,6 +22,11 @@ import {
 import { usePropertyColumnSources } from "@/hooks/usePropertyColumnSources";
 import { usePropertyMasterData } from "@/hooks/usePropertyMasterData";
 
+/**
+ * =========================
+ * Utils
+ * =========================
+ */
 function buildDefaultPropertyColumnConfigs(
   columnSources: Array<{
     field: string;
@@ -39,7 +44,17 @@ function buildDefaultPropertyColumnConfigs(
     }));
 }
 
+/**
+ * =========================
+ * Component
+ * =========================
+ */
 export default function Properties() {
+  /**
+   * =========================
+   * Query / External hooks
+   * =========================
+   */
   const { isLoading, isFetching, refetch } = useProperties();
 
   const {
@@ -63,6 +78,11 @@ export default function Properties() {
   const { mutateAsync: saveColumnConfigs, isPending: isSavingColumnConfigs } =
     useSavePropertyColumnConfigs();
 
+  /**
+   * =========================
+   * Store (Zustand)
+   * =========================
+   */
   const resetGridView = usePropertiesGridStore((state) => state.resetGridView);
 
   const filterModel = usePropertiesGridStore((state) => state.filterModel);
@@ -70,8 +90,25 @@ export default function Properties() {
   const setFilterModel = usePropertiesGridStore((state) => state.setFilterModel);
   const setSortModel = usePropertiesGridStore((state) => state.setSortModel);
 
+  /**
+   * =========================
+   * Local state
+   * =========================
+   */
+  const [columnConfigs, setColumnConfigs] = useState<PropertyColumnConfig[]>([]);
+
+  /**
+   * =========================
+   * UI helpers / providers
+   * =========================
+   */
   const { showToast } = useAppToast();
 
+  /**
+   * =========================
+   * Derived (useMemo)
+   * =========================
+   */
   const renderFilterableHeader = useMemo(
     () =>
       createFilterableHeader({
@@ -101,19 +138,6 @@ export default function Properties() {
     [loadedColumnSources]
   );
 
-  const [columnConfigs, setColumnConfigs] = useState<PropertyColumnConfig[]>([]);
-
-  useEffect(() => {
-    if (loadedColumnConfigs && loadedColumnConfigs.length > 0) {
-      setColumnConfigs(loadedColumnConfigs);
-      return;
-    }
-
-    if (loadedColumnSources.length > 0) {
-      setColumnConfigs(defaultColumnConfigs);
-    }
-  }, [loadedColumnConfigs, loadedColumnSources, defaultColumnConfigs]);
-
   const columns = useMemo(
     () =>
       createPropertyColumns({
@@ -127,6 +151,27 @@ export default function Properties() {
     [columnConfigs, renderFilterableHeader, masterData]
   );
 
+  /**
+   * =========================
+   * Effects
+   * =========================
+   */
+  useEffect(() => {
+    if (loadedColumnConfigs && loadedColumnConfigs.length > 0) {
+      setColumnConfigs(loadedColumnConfigs);
+      return;
+    }
+
+    if (loadedColumnSources.length > 0) {
+      setColumnConfigs(defaultColumnConfigs);
+    }
+  }, [loadedColumnConfigs, loadedColumnSources, defaultColumnConfigs]);
+
+  /**
+   * =========================
+   * Handlers (useCallback)
+   * =========================
+   */
   const handleRefresh = useCallback(async () => {
     await Promise.all([refetch()]);
     resetGridView();
@@ -196,6 +241,11 @@ export default function Properties() {
     }
   }, [columnConfigs, saveColumnConfigs, showToast]);
 
+  /**
+   * =========================
+   * Render
+   * =========================
+   */
   return (
     <div className="properties-container">
       <div className="properties-common-header">
