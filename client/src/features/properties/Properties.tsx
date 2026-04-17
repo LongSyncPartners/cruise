@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
@@ -10,19 +10,51 @@ import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import { createFilterableHeader } from "../shared/createFilterableHeader";
 import {
   createPropertyColumns,
-  DEFAULT_PROPERTY_COLUMN_CONFIGS,
   type PropertyColumnConfig,
 } from "./propertyColumns";
-import {
-  PROPERTY_COLUMN_SOURCE_OPTIONS,
-  PROPERTY_COLUMN_SOURCES,
-} from "./data.dump";
 
 import "./index.style.css";
 import { useAppToast } from "@/providers/ToastProvider";
+import {
+  usePropertyColumnConfigs,
+  useSavePropertyColumnConfigs,
+} from "@/hooks/usePropertyColumnConfigs";
+import { usePropertyColumnSources } from "@/hooks/usePropertyColumnSources";
+
+function buildDefaultPropertyColumnConfigs(
+  columnSources: Array<{
+    field: string;
+    headerName: string;
+    visible?: boolean;
+  }>
+): PropertyColumnConfig[] {
+  return columnSources
+    .filter(({ field }) => !["managementStartDate", "managementEndDate"].includes(field))
+    .map(({ field, headerName, visible }) => ({
+      field,
+      headerName,
+      dataSource: field,
+      visible,
+    }));
+}
 
 export default function Properties() {
   const { isLoading, isFetching, refetch } = useProperties();
+
+  const {
+    data: loadedColumnSources = [],
+    isLoading: isColumnSourcesLoading,
+    isFetching: isColumnSourcesFetching,
+  } = usePropertyColumnSources();
+
+  const {
+    data: loadedColumnConfigs,
+    isLoading: isColumnConfigsLoading,
+    isFetching: isColumnConfigsFetching,
+  } = usePropertyColumnConfigs();
+
+  const { mutateAsync: saveColumnConfigs, isPending: isSavingColumnConfigs } =
+    useSavePropertyColumnConfigs();
 
   const resetGridView = usePropertiesGridStore((state) => state.resetGridView);
 
@@ -30,6 +62,7 @@ export default function Properties() {
   const sortModel = usePropertiesGridStore((state) => state.sortModel);
   const setFilterModel = usePropertiesGridStore((state) => state.setFilterModel);
   const setSortModel = usePropertiesGridStore((state) => state.setSortModel);
+
   const { showToast } = useAppToast();
 
   const renderFilterableHeader = useMemo(
@@ -44,9 +77,35 @@ export default function Properties() {
     [filterModel, setFilterModel, sortModel, setSortModel]
   );
 
-  const [columnConfigs, setColumnConfigs] = useState<PropertyColumnConfig[]>(
-    DEFAULT_PROPERTY_COLUMN_CONFIGS
+  const defaultColumnConfigs = useMemo(
+    () => buildDefaultPropertyColumnConfigs(loadedColumnSources),
+    [loadedColumnSources]
   );
+
+  const dataSourceOptions = useMemo(
+    () =>
+      loadedColumnSources
+        .filter(({ visible }) => visible === false)
+        .map(({ field, headerName, visible }) => ({
+          value: field,
+          label: headerName,
+          visible,
+        })),
+    [loadedColumnSources]
+  );
+
+  const [columnConfigs, setColumnConfigs] = useState<PropertyColumnConfig[]>([]);
+
+  useEffect(() => {
+    if (loadedColumnConfigs && loadedColumnConfigs.length > 0) {
+      setColumnConfigs(loadedColumnConfigs);
+      return;
+    }
+
+    if (loadedColumnSources.length > 0) {
+      setColumnConfigs(defaultColumnConfigs);
+    }
+  }, [loadedColumnConfigs, loadedColumnSources, defaultColumnConfigs]);
 
   const columns = useMemo(
     () =>
@@ -58,7 +117,7 @@ export default function Properties() {
   );
 
   const handleRefresh = useCallback(async () => {
-    await refetch();
+    await Promise.all([refetch()]);
     resetGridView();
   }, [refetch, resetGridView]);
 
@@ -83,14 +142,17 @@ export default function Properties() {
     (afterField: string, headerName: string, dataSource?: string) => {
       const normalizedHeaderName = headerName.trim();
       const selectedSource = dataSource?.trim();
-      const sourceDefinition = PROPERTY_COLUMN_SOURCES.find(
+
+      const sourceDefinition = loadedColumnSources.find(
         ({ field }) => field === selectedSource
       );
 
       const newColumn: PropertyColumnConfig = {
         field: `custom_${Date.now()}`,
-        headerName: normalizedHeaderName || sourceDefinition?.headerName || "新しい項目",
+        headerName:
+          normalizedHeaderName || sourceDefinition?.headerName || "新しい項目",
         dataSource: selectedSource || undefined,
+        visible: true,
       };
 
       setColumnConfigs((prev) => {
@@ -107,12 +169,21 @@ export default function Properties() {
         ];
       });
     },
-    []
+    [loadedColumnSources]
   );
 
-  const handleSave = useCallback(()=> {
-    showToast("この機能は開発中です。", "error");
-  }, []);
+  const handleSave = useCallback(async () => {
+    try {
+      await saveColumnConfigs(columnConfigs);
+      showToast("保存しました。", "success");
+    } catch (error) {
+      if (error instanceof Error) {
+        showToast("保存に失敗しました。", "error", error.message);
+      } else {
+        showToast("保存に失敗しました。", "error", `${error}`);
+      }
+    }
+  }, [columnConfigs, saveColumnConfigs, showToast]);
 
   return (
     <div className="properties-container">
@@ -130,7 +201,7 @@ export default function Properties() {
       <div className="properties-grid-contaniner">
         <PropertyDataGrid
           columns={columns}
-          dataSourceOptions={PROPERTY_COLUMN_SOURCE_OPTIONS}
+          dataSourceOptions={dataSourceOptions}
           onRenameHeader={handleRenameHeader}
           onDeleteHeader={handleDeleteHeader}
           onAddHeader={handleAddHeader}
@@ -138,7 +209,17 @@ export default function Properties() {
         />
       </div>
 
-      <LoadingDialog open={isLoading || isFetching} />
+      <LoadingDialog
+        open={
+          isLoading ||
+          isFetching ||
+          isColumnSourcesLoading ||
+          isColumnSourcesFetching ||
+          isColumnConfigsLoading ||
+          isColumnConfigsFetching ||
+          isSavingColumnConfigs
+        }
+      />
     </div>
   );
 }

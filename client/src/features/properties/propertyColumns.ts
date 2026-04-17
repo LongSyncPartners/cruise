@@ -10,15 +10,17 @@ import {
 
 import { singleSelectContainsOperator } from "../shared/createFilterableHeader";
 import { getPreviousMonthLabel } from "../shared/utils";
-import {
-  PROPERTY_COLUMN_SOURCES,
-  type PropertyColumnSource,
-} from "./data.dump";
 
 export type PropertyColumnConfig = {
   field: string;
   headerName: string;
   dataSource?: string;
+  visible?: boolean;
+};
+
+export type PropertyColumnSource = {
+  field: string;
+  headerName: string;
   visible?: boolean;
 };
 
@@ -135,57 +137,48 @@ const buildBaseColumnMap = (
   },
 });
 
-export const DEFAULT_PROPERTY_COLUMN_CONFIGS: PropertyColumnConfig[] =
-  PROPERTY_COLUMN_SOURCES.filter(
-    ({ field }) => !["managementStartDate", "managementEndDate"].includes(field)
-  ).map(({ field, headerName, visible }: PropertyColumnSource) => ({
-    field,
-    headerName,
-    dataSource: field,
-    visible,
-  }));
-
 export const createPropertyColumns = ({
   renderFilterableHeader,
-  columnConfigs = DEFAULT_PROPERTY_COLUMN_CONFIGS,
+  columnConfigs = [],
 }: Params): GridColDef<PropertyRow>[] => {
   const baseColumnMap = buildBaseColumnMap(renderFilterableHeader);
 
   return columnConfigs
-  .filter((config) => config.visible !== false)
-  .map((config) => {
-    const baseColumn = baseColumnMap[config.dataSource ?? config.field];
+    .filter((config) => config.visible !== false)
+    .map((config) => {
+      const baseColumn = baseColumnMap[config.dataSource ?? config.field];
 
-    if (baseColumn) {
+      if (baseColumn) {
+        return {
+          ...baseColumn,
+          field: config.field,
+          headerName:
+            config.dataSource === "processingStatus"
+              ? config.headerName ||
+                `処理ステータス（${getPreviousMonthLabel()}）`
+              : config.headerName,
+          valueGetter:
+            config.field !== (config.dataSource ?? config.field)
+              ? (_value, row) => {
+                  const dynamicRow = row as PropertyRow & Record<string, unknown>;
+                  return dynamicRow[config.dataSource ?? config.field] ?? "";
+                }
+              : baseColumn.valueGetter,
+        };
+      }
+
       return {
-        ...baseColumn,
         field: config.field,
-        headerName:
-          config.dataSource === "processingStatus"
-            ? config.headerName || `処理ステータス（${getPreviousMonthLabel()}）`
-            : config.headerName,
-        valueGetter:
-          config.field !== (config.dataSource ?? config.field)
-            ? (_value, row) => {
-                const dynamicRow = row as PropertyRow & Record<string, unknown>;
-                return dynamicRow[config.dataSource ?? config.field] ?? "";
-              }
-            : baseColumn.valueGetter,
+        headerName: config.headerName,
+        width: 160,
+        editable: false,
+        sortable: false,
+        filterable: false,
+        renderHeader: renderFilterableHeader,
+        valueGetter: (_value, row) => {
+          const dynamicRow = row as PropertyRow & Record<string, unknown>;
+          return dynamicRow[config.dataSource ?? config.field] ?? "";
+        },
       };
-    }
-
-    return {
-      field: config.field,
-      headerName: config.headerName,
-      width: 160,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderHeader: renderFilterableHeader,
-      valueGetter: (_value, row) => {
-        const dynamicRow = row as PropertyRow & Record<string, unknown>;
-        return dynamicRow[config.dataSource ?? config.field] ?? "";
-      },
-    };
-  });
+    });
 };
