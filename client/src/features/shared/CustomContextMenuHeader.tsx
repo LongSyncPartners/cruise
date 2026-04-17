@@ -14,6 +14,7 @@ import {
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import SaveIcon from '@mui/icons-material/Save';
 
 export type HeaderContextMenuState = {
   mouseX: number;
@@ -38,6 +39,7 @@ type CustomContextMenuHeaderProps = {
     headerName: string,
     dataSource?: string
   ) => void;
+  onSave? : () => void;
 };
 
 const DEFAULT_HEADER_OPTIONS: HeaderOption[] = [
@@ -52,6 +54,7 @@ export default function CustomContextMenuHeader({
   onRenameHeader,
   onDeleteHeader,
   onAddHeader,
+  onSave,
 }: CustomContextMenuHeaderProps) {
   const [renameValue, setRenameValue] = React.useState("");
   const [selectedHeaderValue, setSelectedHeaderValue] = React.useState("");
@@ -117,6 +120,13 @@ export default function CustomContextMenuHeader({
 
   const handleChangeHeaderValue = (event: SelectChangeEvent<string>) => {
     setSelectedHeaderValue(event.target.value);
+  };
+
+  const handleSave = () => {
+    if (contextMenu) {
+      onSave?.();
+    }
+    onClose();
   };
 
   return (
@@ -222,7 +232,15 @@ export default function CustomContextMenuHeader({
         <DeleteForeverIcon
           sx={{ fontSize: "150%", mr: 1, color: "#ff5959" }}
         />
-        ヘッダーを削除
+        カラムを削除
+      </MenuItem>
+      <Divider />
+
+      <MenuItem onClick={handleSave} sx={{ fontWeight: 400 }}>
+        <SaveIcon
+          sx={{ fontSize: "150%", mr: 1, color: "#467ABA" }}
+        />
+        全カラム状態を保存
       </MenuItem>
     </Menu>
   );

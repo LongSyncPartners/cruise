@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
   Drawer,
@@ -9,6 +9,8 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+import type { ReactNode } from "react";
 
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import AssessmentIcon from "@mui/icons-material/Assessment";
@@ -20,12 +22,67 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
-const drawerWidth = 200;
-const miniWidth = 70;
+const DRAWER_WIDTH = 200;
+const MINI_WIDTH = 70;
+
+type AppMenuItem = {
+  text: string;
+  to: string;
+  icon: ReactNode;
+};
+
+type MenuItemProps = {
+  open: boolean;
+  icon: ReactNode;
+  text: string;
+  to: string;
+  selected: boolean;
+};
 
 export default function Menu() {
   const [open, setOpen] = useState(true);
   const location = useLocation();
+
+  const menuItems = useMemo<AppMenuItem[]>(
+    () => [
+      {
+        text: "物件一覧",
+        to: "/properties",
+        icon: <ApartmentIcon />,
+      },
+      {
+        text: "収支報告書",
+        to: "/report/homework",
+        icon: <AssessmentIcon />,
+      },
+      {
+        text: "物件別収支一覧",
+        to: "/report/apartment",
+        icon: <TableChartIcon />,
+      },
+      {
+        text: "物件収支明細",
+        to: "/properties/finance",
+        icon: <ReceiptLongIcon />,
+      },
+      {
+        text: "支払いデータ",
+        to: "/payment",
+        icon: <PaymentsIcon />,
+      },
+      {
+        text: "マスタ",
+        to: "/master",
+        icon: <SettingsIcon />,
+      },
+      {
+        text: "ログアウト",
+        to: "/logout",
+        icon: <LogoutIcon />,
+      },
+    ],
+    []
+  );
 
   const toggleMenu = () => {
     setOpen((prev) => !prev);
@@ -36,13 +93,13 @@ export default function Menu() {
       variant="permanent"
       className="menu-container"
       sx={{
-        width: open ? drawerWidth : miniWidth,
+        width: open ? DRAWER_WIDTH : MINI_WIDTH,
         flexShrink: 0,
       }}
       slotProps={{
         paper: {
           sx: {
-            width: open ? drawerWidth : miniWidth,
+            width: open ? DRAWER_WIDTH : MINI_WIDTH,
             transition: "width 0.1s",
             overflowX: "hidden",
             boxSizing: "border-box",
@@ -61,24 +118,7 @@ export default function Menu() {
         <IconButton
           onClick={toggleMenu}
           disableRipple
-          sx={{
-            position: "absolute",
-            top: 12,
-            right: -20,
-            width: 42,
-            height: 42,
-            border: "2px solid #ccc",
-            backgroundColor: "#f7f7f7",
-            zIndex: 9999,
-            outline: "none",
-            "&:focus": {
-              outline: "none",
-              boxShadow: "none",
-            },
-            "&:focus-visible": {
-              outline: "none",
-            },
-          }}
+          sx={toggleButtonSx}
         >
           {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
@@ -91,61 +131,16 @@ export default function Menu() {
           }}
         >
           <List>
-            <MenuItem
-              open={open}
-              icon={<ApartmentIcon />}
-              text="物件一覧"
-              to="/properties"
-              selected={location.pathname === "/properties"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<AssessmentIcon />}
-              text="収支報告書"
-              to="/report/homework"
-              selected={location.pathname === "/report/homework"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<TableChartIcon />}
-              text="物件別収支一覧"
-              to="/report/apartment"
-              selected={location.pathname === "/report/apartment"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<ReceiptLongIcon />}
-              text="物件収支明細"
-              to="/properties/finance"
-              selected={location.pathname === "/properties/finance"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<PaymentsIcon />}
-              text="支払いデータ"
-              to="/payment"
-              selected={location.pathname === "/payment"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<SettingsIcon />}
-              text="マスタ"
-              to="/master"
-              selected={location.pathname === "/master"}
-            />
-
-            <MenuItem
-              open={open}
-              icon={<LogoutIcon />}
-              text="ログアウト"
-              to="/logout"
-              selected={location.pathname === "/logout"}
-            />
+            {menuItems.map((item) => (
+              <MenuItem
+                key={item.to}
+                open={open}
+                icon={item.icon}
+                text={item.text}
+                to={item.to}
+                selected={location.pathname === item.to}
+              />
+            ))}
           </List>
         </Box>
       </Box>
@@ -153,7 +148,7 @@ export default function Menu() {
   );
 }
 
-function MenuItem({ open, icon, text, to, selected }) {
+function MenuItem({ open, icon, text, to, selected }: MenuItemProps) {
   return (
     <ListItemButton
       component={RouterLink}
@@ -190,3 +185,22 @@ function MenuItem({ open, icon, text, to, selected }) {
     </ListItemButton>
   );
 }
+
+const toggleButtonSx: SxProps<Theme> = {
+  position: "absolute",
+  top: 12,
+  right: -20,
+  width: 42,
+  height: 42,
+  border: "2px solid #ccc",
+  backgroundColor: "#f7f7f7",
+  zIndex: 9999,
+  outline: "none",
+  "&:focus": {
+    outline: "none",
+    boxShadow: "none",
+  },
+  "&:focus-visible": {
+    outline: "none",
+  },
+};

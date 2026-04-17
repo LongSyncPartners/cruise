@@ -19,6 +19,7 @@ import {
 } from "./data.dump";
 
 import "./index.style.css";
+import { useAppToast } from "@/providers/ToastProvider";
 
 export default function Properties() {
   const { isLoading, isFetching, refetch } = useProperties();
@@ -29,6 +30,7 @@ export default function Properties() {
   const sortModel = usePropertiesGridStore((state) => state.sortModel);
   const setFilterModel = usePropertiesGridStore((state) => state.setFilterModel);
   const setSortModel = usePropertiesGridStore((state) => state.setSortModel);
+  const { showToast } = useAppToast();
 
   const renderFilterableHeader = useMemo(
     () =>
@@ -108,6 +110,10 @@ export default function Properties() {
     []
   );
 
+  const handleSave = useCallback(()=> {
+    showToast("この機能は開発中です。", "error");
+  }, []);
+
   return (
     <div className="properties-container">
       <div className="properties-common-header">
@@ -128,6 +134,7 @@ export default function Properties() {
           onRenameHeader={handleRenameHeader}
           onDeleteHeader={handleDeleteHeader}
           onAddHeader={handleAddHeader}
+          onSave={handleSave}
         />
       </div>
 

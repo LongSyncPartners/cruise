@@ -28,6 +28,7 @@ import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseC
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";
+import { useAppToast } from "@/providers/ToastProvider";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -101,21 +102,6 @@ export default function PropertyIncomeExpenseDetail() {
   const { validateRows } = usePropertyIncomeExpenseValidation();
 
   /**
-   * Toast state for success / error notifications.
-   */
-  const [toast, setToast] = useState<{
-    open: boolean;
-    message: string;
-    description?: string;
-    severity: AlertColor;
-  }>({
-    open: false,
-    message: "",
-    description: "",
-    severity: "success",
-  });
-
-  /**
    * Selected property code from global store.
    * This is usually set from the property list screen.
    */
@@ -164,13 +150,7 @@ export default function PropertyIncomeExpenseDetail() {
   /**
    * Open toast message.
    */
-  const showToast = (
-    message: string,
-    severity: AlertColor = "success",
-    description?: string
-  ) => {
-    setToast({ open: true, message, description, severity });
-  };
+  const { showToast } = useAppToast();
 
   const { data: groups = [] } = usePropertyIncomeExpenseGroups();
   
@@ -445,15 +425,6 @@ export default function PropertyIncomeExpenseDetail() {
 
       {/* Full-screen loading dialog */}
       <LoadingDialog open={isScreenLoading} />
-
-      {/* Common toast notification */}
-      <CommonToast
-        open={toast.open}
-        message={toast.message}
-        description={toast.description}
-        severity={toast.severity}
-        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
-      />
     </div>
   );
 }

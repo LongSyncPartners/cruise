@@ -37,6 +37,7 @@ type PropertyDataGridProps = {
     headerName: string,
     dataSource?: string
   ) => void;
+  onSave?: () => void;
 };
 
 export default function PropertyDataGrid({
@@ -46,6 +47,7 @@ export default function PropertyDataGrid({
   onRenameHeader,
   onDeleteHeader,
   onAddHeader,
+  onSave,
 }: PropertyDataGridProps) {
   const [openProcessingStatusDialog, setOpenProcessingStatusDialog] =
     useState(false);
@@ -208,6 +210,7 @@ export default function PropertyDataGrid({
         onRenameHeader={onRenameHeader}
         onDeleteHeader={onDeleteHeader}
         onAddHeader={onAddHeader}
+        onSave={onSave}
       />
 
       <ProcessingStatusStateDialog
