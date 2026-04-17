@@ -9,9 +9,9 @@ import {
 } from "@mui/x-data-grid";
 
 import type { PropertyRow } from "./types";
-
-import { dataGridCommonSx } from "../shared/dataGridCommonSx";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
+import { useProcessingStatusStateRows } from "@/hooks/useProcessingStatusStateRows";
+import { dataGridCommonSx } from "../shared/dataGridCommonSx";
 import PropertiesPaginationFooter from "./PropertiesPaginationFooter";
 import CustomContextMenuHeader, {
   type HeaderContextMenuState,
@@ -166,6 +166,11 @@ export default function PropertyDataGrid({
     setHeaderContextMenu(null);
   }, []);
 
+  const {
+    data: processingStatusRows = [],
+  } = useProcessingStatusStateRows();
+
+
   return (
     <Box sx={{ width: "auto", height }}>
       <DataGrid
@@ -217,6 +222,7 @@ export default function PropertyDataGrid({
         open={openProcessingStatusDialog}
         onClose={() => setOpenProcessingStatusDialog(false)}
         propertyCode={dialogPropertyCode ?? undefined}
+        rows={processingStatusRows}
       />
     </Box>
   );

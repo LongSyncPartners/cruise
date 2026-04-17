@@ -12,10 +12,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import {
-  type ProcessingStatusStateRow,
-} from "./types";
-import { PROCESSING_STATUS_STATE_ROWS } from "./property";
+import { type ProcessingStatusStateRow } from "./types";
 
 type Props = {
   open: boolean;
@@ -28,7 +25,7 @@ export default function ProcessingStatusStateDialog({
   open,
   onClose,
   propertyCode = "",
-  rows = PROCESSING_STATUS_STATE_ROWS,
+  rows = [],
 }: Props) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -53,6 +50,14 @@ export default function ProcessingStatusStateDialog({
                   <TableCell>{row.state}</TableCell>
                 </TableRow>
               ))}
+
+              {rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    データがありません。
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

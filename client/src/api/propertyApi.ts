@@ -1,12 +1,27 @@
-import { paggingdata, PROPERTY_COLUMN_SOURCES } from "@/features/properties/data.dump";
+import {
+  paggingdata,
+  PROPERTY_COLUMN_SOURCES,
+  MANAGEMENT_TYPE_OPTIONS,
+  PROCESSING_STATUS_OPTIONS,
+  PROPERTY_STATUS_OPTIONS,
+  PROPERTY_TYPE_OPTIONS,
+  PROCESSING_STATUS_STATE_ROWS,
+} from "@/features/properties/data.dump";
 import { apiClient } from "./client";
 import type {
   PropertyColumnConfig,
   PropertyColumnSource,
 } from "@/features/properties/propertyColumns";
+import { ProcessingStatusStateRow } from "@/features/properties/types";
+
+export type PropertyMasterData = {
+  managementTypeOptions: typeof MANAGEMENT_TYPE_OPTIONS;
+  propertyTypeOptions: typeof PROPERTY_TYPE_OPTIONS;
+  propertyStatusOptions: typeof PROPERTY_STATUS_OPTIONS;
+  processingStatusOptions: typeof PROCESSING_STATUS_OPTIONS;
+};
 
 export const fetchProperties = async () => {
-  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
   await sleep(500);
   return paggingdata;
 
@@ -14,8 +29,20 @@ export const fetchProperties = async () => {
   return res.data;
 };
 
+export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => {
+  await sleep(300);
+  return {
+    managementTypeOptions: MANAGEMENT_TYPE_OPTIONS,
+    propertyTypeOptions: PROPERTY_TYPE_OPTIONS,
+    propertyStatusOptions: PROPERTY_STATUS_OPTIONS,
+    processingStatusOptions: PROCESSING_STATUS_OPTIONS,
+  };
+
+  const res = await apiClient.get("/properties/master-data");
+  return res.data;
+};
+
 export const fetchPropertyColumnSources = async (): Promise<PropertyColumnSource[]> => {
-  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
   await sleep(300);
   return PROPERTY_COLUMN_SOURCES;
 
@@ -24,7 +51,6 @@ export const fetchPropertyColumnSources = async (): Promise<PropertyColumnSource
 };
 
 export const fetchPropertyColumnConfigs = async (): Promise<PropertyColumnConfig[]> => {
-  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
   await sleep(300);
   return PROPERTY_COLUMN_SOURCES.filter(
     ({ field }) => !["managementStartDate", "managementEndDate"].includes(field)
@@ -42,12 +68,23 @@ export const fetchPropertyColumnConfigs = async (): Promise<PropertyColumnConfig
 export const savePropertyColumnConfigs = async (
   columnConfigs: PropertyColumnConfig[]
 ): Promise<PropertyColumnConfig[]> => {
-  // stub dataでエラーを投げているため、実装完了後はこの行を削除してください。
   await sleep(800);
   throw new Error("この機能は開発中です。");
 
   const res = await apiClient.put("/properties/column-configs", {
     columnConfigs,
+  });
+  return res.data;
+};
+
+export const fetchProcessingStatusStateRows = async (
+  propertyCode?: string
+): Promise<ProcessingStatusStateRow[]> => {
+  await sleep(300);
+  return PROCESSING_STATUS_STATE_ROWS;
+
+  const res = await apiClient.get("/properties/processing-status-state", {
+    params: { propertyCode },
   });
   return res.data;
 };

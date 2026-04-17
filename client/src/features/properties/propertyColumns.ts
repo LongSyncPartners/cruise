@@ -1,13 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
 import type { PropertyRow } from "./types";
-
-import {
-  MANAGEMENT_TYPE_OPTIONS,
-  PROCESSING_STATUS_OPTIONS,
-  PROPERTY_STATUS_OPTIONS,
-  PROPERTY_TYPE_OPTIONS,
-} from "./property";
-
 import { singleSelectContainsOperator } from "../shared/createFilterableHeader";
 import { getPreviousMonthLabel } from "../shared/utils";
 
@@ -24,14 +16,27 @@ export type PropertyColumnSource = {
   visible?: boolean;
 };
 
+type OptionItem = {
+  value: string;
+  label: string;
+};
+
 type Params = {
   renderFilterableHeader: GridColDef["renderHeader"];
   columnConfigs?: PropertyColumnConfig[];
+  managementTypeOptions: OptionItem[];
+  propertyTypeOptions: OptionItem[];
+  propertyStatusOptions: OptionItem[];
+  processingStatusOptions: OptionItem[];
 };
 
-const buildBaseColumnMap = (
-  renderFilterableHeader: GridColDef["renderHeader"]
-): Record<string, GridColDef<PropertyRow>> => ({
+const buildBaseColumnMap = ({
+  renderFilterableHeader,
+  managementTypeOptions,
+  propertyTypeOptions,
+  propertyStatusOptions,
+  processingStatusOptions,
+}: Omit<Params, "columnConfigs">): Record<string, GridColDef<PropertyRow>> => ({
   propertyCode: {
     field: "propertyCode",
     headerName: "物件番号",
@@ -49,7 +54,7 @@ const buildBaseColumnMap = (
     sortable: false,
     filterable: false,
     type: "singleSelect",
-    valueOptions: MANAGEMENT_TYPE_OPTIONS,
+    valueOptions: managementTypeOptions,
     filterOperators: [singleSelectContainsOperator],
     renderHeader: renderFilterableHeader,
   },
@@ -61,7 +66,7 @@ const buildBaseColumnMap = (
     sortable: false,
     filterable: false,
     type: "singleSelect",
-    valueOptions: PROPERTY_TYPE_OPTIONS,
+    valueOptions: propertyTypeOptions,
     filterOperators: [singleSelectContainsOperator],
     renderHeader: renderFilterableHeader,
   },
@@ -109,7 +114,7 @@ const buildBaseColumnMap = (
     sortable: false,
     filterable: false,
     type: "singleSelect",
-    valueOptions: PROPERTY_STATUS_OPTIONS,
+    valueOptions: propertyStatusOptions,
     filterOperators: [singleSelectContainsOperator],
     renderHeader: renderFilterableHeader,
   },
@@ -131,7 +136,7 @@ const buildBaseColumnMap = (
     sortable: false,
     filterable: false,
     type: "singleSelect",
-    valueOptions: PROCESSING_STATUS_OPTIONS,
+    valueOptions: processingStatusOptions,
     filterOperators: [singleSelectContainsOperator],
     renderHeader: renderFilterableHeader,
   },
@@ -140,8 +145,18 @@ const buildBaseColumnMap = (
 export const createPropertyColumns = ({
   renderFilterableHeader,
   columnConfigs = [],
+  managementTypeOptions,
+  propertyTypeOptions,
+  propertyStatusOptions,
+  processingStatusOptions,
 }: Params): GridColDef<PropertyRow>[] => {
-  const baseColumnMap = buildBaseColumnMap(renderFilterableHeader);
+  const baseColumnMap = buildBaseColumnMap({
+    renderFilterableHeader,
+    managementTypeOptions,
+    propertyTypeOptions,
+    propertyStatusOptions,
+    processingStatusOptions,
+  });
 
   return columnConfigs
     .filter((config) => config.visible !== false)
@@ -154,8 +169,7 @@ export const createPropertyColumns = ({
           field: config.field,
           headerName:
             config.dataSource === "processingStatus"
-              ? config.headerName ||
-                `処理ステータス（${getPreviousMonthLabel()}）`
+              ? config.headerName || `処理ステータス（${getPreviousMonthLabel()}）`
               : config.headerName,
           valueGetter:
             config.field !== (config.dataSource ?? config.field)

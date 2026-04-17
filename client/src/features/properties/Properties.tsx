@@ -20,6 +20,7 @@ import {
   useSavePropertyColumnConfigs,
 } from "@/hooks/usePropertyColumnConfigs";
 import { usePropertyColumnSources } from "@/hooks/usePropertyColumnSources";
+import { usePropertyMasterData } from "@/hooks/usePropertyMasterData";
 
 function buildDefaultPropertyColumnConfigs(
   columnSources: Array<{
@@ -40,6 +41,12 @@ function buildDefaultPropertyColumnConfigs(
 
 export default function Properties() {
   const { isLoading, isFetching, refetch } = useProperties();
+
+  const {
+    data: masterData,
+    isLoading: isMasterDataLoading,
+    isFetching: isMasterDataFetching,
+  } = usePropertyMasterData();
 
   const {
     data: loadedColumnSources = [],
@@ -112,8 +119,12 @@ export default function Properties() {
       createPropertyColumns({
         renderFilterableHeader,
         columnConfigs,
+        managementTypeOptions: masterData?.managementTypeOptions ?? [],
+        propertyTypeOptions: masterData?.propertyTypeOptions ?? [],
+        propertyStatusOptions: masterData?.propertyStatusOptions ?? [],
+        processingStatusOptions: masterData?.processingStatusOptions ?? [],
       }),
-    [columnConfigs, renderFilterableHeader]
+    [columnConfigs, renderFilterableHeader, masterData]
   );
 
   const handleRefresh = useCallback(async () => {
@@ -217,7 +228,11 @@ export default function Properties() {
           isColumnSourcesFetching ||
           isColumnConfigsLoading ||
           isColumnConfigsFetching ||
-          isSavingColumnConfigs
+          isSavingColumnConfigs ||
+          isMasterDataLoading ||
+          isMasterDataFetching ||
+          isColumnSourcesLoading ||
+          isColumnSourcesFetching
         }
       />
     </div>
