@@ -75,7 +75,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => (
         <YearMonthCell
           {...params}
@@ -91,7 +90,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} />,
     }),
     withContextMenu({
@@ -103,7 +101,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       headerClassName: "line-separator align-right-header",
       cellClassName: "line-separator",
-      renderHeader: renderEditableHeader,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} />,
@@ -116,7 +113,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <DateCell {...params} />,
       preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderEditCell: (params) => <DateEditCell {...params} required />,
@@ -128,7 +124,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       preProcessEditCellProps: createTextCellValidator({
         maxLength: 40,
         required: true,
@@ -144,7 +139,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       preProcessEditCellProps: createTextCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} required />,
@@ -157,7 +151,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} />,
@@ -171,7 +164,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} />,
@@ -185,7 +177,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} />,
     }),
     withContextMenu({
@@ -196,7 +187,6 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       preProcessEditCellProps: createTextCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} required />,

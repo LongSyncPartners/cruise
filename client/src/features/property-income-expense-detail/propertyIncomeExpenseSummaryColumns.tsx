@@ -22,6 +22,7 @@ const createEditableHeader =
 export const createPropertyIncomeExpenseSummaryColumns = ({
   onRenameHeader,
 }: CreatePropertyIncomeExpenseSummaryColumnsParams = {}): GridColDef<PropertyIncomeExpenseSummaryRow>[] => {
+  
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
   return [
@@ -33,7 +34,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
     },
     {
       field: "expectedAmountSummary",
@@ -44,7 +44,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -56,7 +55,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -68,7 +66,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => (
         <CurrencyCell
           {...params}
@@ -86,7 +83,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -98,7 +94,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -110,7 +105,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => (
         <CurrencyCell
           {...params}
@@ -128,7 +122,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -140,7 +133,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => <CurrencyCell {...params} showZero={true} />,
     },
     {
@@ -151,7 +143,6 @@ export const createPropertyIncomeExpenseSummaryColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderHeader: renderEditableHeader,
       renderCell: (params) => (
         <CurrencyCell
           {...params}

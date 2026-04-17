@@ -197,7 +197,6 @@ export default function PropertyDataGrid({
         processRowUpdate={handleProcessRowUpdate}
         onRowClick={handleRowClick}
         onRowDoubleClick={handleRowDoubleClick}
-        onColumnHeaderContextMenu={handleHeaderContextMenu}
         slots={{
           footer: () => (
             <PropertiesPaginationFooter
