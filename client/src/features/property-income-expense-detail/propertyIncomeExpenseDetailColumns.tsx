@@ -187,9 +187,9 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      preProcessEditCellProps: createTextCellValidator({ required: true }),
+      preProcessEditCellProps: createTextCellValidator({ }),
       renderCell: (params) => <MultilineCell {...params} />,
-      renderEditCell: (params) => <MultilineEditCell {...params} required />,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     }),
   ];
 };

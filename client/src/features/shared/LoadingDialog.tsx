@@ -1,40 +1,19 @@
-import * as React from "react";
-import { Dialog, DialogContent, CircularProgress, Box } from "@mui/material";
+import { Backdrop, CircularProgress } from "@mui/material";
 
-type Props = {
+type LoadingDialogProps = {
   open: boolean;
 };
 
-export default function LoadingDialog({ open }: Props) {
+export default function LoadingDialog({ open }: LoadingDialogProps) {
   return (
-    <Dialog
+    <Backdrop
       open={open}
-      PaperProps={{
-        sx: {
-          backgroundColor: "transparent",
-          boxShadow: "none",
-          overflow: "hidden",
-        },
-      }}
+      sx={(theme) => ({
+        zIndex: theme.zIndex.modal + 1,
+        color: "#fff",
+      })}
     >
-      <DialogContent
-        sx={{
-          p: 0,
-          backgroundColor: "transparent",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minWidth: 80,
-            minHeight: 80,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      </DialogContent>
-    </Dialog>
+      <CircularProgress color="inherit" />
+    </Backdrop>
   );
 }

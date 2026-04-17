@@ -263,13 +263,13 @@ export default function PropertyIncomeExpenseDetail() {
   const handleUpdate = async () => {
     if (!activePropertyCode) return;
 
-    /*
+    
     const validationResult = validateRows(editedRows);
     if (!validationResult.isValid) {
+      console.log(validationResult);
       showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
       return;
     }
-    */
 
     try {
       setLoading(true);

@@ -71,13 +71,6 @@ export const usePropertyIncomeExpenseValidation = () => {
       );
       if (!descriptionRequired.isValid) return descriptionRequired;
 
-      // Note
-      const noteRequired = validateRequired(
-        row.note,
-        "備考"
-      );
-      if (!noteRequired.isValid) return noteRequired;
-
       // Currency fields
       if (!isValidNumber(row.managementCompanyAmount)) {
         return {
@@ -115,7 +108,7 @@ export const usePropertyIncomeExpenseValidation = () => {
         if (!result.isValid) {
           return {
             isValid: false,
-            errorMessage: "入力内容に誤りがあります。",
+            errorMessage: result.errorMessage,
           };
         }
       }
