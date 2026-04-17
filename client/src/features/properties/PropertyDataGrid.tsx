@@ -8,7 +8,7 @@ import {
   type GridRowSelectionModel,
 } from "@mui/x-data-grid";
 
-import type { PropertyRow } from "./types";
+import type { PropertyDataGridProps, PropertyRow } from "./types";
 import ProcessingStatusStateDialog from "./ProcessingStatusDialog";
 import { useProcessingStatusStateRows } from "@/hooks/useProcessingStatusStateRows";
 import { dataGridCommonSx } from "../shared/dataGridCommonSx";
@@ -20,25 +20,6 @@ import CustomContextMenuHeader, {
 import { usePropertySelectionStore } from "../../stores/propertySelectionStore";
 import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import { useProperties } from "@/hooks/useProperties";
-
-type HeaderOption = {
-  value: string;
-  label: string;
-};
-
-type PropertyDataGridProps = {
-  height?: number;
-  columns: GridColDef<PropertyRow>[];
-  dataSourceOptions?: HeaderOption[];
-  onRenameHeader?: (field: string, headerName: string) => void;
-  onDeleteHeader?: (field: string) => void;
-  onAddHeader?: (
-    afterField: string,
-    headerName: string,
-    dataSource?: string
-  ) => void;
-  onSave?: () => void;
-};
 
 export default function PropertyDataGrid({
   height = 700,

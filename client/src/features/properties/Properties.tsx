@@ -10,7 +10,6 @@ import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import { createFilterableHeader } from "../shared/createFilterableHeader";
 import {
   createPropertyColumns,
-  type PropertyColumnConfig,
 } from "./propertyColumns";
 
 import "./index.style.css";
@@ -21,6 +20,7 @@ import {
 } from "@/hooks/usePropertyColumnConfigs";
 import { usePropertyColumnSources } from "@/hooks/usePropertyColumnSources";
 import { usePropertyMasterData } from "@/hooks/usePropertyMasterData";
+import { PropertyColumnConfig } from "./types";
 
 /**
  * =========================

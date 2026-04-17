@@ -8,11 +8,7 @@ import {
   PROCESSING_STATUS_STATE_ROWS,
 } from "@/features/properties/data.dump";
 import { apiClient } from "./client";
-import type {
-  PropertyColumnConfig,
-  PropertyColumnSource,
-} from "@/features/properties/propertyColumns";
-import { ProcessingStatusStateRow } from "@/features/properties/types";
+import { ProcessingStatusStateRow, PropertyColumnConfig, PropertyColumnSource } from "@/features/properties/types";
 
 export type PropertyMasterData = {
   managementTypeOptions: typeof MANAGEMENT_TYPE_OPTIONS;

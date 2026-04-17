@@ -12,7 +12,7 @@ import {
   type PropertyIncomeExpenseDetailRow,
   type PropertyTabSummary,
 } from "./types";
-import PropertyHeader from "./PropertyHeader";
+
 import PropertyIncomeExpenseDetailGrid from "./PropertyIncomeExpenseDetailGrid";
 import PropertyIncomeExpenseTabs from "./PropertyIncomeExpenseTabs";
 
@@ -29,6 +29,7 @@ import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpense
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";
 import { useAppToast } from "@/providers/ToastProvider";
+import { PropertyHeader } from "./PropertyIncomeExpenseDetailHeader";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.

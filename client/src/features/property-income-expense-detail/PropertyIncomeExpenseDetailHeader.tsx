@@ -8,7 +8,7 @@ const Item = ({ label, value }: { label: string; value?: string }) => (
   </Box>
 );
 
-const PropertyHeader = ({
+export const PropertyHeader = ({
   propertyCode,
   roomCode,
   managementType,
@@ -38,5 +38,3 @@ const PropertyHeader = ({
     </Box>
   );
 };
-
-export default PropertyHeader;

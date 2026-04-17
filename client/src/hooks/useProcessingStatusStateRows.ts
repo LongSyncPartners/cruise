@@ -1,18 +1,13 @@
 import { fetchProcessingStatusStateRows } from "@/api/propertyApi";
+import { propertyKeys } from "@/queries/propertyKeys";
 import { useQuery } from "@tanstack/react-query";
-
-export const processingStatusStateKeys = {
-  all: ["processingStatusState"] as const,
-  detail: (propertyCode?: string) =>
-    [...processingStatusStateKeys.all, propertyCode ?? ""] as const,
-};
 
 export function useProcessingStatusStateRows(
   propertyCode?: string,
   enabled = true
 ) {
   return useQuery({
-    queryKey: processingStatusStateKeys.detail(propertyCode),
+    queryKey: propertyKeys.processingStatusState(propertyCode),
     queryFn: () => fetchProcessingStatusStateRows(propertyCode),
     enabled,
   });

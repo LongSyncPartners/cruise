@@ -1,20 +1,7 @@
 import type { GridColDef } from "@mui/x-data-grid";
-import type { PropertyRow } from "./types";
+import type { PropertyColumnConfig, PropertyRow } from "./types";
 import { singleSelectContainsOperator } from "../shared/createFilterableHeader";
 import { getPreviousMonthLabel } from "../shared/utils";
-
-export type PropertyColumnConfig = {
-  field: string;
-  headerName: string;
-  dataSource?: string;
-  visible?: boolean;
-};
-
-export type PropertyColumnSource = {
-  field: string;
-  headerName: string;
-  visible?: boolean;
-};
 
 type OptionItem = {
   value: string;
