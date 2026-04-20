@@ -53,3 +53,10 @@ export type PropertyColumnSource = {
   headerName: string;
   visible?: boolean;
 };
+
+export const PROPERTY_MASTER_TYPES = [
+  "managementType",
+  "processingStatus",
+  "propertyStatus",
+  "propertyType",
+] as const;

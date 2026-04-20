@@ -8,7 +8,7 @@ import {
   PROCESSING_STATUS_STATE_ROWS,
 } from "@/features/properties/data.dump";
 import { apiClient } from "./client";
-import { ProcessingStatusStateRow, PropertyColumnConfig, PropertyColumnSource } from "@/features/properties/types";
+import { ProcessingStatusStateRow, PROPERTY_MASTER_TYPES, PropertyColumnConfig, PropertyColumnSource } from "@/features/properties/types";
 
 export type PropertyMasterData = {
   managementTypeOptions: typeof MANAGEMENT_TYPE_OPTIONS;
@@ -18,14 +18,18 @@ export type PropertyMasterData = {
 };
 
 export const fetchProperties = async () => {
+    /** 
   await sleep(500);
   return paggingdata;
+ */
 
   const res = await apiClient.get("/properties");
   return res.data;
 };
 
 export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => {
+
+  /** 
   await sleep(300);
   return {
     managementTypeOptions: MANAGEMENT_TYPE_OPTIONS,
@@ -33,9 +37,21 @@ export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => 
     propertyStatusOptions: PROPERTY_STATUS_OPTIONS,
     processingStatusOptions: PROCESSING_STATUS_OPTIONS,
   };
+ */
 
-  const res = await apiClient.get("/properties/master-data");
-  return res.data;
+  const res = await apiClient.get("/master-data", {
+    params: {
+      types: PROPERTY_MASTER_TYPES.join(","),
+    },
+  });
+
+  const data = res.data;
+  return {
+    managementTypeOptions: data.managementType ?? [],
+    propertyTypeOptions: data.propertyType ?? [],
+    propertyStatusOptions: data.propertyStatus ?? [],
+    processingStatusOptions: data.processingStatus ?? [],
+  };
 };
 
 export const fetchPropertyColumnSources = async (): Promise<PropertyColumnSource[]> => {

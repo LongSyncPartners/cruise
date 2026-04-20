@@ -3,19 +3,19 @@ import { ProcessingStatusStateRow, type PropertyRow } from "./types";
 import { addDays, format } from "date-fns";
 
 export const MANAGEMENT_TYPE_OPTIONS = [
-  { value: "一般管理", label: "一般管理" },
-  { value: "サブリース", label: "サブリース" },
+  { value: "GENERAL", label: "一般管理" },
+  { value: "SUBLEASE", label: "サブリース" },
 ];
 
 export const PROPERTY_TYPE_OPTIONS = [
-  { value: "アパート", label: "アパート" },
-  { value: "マンション", label: "マンション" },
-  { value: "戸建て", label: "戸建て" },
+  { value: "APART", label: "アパート" },
+  { value: "MANSION", label: "マンション" },
+  { value: "HOUSE", label: "戸建て" },
 ];
 
 export const PROPERTY_STATUS_OPTIONS = [
-  { value: "管理中", label: "管理中" },
-  { value: "終了", label: "終了" },
+  { value: "ACTIVE", label: "管理中" },
+  { value: "END", label: "終了" },
 ];
 
 export type ProcessingStatus =
