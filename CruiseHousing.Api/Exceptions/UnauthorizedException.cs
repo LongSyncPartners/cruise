@@ -2,9 +2,9 @@
 
 namespace CruiseHousing.Api.Exceptions;
 
-public class UnauthorizedAppException : AppException
+public class UnauthorizedException : AppException
 {
-    public UnauthorizedAppException(
+    public UnauthorizedException(
         string message = "Authentication is required.",
         string errorCode = "UNAUTHORIZED")
         : base(message, (int)HttpStatusCode.Unauthorized, errorCode)
