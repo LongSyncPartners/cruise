@@ -8,4 +8,13 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://localhost:7089",
+        changeOrigin: true,
+        secure: false, // self-signed cert
+      },
+    },
+  },
 });
