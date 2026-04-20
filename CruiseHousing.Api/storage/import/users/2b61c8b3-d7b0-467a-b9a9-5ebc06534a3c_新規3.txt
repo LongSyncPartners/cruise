@@ -1,0 +1,83 @@
+顧客属性変動係数
+変動係数
+世帯人数
+利用機器
+居住形態
+開始適用日
+
+直近配送ID, 直近メーター検針ID
+
+dung luong binh
+
+
+công việc hôm nay
+ - dự án gascom -> liên lạc từ sugiura tạm dừng do chưa confirm nghiệp vụ được với khách hàng
+ - dự án cruise -> trong tuần này murase tạo tài liệu -> có lẽ tuần sau sẽ giải thích 
+ - công nghệ : react, xem lại source code đã theo clear architect, soild chưa
+               java -> có dùng ko ?
+			        -> dùng ở dự án cruise
+					
+ - tùy theo mục đích sử dụng thì có thể cân nhắc giữa dùng thẻ html và thể material
+ box, stack, grid, container
+ 
+ khi thết kế một trang web
+  - đầu tiên lên layout chung, có header, có menu, có conten body, có content footer
+  như vậy nên dùng 
+  
+	hiện trạng bây giờ dùng function, common component -> return ra các html như ý muốn
+	
+	-> ngoài return, xử lý logic thì còn props, quản lý khi nào thì load lại các item
+	
+	props là cách truyền parameter trong react, có thể gọi ra như props.carinfo -> không cần khai báo property
+	
+	5 10 20  năm nữa sẽ ra sao
+	buồn ngủ vãi, mắt cứ díp vài nhau
+			
+	hợp đồng : nhà thường, nhà thuê lại, chà chung cư
+	bất động sản , chủ nhà, chủ tài khoản
+	thu nhập, công ty quản lý bất động sản, chi tiêu 
+		thu nhập : tiền cho thuê nhà, tiền chủ nhà ký gửi, tiền tiền phí dịch vụ
+		chi tiêu : tiền điện, tiền nước, tiêng net, tiền phí dịch vụ công cộng, tiền sửa chữa, tiền bảo trì, tiền thay mới
+		
+		IIS（ASP.NET Webアプリ）-> 処理依頼を MySQLのキューテーブルに登録
+		
+		như vậy phần batch của 
+về hệ số sử dụng ga phụ thuộc vào nhiệt độ, ngày lễ ngày thường, biến động số người , biến động thiết bị .
+ Nhưng chỉ có dữ liệu sử dụng theo tháng và nhiệt độ quá khứ, số ngày lễ trong tháng.
+ vậy thuật toán dự đoán nên thế nào
+	
+	có nhiều thứ linh tinh quá, đầu óc nhơ đơ
+	-> không ổn định được, thì làm ở đâu đây
+	-> cần cân nhác xem bây giờ cần làm gì
+	-> tình hình của mình trong suy nghĩ của ITPL ra sao
+	-> trong suy nghi cua gia dinh ra sao
+	
+	nếu ko làm gì thì ko có gì để giao
+	vậy mày nghĩ được gì về dự án rồi
+	có mấy màn hình
+	màn hình có loại item nào
+	luồng xử lý của hệ thống như thế nào
+	nếu làm LPC thì về không thể nhớ kiến thức IT, mà giờ IT cập nhật nhanh chóng -> tụt hậu -> chỉ có thể đảm nhận công việc cũ
+	ke hoach hom nay la ngoi choi à
+	cái này ko thể nói, nếu bị hỏi hôm qua và nay làm gì thì đối sách ra sao 
+	 - suy nghĩ về hệ thống của server dev -> về queue mysql -> về windown service -> cân nhắc tới batch -> đưa ra mô hình phát triển -> giống rabbitMQ
+	 - về hệ thống cruise, xem lại cái yêu cầu, cân nhắc màn hình
+			- màn hình inputdata
+			- màn hình chỉnh sửa data
+			- màn hình report
+			- có cần batch ko
+			- xử lý inreport bằng react
+			- nghĩ về giao diện của hệ thống
+			
+	
+			các loại giao diện
+				-giao diện về tạo report
+				giao diện về kéo thả file
+				ngay cả hành động chọn file update thì cũng có thể design theo các cách dưới
+				 - thong dụng : như dang làm
+				 - hien dai hơn : nhu midori
+				 - cai thien giao dien 
+				 VD: chuc nang import data -> midori lam kha tot
+	chu y toi màu sắc -> nếu ko thế tưởng tượng cụ thể -> tưởng tưởng đại thể -> sau đó trên UI thay đổi màu sắc
+	
+	

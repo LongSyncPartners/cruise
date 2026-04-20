@@ -1,0 +1,9 @@
+開発サーバー
+
+IP : 162.43.129.16		
+User:	Administrator
+Pass:	Itpl2026@
+
+MySQLは入っています。
+User	Root
+PW	MySql2026@
