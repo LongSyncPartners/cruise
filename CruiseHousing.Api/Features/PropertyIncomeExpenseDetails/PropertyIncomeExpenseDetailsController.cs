@@ -1,8 +1,7 @@
-﻿using CruiseHousing.Api.Dtos.PropertyIncomeExpenseDetails;
-using CruiseHousing.Api.Services.Interfaces;
+﻿using CruiseHousing.Api.Features.PropertyIncomeExpenseDetails.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CruiseHousing.Api.Controllers;
+namespace CruiseHousing.Api.Features.PropertyIncomeExpenseDetails;
 
 [ApiController]
 [Route("api/property-income-expense-details")]

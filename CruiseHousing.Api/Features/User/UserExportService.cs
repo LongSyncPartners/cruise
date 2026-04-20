@@ -8,7 +8,7 @@ namespace CruiseHousing.Api.Features.User;
 /// <summary>
 /// ユーザーCSVエクスポートサービス実装
 /// </summary>
-public class UserExportService
+public class UserExportService: IUserExportService
 {
     private readonly UserRepository _userRepository;
     private readonly ILogger<UserExportService> _logger;

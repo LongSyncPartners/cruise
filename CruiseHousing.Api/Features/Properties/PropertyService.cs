@@ -1,9 +1,8 @@
-﻿using CruiseHousing.Api.Dtos.Properties;
-using CruiseHousing.Api.Entities;
+﻿using CruiseHousing.Api.Entities;
+using CruiseHousing.Api.Features.Properties.DTOs;
 using CruiseHousing.Api.Repositories.Interfaces;
-using CruiseHousing.Api.Services.Interfaces;
 
-namespace CruiseHousing.Api.Services.Implementations;
+namespace CruiseHousing.Api.Features.Properties;
 
 public class PropertyService : IPropertyService
 {

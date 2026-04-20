@@ -1,5 +1,5 @@
-﻿using CruiseHousing.Api.Features.User.DTOs;
-using CruiseHousing.Api.Models;
+﻿using CruiseHousing.Api.Entities;
+using CruiseHousing.Api.Features.User.DTOs;
 
 namespace CruiseHousing.Api.Mappers
 {

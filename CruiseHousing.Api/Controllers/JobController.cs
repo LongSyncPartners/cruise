@@ -1,6 +1,6 @@
 ﻿using CruiseHousing.Api.Constants;
 using CruiseHousing.Api.DTOs;
-using CruiseHousing.Api.Models;
+using CruiseHousing.Api.Entities;
 using CruiseHousing.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 

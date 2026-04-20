@@ -9,7 +9,7 @@ namespace CruiseHousing.Api.Features.User
     /// <summary>
     /// User業務処理用Service
     /// </summary>
-    public class UserService 
+    public class UserService : IUserService
     {
         private readonly UserRepository _userRepository;
 

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CruiseHousing.Api.Dtos.Properties;
+namespace CruiseHousing.Api.Features.Properties.DTOs;
 public class PropertyUpdateRequest
 {
     public string PropertyCode { get; set; } = string.Empty;

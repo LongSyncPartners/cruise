@@ -1,6 +1,6 @@
-﻿using CruiseHousing.Api.Dtos.Properties;
+﻿using CruiseHousing.Api.Features.Properties.DTOs;
 
-namespace CruiseHousing.Api.Services.Interfaces;
+namespace CruiseHousing.Api.Features.Properties;
 
 public interface IPropertyService
 {

@@ -1,9 +1,8 @@
-﻿using CruiseHousing.Api.Dtos.PropertyIncomeExpenseDetails;
-using CruiseHousing.Api.Entities;
+﻿using CruiseHousing.Api.Entities;
+using CruiseHousing.Api.Features.PropertyIncomeExpenseDetails.DTOs;
 using CruiseHousing.Api.Repositories.Interfaces;
-using CruiseHousing.Api.Services.Interfaces;
 
-namespace CruiseHousing.Api.Services.Implementations;
+namespace CruiseHousing.Api.Features.PropertyIncomeExpenseDetails;
 
 public class PropertyIncomeExpenseDetailService : IPropertyIncomeExpenseDetailService
 {

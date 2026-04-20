@@ -1,6 +1,6 @@
-﻿namespace CruiseHousing.Api.Features.Login.DTOs
+﻿namespace CruiseHousing.Api.Features.Auth.DTOs
 {
-    public class LoginResponseDto
+    public class AuthLoginResponseDto
     {
         public string AccessToken { get; set; } = string.Empty;
         public string TokenType { get; set; } = "Bearer";

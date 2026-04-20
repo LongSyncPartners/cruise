@@ -1,6 +1,6 @@
-﻿using CruiseHousing.Api.Dtos.PropertyIncomeExpenseMonthly;
+﻿using CruiseHousing.Api.Features.PropertyIncomeExpenseDetails.DTOs;
 
-namespace CruiseHousing.Api.Services.Interfaces;
+namespace CruiseHousing.Api.Features.PropertyIncomeExpenseDetails;
 
 public interface IPropertyIncomeExpenseMonthlyService
 {

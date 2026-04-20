@@ -1,7 +1,7 @@
 ﻿using CruiseHousing.Api.Constants;
 using CruiseHousing.Api.DTOs;
+using CruiseHousing.Api.Entities;
 using CruiseHousing.Api.Exceptions;
-using CruiseHousing.Api.Models;
 using CruiseHousing.Api.Repositories;
 using CruiseHousing.Api.Security;
 

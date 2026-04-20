@@ -1,5 +1,5 @@
 ﻿
-using CruiseHousing.Api.Features.Login.DTOs;
+using CruiseHousing.Api.Features.Auth.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+    public async Task<IActionResult> Login([FromBody] AuthLoginRequestDto request)
     {
         var result = await _authService.LoginAsync(request);
         return Ok(result);

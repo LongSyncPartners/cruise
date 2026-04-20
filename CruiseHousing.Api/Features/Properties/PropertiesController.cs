@@ -1,8 +1,7 @@
-﻿using CruiseHousing.Api.Dtos.Properties;
-using CruiseHousing.Api.Services.Interfaces;
+﻿using CruiseHousing.Api.Features.Properties.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CruiseHousing.Api.Controllers;
+namespace CruiseHousing.Api.Features.Properties;
 
 [ApiController]
 [Route("api/properties")]

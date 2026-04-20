@@ -1,4 +1,4 @@
-﻿namespace CruiseHousing.Api.Dtos.PropertyIncomeExpenseDetails;
+﻿namespace CruiseHousing.Api.Features.PropertyIncomeExpenseDetails.DTOs;
 
 public class PropertyIncomeExpenseDetailCreateRequest
 {

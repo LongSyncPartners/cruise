@@ -1,4 +1,4 @@
-﻿using CruiseHousing.Api.Models;
+﻿using CruiseHousing.Api.Entities;
 using CruiseHousing.Api.Repositories;
 
 namespace CruiseHousing.Api.Features.ImportFiles

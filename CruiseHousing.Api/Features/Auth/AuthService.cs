@@ -1,5 +1,5 @@
 ﻿using CruiseHousing.Api.Exceptions;
-using CruiseHousing.Api.Features.Login.DTOs;
+using CruiseHousing.Api.Features.Auth.DTOs;
 using CruiseHousing.Api.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -24,7 +24,7 @@ public class AuthService
         _logger = logger;
     }
 
-    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
+    public async Task<AuthLoginResponseDto> LoginAsync(AuthLoginRequestDto request)
     {
         _logger.LogInformation("Login attempt for email {UserEmail}", request.UserEmail);
 
@@ -47,7 +47,7 @@ public class AuthService
 
         _logger.LogInformation("Login success for userId {UserId}", user.UserId);
 
-        return new LoginResponseDto
+        return new AuthLoginResponseDto
         {
             AccessToken = token,
             ExpiresAt = expiresAt,

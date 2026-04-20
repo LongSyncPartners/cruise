@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CruiseHousing.Api.Dtos.PropertyIncomeExpenseMonthly;
+namespace CruiseHousing.Api.Features.PropertyIncomeExpenseDetails.DTOs;
 
 public class PropertyIncomeExpenseMonthlyCreateRequest
 {

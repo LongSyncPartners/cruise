@@ -4,7 +4,7 @@ using CruiseHousing.Api.Features.User;
 using CruiseHousing.Api.Features.User.DTOs;
 using Microsoft.EntityFrameworkCore;
 
-public class UserSearchService
+public class UserSearchService : IUserSearchService
 {
     private readonly ILogger<UserService> _logger;
     private readonly AppDbContext _db;

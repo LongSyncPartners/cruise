@@ -1,5 +1,4 @@
 ﻿using CruiseHousing.Api.Entities;
-using CruiseHousing.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace CruiseHousing.Api.Data;

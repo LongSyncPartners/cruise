@@ -1,6 +1,6 @@
-﻿using CruiseHousing.Api.Models;
-using CruiseHousing.Api.Data;
+﻿using CruiseHousing.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using CruiseHousing.Api.Entities;
 
 namespace CruiseHousing.Api.Repositories;
 

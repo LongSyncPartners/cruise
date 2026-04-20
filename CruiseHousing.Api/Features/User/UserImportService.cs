@@ -1,16 +1,17 @@
 ﻿using CruiseHousing.Api.Constants;
+using CruiseHousing.Api.Entities;
 using CruiseHousing.Api.Exceptions;
-using CruiseHousing.Api.Models;
 using CruiseHousing.Api.RabbitMQ;
 using CruiseHousing.Api.Repositories;
 using CruiseHousing.Api.Security;
+using CruiseHousing.Api.Services;
 
-namespace CruiseHousing.Api.Services;
+namespace CruiseHousing.Api.Features.User;
 
 /// <summary>
 /// ユーザーCSVインポートサービス実装
 /// </summary>
-public class UserImportService
+public class UserImportService : IUserImportService
 {
     private readonly JobQueuePublisher _obQueuePublisher;
     private readonly JobService _jobService;
