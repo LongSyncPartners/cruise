@@ -9,9 +9,8 @@
     "skipLibCheck": true,
     "noEmit": true,
     "isolatedModules": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "allowJs": true,
     "checkJs": false
