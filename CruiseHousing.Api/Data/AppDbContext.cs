@@ -18,6 +18,11 @@ public class AppDbContext : DbContext
     public DbSet<PropertyIncomeExpenseMonthly> PropertyIncomeExpenseMonthlies => Set<PropertyIncomeExpenseMonthly>();
     public DbSet<PropertyIncomeExpenseDetail> PropertyIncomeExpenseDetails => Set<PropertyIncomeExpenseDetail>();
 
+    public DbSet<ManagementType> ManagementTypes => Set<ManagementType>();
+    public DbSet<PropertyType> PropertyTypes => Set<PropertyType>();
+    public DbSet<PropertyStatus> PropertyStatuses => Set<PropertyStatus>();
+    public DbSet<ProcessingStatus> ProcessingStatuses => Set<ProcessingStatus>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -114,5 +119,21 @@ public class AppDbContext : DbContext
                 .WithMany(x => x.DetailRecords)
                 .HasForeignKey(x => x.PropertyId);
         });
+
+        modelBuilder.Entity<ManagementType>()
+               .HasIndex(x => x.Code)
+               .IsUnique();
+
+        modelBuilder.Entity<PropertyType>()
+            .HasIndex(x => x.Code)
+            .IsUnique();
+
+        modelBuilder.Entity<PropertyStatus>()
+            .HasIndex(x => x.Code)
+            .IsUnique();
+
+        modelBuilder.Entity<ProcessingStatus>()
+            .HasIndex(x => x.Code)
+            .IsUnique();
     }
 }
