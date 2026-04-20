@@ -99,15 +99,15 @@ public class PropertyService : IPropertyService
             PropertyCode = entity.PropertyCode,
             PropertyName = entity.PropertyName,
             PropertyAddress = entity.PropertyAddress,
-            ManagementTypeCode = entity.ManagementTypeCode,
-            PropertyTypeCode = entity.PropertyTypeCode,
-            ManagementCompanyId = entity.ManagementCompanyId,
+            ManagementType = entity.ManagementTypeCode,
+            PropertyType = entity.PropertyTypeCode,
+            ManagementCompany = entity.ManagementCompanyId?.ToString(),
             ManagementStartDate = entity.ManagementStartDate,
             ManagementEndDate = entity.ManagementEndDate,
             ManagementDate = entity.ManagementDate,
-            PropertyStatusCode = entity.PropertyStatusCode,
+            PropertyStatus = entity.PropertyStatusCode,
             OwnerName = entity.OwnerName,
-            ProcessingStatusCode = entity.ProcessingStatusCode
+            ProcessingStatus = entity.ProcessingStatusCode
         };
     }
 }

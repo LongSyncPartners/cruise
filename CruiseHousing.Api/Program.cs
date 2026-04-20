@@ -2,6 +2,7 @@ using CruiseHousing.Api.Data;
 using CruiseHousing.Api.DTOs;
 using CruiseHousing.Api.Features.Auth;
 using CruiseHousing.Api.Features.ImportFiles;
+using CruiseHousing.Api.Features.Masters;
 using CruiseHousing.Api.Features.Properties;
 using CruiseHousing.Api.Features.PropertyIncomeExpenseDetails;
 using CruiseHousing.Api.Features.User;
@@ -39,6 +40,13 @@ builder.Services.Configure<RabbitMqSetting>(
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<IMasterDataService, MasterDataService>();
+
+builder.Services.AddScoped<IManagementTypeRepository, ManagementTypeRepository>();
+builder.Services.AddScoped<IProcessingStatusRepository, ProcessingStatusRepository>();
+builder.Services.AddScoped<IPropertyStatusRepository, PropertyStatusRepository>();
+builder.Services.AddScoped<IPropertyTypeRepository, PropertyTypeRepository>();
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -226,7 +234,32 @@ builder.Services
         };
     });
 
+// DEV
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
+// PRODUCT
+/**
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173") // FE URL
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // cookie/token
+    });
+});
+ */
 
 var app = builder.Build();
 
@@ -246,6 +279,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
