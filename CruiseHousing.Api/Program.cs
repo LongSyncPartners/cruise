@@ -6,8 +6,12 @@ using CruiseHousing.Api.Features.User;
 using CruiseHousing.Api.Middlewares;
 using CruiseHousing.Api.RabbitMQ;
 using CruiseHousing.Api.Repositories;
+using CruiseHousing.Api.Repositories.Implementations;
+using CruiseHousing.Api.Repositories.Interfaces;
 using CruiseHousing.Api.Security;
 using CruiseHousing.Api.Services;
+using CruiseHousing.Api.Services.Implementations;
+using CruiseHousing.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +53,14 @@ builder.Services.AddScoped<JobQueuePublisher>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CurrentUser>();
+
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<IPropertyIncomeExpenseMonthlyRepository, PropertyIncomeExpenseMonthlyRepository>();
+builder.Services.AddScoped<IPropertyIncomeExpenseDetailRepository, PropertyIncomeExpenseDetailRepository>();
+
+builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IPropertyIncomeExpenseMonthlyService, PropertyIncomeExpenseMonthlyService>();
+builder.Services.AddScoped<IPropertyIncomeExpenseDetailService, PropertyIncomeExpenseDetailService>();
 
 // Configure global model validation error handling
 builder.Services.Configure<ApiBehaviorOptions>(options =>
