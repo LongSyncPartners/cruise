@@ -36,20 +36,20 @@ public class UserSearchService : IUserSearchService
         if (!string.IsNullOrWhiteSpace(request.UserEmail))
         {
             query = query.Where(u =>
-                u.UserEmail.Contains(request.UserEmail));
+                u.Email.Contains(request.UserEmail));
         }
 
         var totalCount = await query.CountAsync();
 
         var users = await query
-            .OrderBy(u => u.UserId)
+            .OrderBy(u => u.Id)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(u => new UserDto
             {
-                UserId = u.UserId,
+                Id = u.Id,
                 UserName = u.UserName,
-                UserEmail = u.UserEmail
+                Email = u.Email
             })
             .ToListAsync();
 

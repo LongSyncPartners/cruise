@@ -1,61 +1,68 @@
 ﻿using CruiseHousing.Api.Entities;
 using CruiseHousing.Api.Features.User.DTOs;
 
-namespace CruiseHousing.Api.Mappers
+namespace CruiseHousing.Api.Mappers;
+
+/// <summary>
+/// UserエンティティとDTOの変換処理
+/// </summary>
+public static class UserMapper
 {
     /// <summary>
-    /// UserエンティティとDTOの変換処理
+    /// Entity → DTO変換
     /// </summary>
-    public static class UserMapper
+    public static UserDto ToDto(User entity)
     {
-        /// <summary>
-        /// Entity → DTO変換
-        /// </summary>
-        public static UserDto ToDto(User entity)
+        return new UserDto
         {
-            return new UserDto
-            {
-                UserId = entity.UserId,
-                UserName = entity.UserName,
-                UserEmail = entity.UserEmail,
-                UserRole = entity.UserRole,
-                AddDate = entity.AddDate,
-                UpdDate = entity.UpdDate
-            };
-        }
+            Id = entity.Id,
+            LoginId = entity.LoginId,
+            UserName = entity.UserName,
+            Email = entity.Email,
+            RoleId = entity.RoleId,
+            RoleName = entity.Role?.Name,
+            IsActive = entity.IsActive,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt
+        };
+    }
 
-        /// <summary>
-        /// CreateDto → Entity変換
-        /// </summary>
-        public static User ToEntity(CreateUserDto dto)
+    /// <summary>
+    /// CreateDto → Entity変換
+    /// </summary>
+    public static User ToEntity(CreateUserDto dto)
+    {
+        return new User
         {
-            return new User
-            {
-                UserName = dto.UserName,
-                UserEmail = dto.UserEmail,
-                UserRole = dto.UserRole,
-                DelFlg = "0",
-                DelDate = null,
-                RegUserid = dto.RegUserid,
-                RegUser = dto.RegUser,
-                AddDate = DateTime.Now,
-                UpdUserId = dto.RegUserid,
-                UpdUser = dto.RegUser,
-                UpdDate = DateTime.Now
-            };
-        }
+            LoginId = dto.LoginId,
+            UserName = dto.UserName,
+            Email = dto.Email,
+            PasswordHash = dto.PasswordHash,
+            RoleId = dto.RoleId,
+            IsActive = dto.IsActive,
+            CreatedBy = dto.CreatedBy,
+            UpdatedBy = dto.CreatedBy,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        };
+    }
 
-        /// <summary>
-        /// UpdateDtoの内容をEntityへ反映
-        /// </summary>
-        public static void ApplyUpdate(User entity, UpdateUserDto dto)
+    /// <summary>
+    /// UpdateDtoの内容をEntityへ反映
+    /// </summary>
+    public static void ApplyUpdate(User entity, UpdateUserDto dto)
+    {
+        entity.LoginId = dto.LoginId;
+        entity.UserName = dto.UserName;
+        entity.Email = dto.Email;
+        entity.RoleId = dto.RoleId;
+        entity.IsActive = dto.IsActive;
+        entity.UpdatedBy = dto.UpdatedBy;
+        entity.UpdatedAt = DateTime.Now;
+
+        if (!string.IsNullOrWhiteSpace(dto.PasswordHash))
         {
-            entity.UserName = dto.UserName;
-            entity.UserEmail = dto.UserEmail;
-            entity.UserRole = dto.UserRole;
-            entity.UpdUserId = dto.UpdUserId;
-            entity.UpdUser = dto.UpdUser;
-            entity.UpdDate = DateTime.Now;
+            entity.PasswordHash = dto.PasswordHash;
         }
     }
 }

@@ -1,7 +1,7 @@
 using CruiseHousing.Api.Data;
 using CruiseHousing.Api.DTOs;
+using CruiseHousing.Api.Features.Auth;
 using CruiseHousing.Api.Features.ImportFiles;
-using CruiseHousing.Api.Features.Login;
 using CruiseHousing.Api.Features.Properties;
 using CruiseHousing.Api.Features.PropertyIncomeExpenseDetails;
 using CruiseHousing.Api.Features.User;
@@ -38,16 +38,20 @@ builder.Services.Configure<RabbitMqSetting>(
     builder.Configuration.GetSection("RabbitMq"));
 
 // Add services to the container.
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserSearchService, UserSearchService>();
+builder.Services.AddScoped<IUserImportService, UserImportService>();
+builder.Services.AddScoped<IUserExportService, UserExportService>();
+
+builder.Services.AddScoped<JobRepository>();
+builder.Services.AddScoped<JobService>();
+
 builder.Services.AddScoped<ImportFileRepository>();
 builder.Services.AddScoped<ImportFileService>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserSearchService>();
-builder.Services.AddScoped<UserImportService>();
-builder.Services.AddScoped<UserExportService>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<JobService>();
-builder.Services.AddScoped<JobRepository>();
 
 builder.Services.AddScoped<JobQueuePublisher>();
 

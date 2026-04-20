@@ -5,46 +5,62 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CruiseHousing.Api.Repositories;
 
-public class UserSearchRepository
+/// <summary>
+/// ユーザー検索Repository
+/// </summary>
+public class UserSearchRepository : IUserSearchRepository
 {
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _dbContext;
 
-    public UserSearchRepository(AppDbContext db)
+    /// <summary>
+    /// コンストラクタ
+    /// </summary>
+    public UserSearchRepository(AppDbContext dbContext)
     {
-        _db = db;
+        _dbContext = dbContext;
     }
 
+    /// <summary>
+    /// ユーザー検索
+    /// </summary>
     public async Task<PagedResult<UserDto>> SearchAsync(UserSearchRequest request)
     {
-        var query = _db.Users
+        var page = request.Page <= 0 ? 1 : request.Page;
+        var pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
+
+        var query = _dbContext.Users
+            .Include(x => x.Role)
             .AsNoTracking()
+            .Where(x => x.DeletedAt == null)
             .AsQueryable();
 
-        // filter user_name
+        // user_name filter
         if (!string.IsNullOrWhiteSpace(request.UserName))
         {
-            query = query.Where(u =>
-                u.UserName.Contains(request.UserName));
+            query = query.Where(x => x.UserName.Contains(request.UserName));
         }
 
-        // filter email
+        // email filter
         if (!string.IsNullOrWhiteSpace(request.UserEmail))
         {
-            query = query.Where(u =>
-                u.UserEmail.Contains(request.UserEmail));
+            query = query.Where(x => x.Email.Contains(request.UserEmail));
         }
 
         var totalCount = await query.CountAsync();
 
         var users = await query
-            .OrderBy(u => u.UserId)
-            .Skip((request.Page - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(u => new UserDto
+            .OrderBy(x => x.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new UserDto
             {
-                UserId = u.UserId,
-                UserName = u.UserName,
-                UserEmail = u.UserEmail
+                Id = x.Id,
+                LoginId = x.LoginId,
+                UserName = x.UserName,
+                Email = x.Email,
+                RoleId = x.RoleId,
+                RoleName = x.Role != null ? x.Role.Name : null,
+                IsActive = x.IsActive
             })
             .ToListAsync();
 
@@ -55,4 +71,3 @@ public class UserSearchRepository
         };
     }
 }
-

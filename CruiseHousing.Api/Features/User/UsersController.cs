@@ -17,33 +17,33 @@ namespace CruiseHousing.Api.Features.User
         /// <summary>
         /// Gets the user service instance used for managing user-related operations.
         /// </summary>
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// Gets the user search service used for querying user data.
         /// </summary>
         /// <remarks>This field is initialized during the construction of the containing class and is used
         /// to perform user-related search operations.</remarks>
-        private readonly UserSearchService _userSearchService;
+        private readonly IUserSearchService _userSearchService;
 
         /// <summary>
         /// JobService
         /// </summary>
-        private readonly UserImportService _userImportService;
+        private readonly IUserImportService _userImportService;
 
         /// <summary>
         /// UserExportService
         /// </summary>
-        private readonly UserExportService _userExportService;
+        private readonly IUserExportService _userExportService;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public UsersController(
-            UserService userService,
-            UserSearchService userSearchService,
-            UserImportService userImportService,
-            UserExportService userExportService)
+            IUserService userService,
+            IUserSearchService userSearchService,
+            IUserImportService userImportService,
+            IUserExportService userExportService)
         {
             _userService = userService;
             _userSearchService = userSearchService;
@@ -89,7 +89,7 @@ namespace CruiseHousing.Api.Features.User
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = result.UserId },
+                new { id = result.Id },
                 result
             );
         }

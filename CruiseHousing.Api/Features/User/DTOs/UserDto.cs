@@ -1,38 +1,52 @@
-﻿namespace CruiseHousing.Api.Features.User.DTOs
+﻿namespace CruiseHousing.Api.Features.User.DTOs;
+
+/// <summary>
+/// ユーザー返却用DTO
+/// </summary>
+public class UserDto
 {
     /// <summary>
-    /// ユーザー返却用DTO
+    /// ユーザーID
     /// </summary>
-    public class UserDto
-    {
-        /// <summary>
-        /// ユーザーID
-        /// </summary>
-        public long UserId { get; set; }
+    public long Id { get; set; }
 
-        /// <summary>
-        /// ユーザー名
-        /// </summary>
-        public string? UserName { get; set; }
+    /// <summary>
+    /// ログインID
+    /// </summary>
+    public string LoginId { get; set; } = string.Empty;
 
-        /// <summary>
-        /// メールアドレス
-        /// </summary>
-        public string? UserEmail { get; set; }
+    /// <summary>
+    /// ユーザー名
+    /// </summary>
+    public string UserName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// ユーザー権限
-        /// </summary>
-        public string? UserRole { get; set; }
+    /// <summary>
+    /// メールアドレス
+    /// </summary>
+    public string Email { get; set; } = string.Empty;
 
-        /// <summary>
-        /// 登録日時
-        /// </summary>
-        public DateTime? AddDate { get; set; }
+    /// <summary>
+    /// ロールID
+    /// </summary>
+    public long RoleId { get; set; }
 
-        /// <summary>
-        /// 更新日時
-        /// </summary>
-        public DateTime? UpdDate { get; set; }
-    }
+    /// <summary>
+    /// ロール名
+    /// </summary>
+    public string? RoleName { get; set; }
+
+    /// <summary>
+    /// 有効フラグ
+    /// </summary>
+    public bool IsActive { get; set; }
+
+    /// <summary>
+    /// 作成日時
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// 更新日時
+    /// </summary>
+    public DateTime UpdatedAt { get; set; }
 }

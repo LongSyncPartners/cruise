@@ -25,6 +25,24 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
+        catch (UnauthorizedException ex)
+        {
+            _logger.LogWarning(
+                "Validation error. Path={Path}, Message={Message}, TraceId={TraceId}",
+                context.Request.Path,
+                ex.Message,
+                context.TraceIdentifier);
+
+            await WriteErrorResponseAsync(
+                context,
+                ex.StatusCode,
+                new ErrorResponseDto
+                {
+                    ErrorCode = ex.ErrorCode,
+                    Message = ex.Message,
+                    TraceId = context.TraceIdentifier
+                });
+        }
         catch (ValidationException ex)
         {
             _logger.LogWarning(

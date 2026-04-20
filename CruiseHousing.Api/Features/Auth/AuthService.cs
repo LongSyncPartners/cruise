@@ -1,4 +1,5 @@
-﻿using CruiseHousing.Api.Exceptions;
+﻿using CruiseHousing.Api.Entities;
+using CruiseHousing.Api.Exceptions;
 using CruiseHousing.Api.Features.Auth.DTOs;
 using CruiseHousing.Api.Repositories;
 using Microsoft.IdentityModel.Tokens;
@@ -6,16 +7,16 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace CruiseHousing.Api.Features.Login;
+namespace CruiseHousing.Api.Features.Auth;
 
-public class AuthService
+public class AuthService : IAuthService
 {
-    private readonly UserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
     private readonly ILogger<AuthService> _logger;
 
     public AuthService(
-        UserRepository userRepository,
+        IUserRepository userRepository,
         IConfiguration configuration,
         ILogger<AuthService> logger)
     {
@@ -26,34 +27,33 @@ public class AuthService
 
     public async Task<AuthLoginResponseDto> LoginAsync(AuthLoginRequestDto request)
     {
-        _logger.LogInformation("Login attempt for email {UserEmail}", request.UserEmail);
+        _logger.LogInformation("Login attempt for email {UserEmail}", request.LoginIdOrEmail);
 
-        var user = await _userRepository.GetByEmailAsync(request.UserEmail);
+        var user = await _userRepository.GetByEmailAsync(request.LoginIdOrEmail);
         if (user == null)
         {
-            throw new BusinessException("メールアドレスまたはパスワードが正しくありません。", "LOGIN_FAILED");
+            throw new UnauthorizedException("メールアドレスまたはパスワードが正しくありません。", "LOGIN_FAILED");
         }
 
         var passwordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
         if (!passwordValid)
         {
-            throw new BusinessException("メールアドレスまたはパスワードが正しくありません。", "LOGIN_FAILED");
+            throw new UnauthorizedException("メールアドレスまたはパスワードが正しくありません。", "LOGIN_FAILED");
         }
 
         var expiresMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
         var expiresAt = DateTime.UtcNow.AddMinutes(expiresMinutes);
 
-        var token = GenerateJwtToken(user.UserId, user.UserName, user.UserEmail, expiresAt);
+        var token = GenerateJwtToken(user.Id, user.UserName, user.Email, expiresAt);
 
-        _logger.LogInformation("Login success for userId {UserId}", user.UserId);
+        _logger.LogInformation("Login success for userId {LoginId}", user.LoginId);
 
         return new AuthLoginResponseDto
         {
             AccessToken = token,
             ExpiresAt = expiresAt,
-            UserId = user.UserId,
             UserName = user.UserName,
-            UserEmail = user.UserEmail
+            Email = user.Email
         };
     }
 

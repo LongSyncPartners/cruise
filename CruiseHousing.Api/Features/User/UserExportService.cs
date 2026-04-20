@@ -10,11 +10,11 @@ namespace CruiseHousing.Api.Features.User;
 /// </summary>
 public class UserExportService: IUserExportService
 {
-    private readonly UserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ILogger<UserExportService> _logger;
 
     public UserExportService(
-        UserRepository userRepository,
+        IUserRepository userRepository,
         ILogger<UserExportService> logger)
     {
         _userRepository = userRepository;
@@ -41,9 +41,9 @@ public class UserExportService: IUserExportService
         foreach (var user in users)
         {
             sb.AppendLine(string.Join(",",
-                EscapeCsv(user.UserId.ToString()),
+                EscapeCsv(user.Id.ToString()),
                 EscapeCsv(user.UserName),
-                EscapeCsv(user.UserEmail)));
+                EscapeCsv(user.Email)));
         }
 
         // UTF-8 with BOM 

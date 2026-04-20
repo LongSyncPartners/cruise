@@ -7,7 +7,7 @@ namespace CruiseHousing.Api.Repositories;
 /// <summary>
 /// UserテーブルRepository実装
 /// </summary>
-public class UserRepository
+public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _dbContext;
 
@@ -21,33 +21,49 @@ public class UserRepository
 
     /// <summary>
     /// ユーザー一覧取得
-    /// 削除フラグが立っていないデータのみ取得
+    /// 論理削除されていないデータのみ取得
     /// </summary>
     public async Task<List<User>> GetAllAsync()
     {
         return await _dbContext.Users
+            .Include(x => x.Role)
             .AsNoTracking()
-            .Where(x => x.DelFlg != "1")
-            .OrderByDescending(x => x.UserId)
+            .Where(x => x.DeletedAt == null)
+            .OrderByDescending(x => x.Id)
             .ToListAsync();
     }
 
     /// <summary>
     /// IDでユーザー取得
     /// </summary>
-    public async Task<User?> GetByIdAsync(long userId)
+    public async Task<User?> GetByIdAsync(long id)
     {
         return await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.DelFlg != "1");
+            .Include(x => x.Role)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null);
     }
 
     /// <summary>
     /// メールアドレスでユーザー取得
     /// </summary>
-    public async Task<User?> GetByEmailAsync(string userEmail)
+    public async Task<User?> GetByEmailAsync(string email)
     {
         return await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.UserEmail == userEmail && x.DelFlg != "1");
+            .Include(x => x.Role)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null);
+    }
+
+    /// <summary>
+    /// ログインIDでユーザー取得
+    /// </summary>
+    public async Task<User?> GetByLoginIdAsync(string loginId)
+    {
+        return await _dbContext.Users
+            .Include(x => x.Role)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.LoginId == loginId && x.DeletedAt == null);
     }
 
     /// <summary>
@@ -55,6 +71,9 @@ public class UserRepository
     /// </summary>
     public async Task<User> CreateAsync(User entity)
     {
+        entity.CreatedAt = DateTime.Now;
+        entity.UpdatedAt = DateTime.Now;
+
         await _dbContext.Users.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
         return entity;
@@ -66,20 +85,21 @@ public class UserRepository
     public async Task<User?> UpdateAsync(User entity)
     {
         var existing = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.UserId == entity.UserId && x.DelFlg != "1");
+            .FirstOrDefaultAsync(x => x.Id == entity.Id && x.DeletedAt == null);
 
         if (existing == null)
         {
             return null;
         }
 
+        existing.LoginId = entity.LoginId;
         existing.UserName = entity.UserName;
-        existing.UserEmail = entity.UserEmail;
-        existing.UserRole = entity.UserRole;
+        existing.Email = entity.Email;
         existing.PasswordHash = entity.PasswordHash;
-        existing.UpdUserId = entity.UpdUserId;
-        existing.UpdUser = entity.UpdUser;
-        existing.UpdDate = entity.UpdDate;
+        existing.RoleId = entity.RoleId;
+        existing.IsActive = entity.IsActive;
+        existing.UpdatedBy = entity.UpdatedBy;
+        existing.UpdatedAt = DateTime.Now;
 
         await _dbContext.SaveChangesAsync();
         return existing;
@@ -88,10 +108,10 @@ public class UserRepository
     /// <summary>
     /// ユーザー物理削除
     /// </summary>
-    public async Task<bool> DeleteAsync(long userId)
+    public async Task<bool> DeleteAsync(long id)
     {
         var existing = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.UserId == userId);
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         if (existing == null)
         {
@@ -106,21 +126,21 @@ public class UserRepository
     /// <summary>
     /// ユーザー論理削除
     /// </summary>
-    public async Task<bool> SoftDeleteAsync(long userId, string? updUserId = null, string? updUser = null)
+    public async Task<bool> SoftDeleteAsync(long id, string? updatedBy = null)
     {
         var existing = await _dbContext.Users
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.DelFlg != "1");
+            .FirstOrDefaultAsync(x => x.Id == id && x.DeletedAt == null);
 
         if (existing == null)
         {
             return false;
         }
 
-        existing.DelFlg = "1";
-        existing.DelDate = DateTime.Now;
-        existing.UpdUserId = updUserId;
-        existing.UpdUser = updUser;
-        existing.UpdDate = DateTime.Now;
+        existing.DeletedAt = DateTime.Now;
+        existing.DeletedBy = updatedBy;
+        existing.UpdatedBy = updatedBy;
+        existing.UpdatedAt = DateTime.Now;
+        existing.IsActive = false;
 
         await _dbContext.SaveChangesAsync();
         return true;

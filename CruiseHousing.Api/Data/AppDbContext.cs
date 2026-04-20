@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<ImportFile> ImportFiles => Set<ImportFile>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
     public DbSet<Job> Jobs => Set<Job>();
 
     public DbSet<Property> Properties => Set<Property>();
@@ -25,6 +26,10 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Role>()
+            .HasIndex(x => x.Code)
+            .IsUnique();
 
         modelBuilder.Entity<Property>(entity =>
         {

@@ -11,12 +11,12 @@ namespace CruiseHousing.Api.Features.User
     /// </summary>
     public class UserService : IUserService
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public UserService(UserRepository userRepository)
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -49,7 +49,7 @@ namespace CruiseHousing.Api.Features.User
         /// </summary>
         public async Task<UserDto> CreateAsync(CreateUserDto dto)
         {
-            var exists = await _userRepository.GetByEmailAsync(dto.UserEmail ?? string.Empty);
+            var exists = await _userRepository.GetByEmailAsync(dto.Email ?? string.Empty);
             if (exists != null)
             {
                 throw new Exceptions.BusinessException(ErrorMessages.EmailAlreadyExists);
@@ -97,7 +97,7 @@ namespace CruiseHousing.Api.Features.User
         /// </summary>
         public async Task<bool> SoftDeleteAsync(long userId, string? updUserId = null, string? updUser = null)
         {
-            return await _userRepository.SoftDeleteAsync(userId, updUserId, updUser);
+            return await _userRepository.SoftDeleteAsync(userId);
         }
     }
 }
