@@ -12,6 +12,7 @@ import {
 import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { useAppToast } from "@/providers/ToastProvider";
 import axios from "axios";
+import { useAuthStore } from "@/stores/authStore";
 
 type LoginFormValues = {
   loginIdOrEmail: string;
@@ -20,6 +21,11 @@ type LoginFormValues = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (isAuthenticated) {
+    navigate("/properties");
+  }
 
   const {
     register,

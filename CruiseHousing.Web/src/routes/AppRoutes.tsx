@@ -2,39 +2,34 @@
 import Dashboard from "@/pages/Dashboard";
 import Forecast from "@/pages/Forecast";
 import { AuthLayout, MainLayout } from "@/layouts";
-import { AuthProvider } from "../pages/Login/AuthContext";
 import Properties from "@/features/properties";
 import PropertyIncomeExpenseDetail from "@/features/property-income-expense-detail";
 import Login from "@/features/login";
-
+import ProtectedRoute from "@/routes/ProtectedRoute";
 
 export default function AppRoutes() {
-    return (
-        <AuthProvider>
-        <BrowserRouter>
-            <Routes>
-                {/* Auth */}
-                <Route element={<AuthLayout />}>
-                    <Route path="/login" element={
-                            <Login />
-                            } />
-                </Route>
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Auth */}
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
 
-                {/* Main */}
-                <Route element={<MainLayout />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/forecast" element={<Forecast />} />
-                    <Route path="/properties" element={<Properties />} />
-                    <Route
-                        path="/properties/finance"
-                        element={<PropertyIncomeExpenseDetail />}
-                    />
-                </Route>
+        {/* Protected */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/properties" element={<Properties />} />
+            <Route
+              path="/properties/finance"
+              element={<PropertyIncomeExpenseDetail />}
+            />
+          </Route>
+        </Route>
 
-                 {/* fallback */}
-                <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
-        </BrowserRouter>
-        </AuthProvider>
-    );
+        {/* fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
