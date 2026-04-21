@@ -46,7 +46,7 @@ public class AuthService : IAuthService
         var expiresMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"]!);
         var expiresAt = DateTime.UtcNow.AddMinutes(expiresMinutes);
 
-        var token = GenerateJwtToken(user.Id, user.UserName, user.Email, expiresAt);
+        var token = GenerateJwtToken(user.Id, user.Role.Code, user.UserName, user.Email, expiresAt);
 
         _logger.LogInformation("Login success for userId {LoginId}", user.LoginId);
 
@@ -59,7 +59,7 @@ public class AuthService : IAuthService
         };
     }
 
-    private string GenerateJwtToken(long userId, string userName, string userEmail, DateTime expiresAt)
+    private string GenerateJwtToken(long userId, string role, string userName, string userEmail, DateTime expiresAt)
     {
         var issuer = _configuration["Jwt:Issuer"]!;
         var audience = _configuration["Jwt:Audience"]!;
@@ -72,6 +72,7 @@ public class AuthService : IAuthService
             new(ClaimTypes.NameIdentifier, userId.ToString()),
             new(ClaimTypes.Name, userName),
             new(ClaimTypes.Email, userEmail),
+            new Claim(ClaimTypes.Role, role),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

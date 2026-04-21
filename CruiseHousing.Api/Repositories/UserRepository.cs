@@ -75,15 +75,11 @@ public class UserRepository : IUserRepository
 
         return await _dbContext.Users
             .AsNoTracking()
+            .Include(x => x.Role)
             .Where(x => x.DeletedAt == null)
             .Where(x => isEmail
                 ? x.Email == loginIdOrEmail
                 : x.LoginId == loginIdOrEmail)
-             .Select(x => new User
-             {
-                 Email = x.Email,
-                 UserName = x.UserName,
-             })
             .FirstOrDefaultAsync();
     }
 
