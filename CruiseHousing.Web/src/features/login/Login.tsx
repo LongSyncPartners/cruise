@@ -45,16 +45,6 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-    /**
-    await new Promise((r) => setTimeout(r, 1000));
-
-    console.log("login data", data);
-
-    // fake API
-    const fakeJwt = "ey.fake.jwt";
-    login(fakeJwt);
-    */
-
       await mutateAsync({
         loginIdOrEmail: data.loginIdOrEmail,
         password: data.password,

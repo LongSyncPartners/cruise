@@ -19,9 +19,11 @@ export type PropertyMasterData = {
 
 export const fetchProperties = async () => {
 
-  await sleep(500);
-  return paggingdata;
-
+  const USE_FAKE = import.meta.env.VITE_USE_FAKE_API === "true";
+  if (USE_FAKE) {
+    await sleep(500);
+    return paggingdata;
+  }
 
   const res = await apiClient.get("/properties");
   return res.data;
@@ -29,16 +31,17 @@ export const fetchProperties = async () => {
 
 export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => {
 
-
-  await sleep(300);
-  return {
-    managementTypeOptions: MANAGEMENT_TYPE_OPTIONS,
-    propertyTypeOptions: PROPERTY_TYPE_OPTIONS,
-    propertyStatusOptions: PROPERTY_STATUS_OPTIONS,
-    processingStatusOptions: PROCESSING_STATUS_OPTIONS,
-  };
-
-
+  const USE_FAKE = import.meta.env.VITE_USE_FAKE_API === "true";
+  if (USE_FAKE) {
+    await sleep(300);
+    return {
+      managementTypeOptions: MANAGEMENT_TYPE_OPTIONS,
+      propertyTypeOptions: PROPERTY_TYPE_OPTIONS,
+      propertyStatusOptions: PROPERTY_STATUS_OPTIONS,
+      processingStatusOptions: PROCESSING_STATUS_OPTIONS,
+    };
+  }
+  
   const res = await apiClient.get("/master-data", {
     params: {
       types: PROPERTY_MASTER_TYPES.join(","),

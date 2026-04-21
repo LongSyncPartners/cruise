@@ -1,6 +1,4 @@
 ﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "@/pages/Dashboard";
-import Forecast from "@/pages/Forecast";
 import { AuthLayout, MainLayout } from "@/layouts";
 import Properties from "@/features/properties";
 import PropertyIncomeExpenseDetail from "@/features/property-income-expense-detail";
