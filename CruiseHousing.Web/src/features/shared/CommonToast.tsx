@@ -50,7 +50,7 @@ export default function CommonToast({
   return (
     <Snackbar
       open={open}
-      autoHideDuration={duration}
+      autoHideDuration={severity === "success" ? duration :  5000}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
     >

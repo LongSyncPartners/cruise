@@ -41,7 +41,7 @@ export default function PropertyDataGrid({
   const [localRows, setLocalRows] = useState<PropertyRow[]>([]);
 
   const apiRef = useGridApiRef();
-  const { data } = useProperties();
+  const { data, isLoading, isError, error, refetch  } = useProperties();
 
   const setSelectedProperty = usePropertySelectionStore(
     (state) => state.setSelectedProperty
@@ -178,6 +178,10 @@ export default function PropertyDataGrid({
         processRowUpdate={handleProcessRowUpdate}
         onRowClick={handleRowClick}
         onRowDoubleClick={handleRowDoubleClick}
+         localeText={{
+          noRowsLabel: "データがありません",
+          noResultsOverlayLabel: "データがありません",
+        }}
         slots={{
           footer: () => (
             <PropertiesPaginationFooter

@@ -21,6 +21,7 @@ import {
 import { usePropertyColumnSources } from "@/hooks/usePropertyColumnSources";
 import { usePropertyMasterData } from "@/hooks/usePropertyMasterData";
 import { PropertyColumnConfig } from "./types";
+import { getUserFriendlyMessage } from "@/api/errorHandler";
 
 /**
  * =========================
@@ -50,17 +51,13 @@ function buildDefaultPropertyColumnConfigs(
  * =========================
  */
 export default function Properties() {
-  /**
-   * =========================
-   * Query / External hooks
-   * =========================
-   */
-  const { isLoading, isFetching, refetch } = useProperties();
 
   const {
     data: masterData,
     isLoading: isMasterDataLoading,
     isFetching: isMasterDataFetching,
+    isError: isMasterDataError,
+    error
   } = usePropertyMasterData();
 
   const {
@@ -96,13 +93,6 @@ export default function Properties() {
    * =========================
    */
   const [columnConfigs, setColumnConfigs] = useState<PropertyColumnConfig[]>([]);
-
-  /**
-   * =========================
-   * UI helpers / providers
-   * =========================
-   */
-  const { showToast } = useAppToast();
 
   /**
    * =========================
@@ -167,6 +157,12 @@ export default function Properties() {
     }
   }, [loadedColumnConfigs, loadedColumnSources, defaultColumnConfigs]);
 
+    /**
+   * =========================
+   * Query / External hooks
+   * =========================
+   */
+  const { isLoading, isFetching, refetch } = useProperties();
   /**
    * =========================
    * Handlers (useCallback)
@@ -228,6 +224,13 @@ export default function Properties() {
     [loadedColumnSources]
   );
 
+  /**
+   * =========================
+   * UI helpers / providers
+   * =========================
+   */
+  const { showToast } = useAppToast();
+
   const handleSave = useCallback(async () => {
     try {
       await saveColumnConfigs(columnConfigs);
@@ -240,6 +243,12 @@ export default function Properties() {
       }
     }
   }, [columnConfigs, saveColumnConfigs, showToast]);
+
+  useEffect(() => {
+    if (isMasterDataError) {
+      showToast(getUserFriendlyMessage(error), "error");
+    }
+  }, [isMasterDataError, error]);
 
   /**
    * =========================
