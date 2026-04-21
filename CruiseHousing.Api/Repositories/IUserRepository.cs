@@ -12,6 +12,8 @@ public interface IUserRepository
 
     Task<User?> GetByLoginIdAsync(string loginId);
 
+    Task<User?> GetByLoginIdOrEmailAsync(string loginIdOrEmail);
+
     Task<User> CreateAsync(User entity);
 
     Task<User?> UpdateAsync(User entity);

@@ -1,11 +1,11 @@
 ﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Forecast from "@/pages/Forecast";
 import { AuthLayout, MainLayout } from "@/layouts";
 import { AuthProvider } from "../pages/Login/AuthContext";
 import Properties from "@/features/properties";
 import PropertyIncomeExpenseDetail from "@/features/property-income-expense-detail";
+import Login from "@/features/login";
 
 
 export default function AppRoutes() {

@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient } from "./clientApi";
 import type { PropertyIncomeExpenseDetailRow } from "@/features/property-income-expense-detail/types";
 import {
   initialPropertyTabs,

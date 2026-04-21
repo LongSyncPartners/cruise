@@ -7,7 +7,7 @@ import {
   PROPERTY_TYPE_OPTIONS,
   PROCESSING_STATUS_STATE_ROWS,
 } from "@/features/properties/data.dump";
-import { apiClient } from "./client";
+import { apiClient } from "./clientApi";
 import { ProcessingStatusStateRow, PROPERTY_MASTER_TYPES, PropertyColumnConfig, PropertyColumnSource } from "@/features/properties/types";
 
 export type PropertyMasterData = {
@@ -18,10 +18,10 @@ export type PropertyMasterData = {
 };
 
 export const fetchProperties = async () => {
-    /** 
+
   await sleep(500);
   return paggingdata;
- */
+
 
   const res = await apiClient.get("/properties");
   return res.data;
@@ -29,7 +29,7 @@ export const fetchProperties = async () => {
 
 export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => {
 
-  /** 
+
   await sleep(300);
   return {
     managementTypeOptions: MANAGEMENT_TYPE_OPTIONS,
@@ -37,7 +37,7 @@ export const fetchPropertyMasterData = async (): Promise<PropertyMasterData> => 
     propertyStatusOptions: PROPERTY_STATUS_OPTIONS,
     processingStatusOptions: PROCESSING_STATUS_OPTIONS,
   };
- */
+
 
   const res = await apiClient.get("/master-data", {
     params: {

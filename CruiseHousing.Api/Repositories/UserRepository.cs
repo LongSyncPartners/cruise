@@ -67,6 +67,28 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// ログインID又はメールアドレスでユーザー取得
+    /// </summary>
+    public async Task<User?> GetByLoginIdOrEmailAsync(string loginIdOrEmail)
+    {
+        var isEmail = loginIdOrEmail.Contains("@");
+
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Where(x => x.DeletedAt == null)
+            .Where(x => isEmail
+                ? x.Email == loginIdOrEmail
+                : x.LoginId == loginIdOrEmail)
+             .Select(x => new User
+             {
+                 Email = x.Email,
+                 UserName = x.UserName,
+             })
+            .FirstOrDefaultAsync();
+    }
+
+
+    /// <summary>
     /// ユーザー新規登録
     /// </summary>
     public async Task<User> CreateAsync(User entity)

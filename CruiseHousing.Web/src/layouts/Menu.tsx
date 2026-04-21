@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Drawer,
   List,
@@ -22,26 +22,37 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
+import { useAuthStore } from "../stores/authStore";
+
 const DRAWER_WIDTH = 200;
 const MINI_WIDTH = 70;
 
 type AppMenuItem = {
   text: string;
-  to: string;
+  to?: string;
   icon: ReactNode;
+  onClick?: () => void;
 };
 
 type MenuItemProps = {
   open: boolean;
   icon: ReactNode;
   text: string;
-  to: string;
+  to?: string;
   selected: boolean;
+  onClick?: () => void;
 };
 
 export default function Menu() {
   const [open, setOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const menuItems = useMemo<AppMenuItem[]>(
     () => [
@@ -77,11 +88,11 @@ export default function Menu() {
       },
       {
         text: "ログアウト",
-        to: "/logout",
         icon: <LogoutIcon />,
+        onClick: handleLogout,
       },
     ],
-    []
+    [handleLogout]
   );
 
   const toggleMenu = () => {
@@ -115,11 +126,7 @@ export default function Menu() {
       }}
     >
       <Box sx={{ position: "relative", height: "100%" }}>
-        <IconButton
-          onClick={toggleMenu}
-          disableRipple
-          sx={toggleButtonSx}
-        >
+        <IconButton onClick={toggleMenu} disableRipple sx={toggleButtonSx}>
           {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
 
@@ -133,12 +140,13 @@ export default function Menu() {
           <List>
             {menuItems.map((item) => (
               <MenuItem
-                key={item.to}
+                key={item.to ?? item.text}
                 open={open}
                 icon={item.icon}
                 text={item.text}
                 to={item.to}
-                selected={location.pathname === item.to}
+                onClick={item.onClick}
+                selected={item.to ? location.pathname === item.to : false}
               />
             ))}
           </List>
@@ -148,19 +156,48 @@ export default function Menu() {
   );
 }
 
-function MenuItem({ open, icon, text, to, selected }: MenuItemProps) {
+function MenuItem({ open, icon, text, to, selected, onClick }: MenuItemProps) {
+  const commonSx = {
+    minHeight: 40,
+    justifyContent: open ? "initial" : "center",
+    px: 1,
+    textDecoration: "none",
+    color: "inherit",
+  };
+
+  if (onClick) {
+    return (
+      <ListItemButton onClick={onClick} selected={selected} sx={commonSx}>
+        <ListItemIcon
+          sx={{
+            minWidth: 0,
+            mr: open ? 2 : "auto",
+            justifyContent: "center",
+          }}
+        >
+          {icon}
+        </ListItemIcon>
+
+        {open && (
+          <ListItemText
+            primary={text}
+            sx={{
+              opacity: 1,
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+          />
+        )}
+      </ListItemButton>
+    );
+  }
+
   return (
     <ListItemButton
       component={RouterLink}
-      to={to}
+      to={to!}
       selected={selected}
-      sx={{
-        minHeight: 40,
-        justifyContent: open ? "initial" : "center",
-        px: 1,
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      sx={commonSx}
     >
       <ListItemIcon
         sx={{
