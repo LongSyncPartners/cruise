@@ -1,0 +1,21 @@
+
+
+
+docker rm -f cruisehousing-document-service
+docker build -t cruisehousing-document-service .
+docker run --rm -d --name cruisehousing-document-service -p 8001:8000 -v "${PWD}\app\output:/service/app/output" cruisehousing-document-service
+
+
+docker run -d ^
+  --name cruisehousing-document-service ^
+  -p 127.0.0.1:8001:8000 ^
+  -v %cd%\app\output:/service/app/output ^
+  cruisehousing-document-service
+  
+  
+curl -Method POST http://localhost:8001/internal/pdf/generate -Headers @{"Content-Type"="application/json"} -Body '{"jobId":"test-001","title":"収支報告書","items":[{"name":"賃料","amount":"1440"},{"name":"修繕費","amount":"225"}]}'
+
+Invoke-RestMethod -Method POST `
+  -Uri "http://localhost:8001/internal/pdf/generate" `
+  -ContentType "application/json; charset=utf-8" `
+  -InFile ".\body.json"

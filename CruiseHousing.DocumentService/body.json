@@ -1,0 +1,8 @@
+{
+  "jobId": "test-001",
+  "title": "収支報告書1",
+  "items": [
+    { "name": "賃料", "amount": "1440" },
+    { "name": "修繕費", "amount": "225" }
+  ]
+}
