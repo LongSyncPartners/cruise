@@ -1,7 +1,7 @@
 import logo from '../assets/images/header_logo.png';
 import {AppBar, Toolbar} from '@mui/material';
 
-export default function Header() {
+export default function MainlayoutHeader() {
   return (
     <div className="header-container">
           <AppBar position="fixed">

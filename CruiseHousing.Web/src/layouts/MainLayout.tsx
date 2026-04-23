@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Header from "./Header";
+import MainlayoutHeader from "./MainLayoutHeader";
 import Menu from "./Menu";
 import "./MainLayout.css";
 import { Toolbar } from "@mui/material";
@@ -9,7 +9,7 @@ export default function MainLayout() {
   return (
     <ToastProvider>
       <div>
-        <Header />
+        <MainlayoutHeader />
         <Toolbar />
 
         <div className="container">
