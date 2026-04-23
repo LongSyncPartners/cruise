@@ -1,1 +1,1 @@
-export { default } from "./PropertyIncomeExpenseScreen";
+export { default } from "./PropertyIncomeExpenseDetailScreen";

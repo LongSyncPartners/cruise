@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import PropertyIncomeExpenseSummaryHeader from "./PropertyIncomeExpenseSummaryHeader";
-import PropertyIncomeExpenseSummaryGrid from "./PropertyIncomeExpenseSummaryGrid";
 
 import "./index.style.css";
 import { useManagementCompanies } from "@/hooks/useManagementCompanies";
@@ -14,8 +12,10 @@ import {
   getVisibleGroups,
   getYears,
 } from "./summary/usePropertyIncomeExpenseSummaryPage";
+import PropertyIncomeExpenseSummaryHeader from "./summary/PropertyIncomeExpenseSummaryHeader";
+import PropertyIncomeExpenseSummaryGrid from "./summary/PropertyIncomeExpenseSummaryGrid";
 
-export default function PropertyIncomeExpenseSummaryPage() {
+export default function SummaryPage() {
   const years = getYears();
 
   const {

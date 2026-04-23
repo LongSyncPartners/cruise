@@ -1,7 +1,7 @@
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import SubjectIcon from '@mui/icons-material/Subject';
 import { Typography } from '@mui/material';
-import { ViewMode } from './PropertyIncomeExpenseScreen';
+import { ViewMode } from './PropertyIncomeExpenseDetailScreen';
 
 type PropertyIncomeExpenseViewHeaderProps = {
   viewMode: ViewMode;

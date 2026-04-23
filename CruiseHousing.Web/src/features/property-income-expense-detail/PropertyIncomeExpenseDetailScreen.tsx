@@ -1,7 +1,7 @@
 import { useState } from "react";
-import PropertyIncomeExpenseDetailPage from "./PropertyIncomeExpenseDetailPage";
-import PropertyIncomeExpenseSummaryPage from "./PropertyIncomeExpenseSummaryPage";
-import PropertyIncomeExpenseScreenHeader from "./PropertyIncomeExpenseScreenHeader";
+import DetailPage from "./DetailPage";
+import SummaryPage from "./SummaryPage";
+import PropertyIncomeExpenseScreenHeader from "./PropertyIncomeExpenseDetailScreenHeader";
 
 export type ViewMode = "detail" | "summary";
 
@@ -16,9 +16,9 @@ export default function PropertyIncomeExpenseScreen() {
       />
 
       {viewMode === "detail" ? (
-        <PropertyIncomeExpenseDetailPage />
+        <DetailPage />
       ) : (
-        <PropertyIncomeExpenseSummaryPage />
+        <SummaryPage />
       )}
     </div>
   );

@@ -1,20 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertColor, Button, Typography } from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import SummarizeIcon from '@mui/icons-material/Summarize';
-import SubjectIcon from '@mui/icons-material/Subject';
-import ViewListIcon from '@mui/icons-material/ViewList';
+import { useEffect, useMemo, useState } from "react";
+import { Button, Typography } from "@mui/material";
 
 import "./index.style.css";
 import {
   type PropertyIncomeExpenseDetailRow,
 } from "./types";
 
-import PropertyIncomeExpenseDetailGrid from "./detail/PropertyIncomeExpenseDetailGrid";
 import PropertyIncomeExpenseTabs from "./detail/PropertyIncomeExpenseTabs";
 
-import CommonToast from "../shared/CommonToast";
 import LoadingDialog from "../shared/LoadingDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
@@ -25,10 +18,10 @@ import { usePropertyIncomeExpenseValidation } from "./detail/usePropertyIncomeEx
 import { usePropertyIncomeExpenseCalculation } from "./detail/usePropertyIncomeExpenseCalculation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
-import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";
+
 import { useAppToast } from "@/providers/ToastProvider";
-import { PropertyHeaderProps, PropertyTabSummary } from "@/features/shared/commonTypes";
-import { PropertyInfo } from "../shared/PropertyInfo";
+import { PropertyTabSummary } from "@/features/shared/commonTypes";
+import { TabPanel } from "./detail/TabPanel";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -36,52 +29,9 @@ import { PropertyInfo } from "../shared/PropertyInfo";
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
 
-/**
- * Tab panel component for displaying the selected property's header and editable grid.
- * Only the active tab is rendered.
- */
-const TabPanel = ({
-  active,
-  header,
-  rows,
-  onRowsChange,
-  onDirtyChange,
-  onSelectedRowsChange,
-  isScreenLoading,
-}: {
-  active: boolean;
-  header?: PropertyHeaderProps;
-  rows: PropertyIncomeExpenseDetailRow[];
-  onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
-  onDirtyChange?: () => void;
-  onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
-  isScreenLoading: boolean;
-}) => {
-  // Do not render anything when the tab is inactive
-  // or when header information is not available.
-  if (!active || !header) return null;
 
-  return (
-    <>
-      {/* Property summary section */}
-      <PropertyInfo {...header} />
 
-      {/* Editable detail grid */}
-      <div className="property-income-expense-detail-grid-contaniner">
-        <PropertyIncomeExpenseDetailGrid
-          key={header.propertyCode}
-          rows={rows}
-          onRowsChange={onRowsChange}
-          onDirtyChange={onDirtyChange}
-          onSelectedRowsChange={onSelectedRowsChange}
-          isScreenLoading={isScreenLoading}
-        />
-      </div>
-    </>
-  );
-};
-
-export default function PropertyIncomeExpenseDetail() {
+export default function DetailPage() {
   /**
    * Local UI state
    */
