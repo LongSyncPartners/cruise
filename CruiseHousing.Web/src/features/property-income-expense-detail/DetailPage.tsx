@@ -6,7 +6,7 @@ import {
   type PropertyIncomeExpenseDetailRow,
 } from "./types";
 
-import PropertyIncomeExpenseTabs from "./detail/PropertyIncomeExpenseTabs";
+import PropertyIncomeExpenseTabs from "./detail/DetailTabs";
 
 import LoadingDialog from "../shared/LoadingDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
@@ -14,14 +14,14 @@ import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTa
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
 import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
-import { usePropertyIncomeExpenseValidation } from "./detail/usePropertyIncomeExpenseValidation";
-import { usePropertyIncomeExpenseCalculation } from "./detail/usePropertyIncomeExpenseCalculation";
+import { usePropertyIncomeExpenseValidation } from "./detail/useDetailValidation";
+import { usePropertyIncomeExpenseCalculation } from "./detail/useDetailCalculation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 
 import { useAppToast } from "@/providers/ToastProvider";
 import { PropertyTabSummary } from "@/features/shared/commonTypes";
-import { TabPanel } from "./detail/TabPanel";
+import { TabPanel } from "./detail/DetailTabPanel";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.

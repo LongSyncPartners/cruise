@@ -11,9 +11,9 @@ import {
   extractPropertyGroups,
   getVisibleGroups,
   getYears,
-} from "./summary/usePropertyIncomeExpenseSummaryPage";
-import PropertyIncomeExpenseSummaryHeader from "./summary/PropertyIncomeExpenseSummaryHeader";
-import PropertyIncomeExpenseSummaryGrid from "./summary/PropertyIncomeExpenseSummaryGrid";
+} from "./summary/useSummaryPage";
+import PropertyIncomeExpenseSummaryHeader from "./summary/SummaryHeader";
+import PropertyIncomeExpenseSummaryGrid from "./summary/SummaryGrid";
 
 export default function SummaryPage() {
   const years = getYears();

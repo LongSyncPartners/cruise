@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   createPropertyIncomeExpenseSummaryColumns,
   PropertyIncomeExpenseSummaryRow,
-} from "./propertyIncomeExpenseSummaryColumns";
+} from "./SummaryColumns";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 
 export default function PropertyIncomeExpenseSummaryGrid({

@@ -19,12 +19,12 @@ import { createStickyColumnSx } from "../../shared/stickColumn.styles";
 import {
   createEmptyPropertyIncomeExpenseDetailRow,
   recalculateBalances,
-} from "./propertyIncomeExpenseDetailRowUtils";
-import { createPropertyIncomeExpenseDetailColumns } from "./propertyIncomeExpenseDetailColumns";
+} from "./DetailRowUtils";
+import { createPropertyIncomeExpenseDetailColumns } from "./DetailColumns";
 import { type PropertyIncomeExpenseDetailRow } from "../types";
 
 import { v4 as uuidv4 } from "uuid";
-import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
+import { usePropertyIncomeExpenseCalculation } from "./useDetailCalculation";
 import { shouldRecalculateRow } from "../utils";
 import { usePropertyIncomeExpenseDetailStore } from "@/stores/propertyIncomeExpenseDetailStore";
 

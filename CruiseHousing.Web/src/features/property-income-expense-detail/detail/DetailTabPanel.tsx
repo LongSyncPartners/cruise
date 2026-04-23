@@ -1,6 +1,6 @@
 import { PropertyHeaderProps } from "@/features/shared/commonTypes";
 import { PropertyIncomeExpenseDetailRow } from "../types";
-import PropertyIncomeExpenseDetailGrid from "./PropertyIncomeExpenseDetailGrid";
+import PropertyIncomeExpenseDetailGrid from "./DetailGrid";
 import { PropertyInfo } from "@/features/shared/PropertyInfo";
 
 /**
