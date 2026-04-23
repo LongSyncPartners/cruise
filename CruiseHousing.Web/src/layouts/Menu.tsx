@@ -68,12 +68,12 @@ export default function Menu() {
       },
       {
         text: "物件別収支一覧",
-        to: "/report/apartment",
+        to: "/properties/finance/list",
         icon: <TableChartIcon />,
       },
       {
         text: "物件収支明細",
-        to: "/properties/finance",
+        to: "/properties/finance/detail",
         icon: <ReceiptLongIcon />,
       },
       {

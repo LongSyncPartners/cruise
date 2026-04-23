@@ -8,9 +8,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 
 import "./index.style.css";
 import {
-  type PropertyHeaderProps,
   type PropertyIncomeExpenseDetailRow,
-  type PropertyTabSummary,
 } from "./types";
 
 import PropertyIncomeExpenseDetailGrid from "./PropertyIncomeExpenseDetailGrid";
@@ -29,7 +27,8 @@ import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpense
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";
 import { useAppToast } from "@/providers/ToastProvider";
-import { PropertyHeader } from "./PropertyIncomeExpenseDetailHeader";
+import { PropertyHeaderProps, PropertyTabSummary } from "@/features/shared/commonTypes";
+import { PropertyInfo } from "../shared/PropertyInfo";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -65,7 +64,7 @@ const TabPanel = ({
   return (
     <>
       {/* Property summary section */}
-      <PropertyHeader {...header} />
+      <PropertyInfo {...header} />
 
       {/* Editable detail grid */}
       <div className="property-income-expense-detail-grid-contaniner">

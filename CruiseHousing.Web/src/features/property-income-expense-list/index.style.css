@@ -1,0 +1,208 @@
+/* ================================
+   Main Container
+   - Wrapper for the whole screen
+   - Controls layout width and spacing
+================================ */
+.property-income-expense-list-container {
+  padding-left: 50px;     /* Add left spacing for layout alignment */
+  max-width: 1400px;      /* Limit max width for better readability */
+}
+
+/* ================================
+   Header Section
+   - Contains search area and title
+================================ */
+.property-income-expense-list-container .search-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;              /* Space between elements */
+  margin-bottom: 24px;
+}
+
+/* Screen title style */
+.property-income-expense-list-container p.property-income-expense-list-title {
+  font-size: 150%;
+  font-weight: 600;
+}
+
+/* ================================
+   Common Header (Top action bar)
+   - Contains refresh, download, etc.
+================================ */
+div.property-income-expense-list-common-header {
+  border-bottom: 1px solid rgb(204, 204, 204); /* Bottom border */
+  margin-bottom: 20px;
+  display: flex;
+}
+
+/* Icon style inside header */
+div.property-income-expense-list-common-header svg {
+  color: #467ABA;         /* Primary icon color */
+  padding-right: 2px;
+}
+
+/* Header item (clickable action) */
+div.common-header-item,
+div.common-header-item-logout {
+  display: flex;
+  padding: 5px 10px;
+}
+
+/* Hover effect for header items */
+div.common-header-item:hover,
+div.common-header-item-logout:hover {
+  background-color: #eae9e9;
+}
+
+/* Logout button aligned to the right */
+div.common-header-item-logout {
+  margin-left: auto;
+}
+
+/* ================================
+   DataGrid Custom Styles
+   - Override default MUI DataGrid styles
+================================ */
+
+/* Row background reset */
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row {
+  background-color: transparent;
+}
+
+/* Input inside grid cell takes full width */
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row .form-input {
+  width: 100%;
+}
+
+/* Column header style */
+.property-income-expense-list-grid-contaniner div.MuiDataGrid-columnHeader {
+  background-color: #1976d2; /* MUI primary color */
+  color: white;
+}
+
+/* Hide column separator line */
+.property-income-expense-list-grid-contaniner div.MuiDataGrid-columnSeparator {
+  display: none;
+}
+
+/* Checkbox style (header) */
+.property-income-expense-list-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root {
+  color: #eff1f3;
+}
+
+/* Checkbox style when checked */
+.property-income-expense-list-grid-contaniner
+  .MuiDataGrid-columnHeaderCheckbox
+  .MuiCheckbox-root.Mui-checked {
+  color: #eff1f3;
+}
+
+/* Adjust spacing for input inside grid */
+.property-income-expense-list-grid-contaniner div.form-input {
+  margin-top: 5px;
+}
+
+
+
+/* ================================
+   Footer Section
+   - Contains Save / Cancel buttons
+================================ */
+.property-income-expense-list-footer {
+  padding-top: 20px;
+  text-align: center;
+}
+
+/* Button style in footer */
+.property-income-expense-list-footer button {
+  width: 120px;
+  margin-right: 30px;
+}
+
+.property-income-expense-list-grid-contaniner .line-separator::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #d0d0d0;
+}
+
+/* ================================
+   Set selected row background color based on executed state and custom row color type
+================================ */
+
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-selected-custom {
+  background-color: rgba(70, 156, 243, 0.12);
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-selected-custom:hover {
+  background-color: rgba(60, 139, 219, 0.18);
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-gray {
+  background-color: #e0e0e0;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row  .mui-row-color-gray:hover {
+  background-color: #d5d5d5;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-yellow {
+  background-color: #faed77;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-yellow:hover {
+  background-color: #fdf5aa;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-blue {
+  background-color: #90caf9;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-blue:hover {
+  background-color: #64b5f6;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-pink {
+  background-color: #f48fb1;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.mui-row-color-pink:hover {
+  background-color: #f06292;
+}
+
+/* Total row style */
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.summary-total-row {
+  background-color: #aad5f1;
+  font-weight: 400;
+}
+
+.property-income-expense-list-grid-contaniner .MuiDataGrid-row.summary-total-row:hover {
+  background-color: #c3dff1;
+}
+
+.property-income-expense-list-grid-contaniner .align-right-header .MuiDataGrid-columnHeaderTitleContainer{
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* active */
+.property-income-expense-list-common-header .common-header-item.active {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* icon */
+.property-income-expense-list-common-header .common-header-item.active svg {
+  color: white;
+}
+
+.property-income-expense-list-common-header .common-header-item {
+  padding-left: 10px;
+  padding-right: 40px;
+}

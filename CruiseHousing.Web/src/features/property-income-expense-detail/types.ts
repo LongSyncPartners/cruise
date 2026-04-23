@@ -1,3 +1,4 @@
+import { PropertyTabSummary } from "@/features/shared/commonTypes";
 import { type GridRowId } from "@mui/x-data-grid";
 
 // Property income/expense detail row
@@ -15,25 +16,6 @@ export type PropertyIncomeExpenseDetailRow = {
   note?: string;
   rowColorType?: string; // For custom row coloring
   executedState: boolean; // For context menu toggle
-};
-
-export type PropertyHeaderProps = {
-  propertyCode: string;
-  roomCode?: string;
-  managementType: string;
-  propertyType: string;
-  managementCompany: string;
-  managementPeriod?: string;
-  owner?: string;
-};
-
-/**
- * Tab summary only
- */
-export type PropertyTabSummary = {
-  id: string;
-  label: string;
-  header: PropertyHeaderProps;
 };
 
 /**

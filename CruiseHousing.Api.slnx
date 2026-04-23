@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="CruiseHousing.Api/CruiseHousing.Api.csproj" />
+  <Project Path="CruiseHousing.Core/CruiseHousing.Core.csproj" Id="f3310acf-f1d9-4685-be7a-8249fbbefc7d" />
+  <Project Path="CruiseHousing.Worker/CruiseHousing.Worker.csproj" Id="086c21f4-8e4a-4977-ae79-475b3aab3da3" />
 </Solution>
