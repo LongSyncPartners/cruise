@@ -1,6 +1,6 @@
 import { Box, MenuItem, Select, Tab, Tabs } from "@mui/material";
-import { PropertyTabSummary } from "../shared/commonTypes";
-import { useCenteredScrollableTabs } from "../shared/useCenteredScrollableTabs";
+import { PropertyTabSummary } from "../../shared/commonTypes";
+import { useCenteredScrollableTabs } from "../../shared/useCenteredScrollableTabs";
 
 type PropertyIncomeExpenseTabsProps = {
   groups: string[];

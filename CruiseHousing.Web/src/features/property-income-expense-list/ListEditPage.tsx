@@ -12,7 +12,7 @@ import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
 import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
-import { usePropertyIncomeExpenseValidation } from "./useListEditPageValidation";
+import { usePropertyIncomeExpenseValidation } from "./edit/useListEditPageValidation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { useAppToast } from "@/providers/ToastProvider";
@@ -22,7 +22,7 @@ import ListEditPageHeader from "./edit/ListEditPageHeader";
 import {
   createListEditRows,
   createSubjectTabs,
-} from "./data.dump2";
+} from "./data.dump";
 import ListEditGrid from "./edit/ListEditGrid";
 import { Button, Typography } from "@mui/material";
 import { PropertyTabSummary } from "../shared/commonTypes";

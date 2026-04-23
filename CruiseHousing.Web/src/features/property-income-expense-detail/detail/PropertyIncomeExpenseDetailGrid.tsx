@@ -11,21 +11,21 @@ import {
 
 import CustomContextMenu, {
   type CellContextMenuState,
-} from "../shared/CustomContextMenu";
-import CustomPagination from "../shared/CustomPagination";
-import { dataGridCommonSx } from "../shared/dataGridCommonSx";
-import { createStickyColumnSx } from "../shared/stickColumn.styles";
+} from "../../shared/CustomContextMenu";
+import CustomPagination from "../../shared/CustomPagination";
+import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
+import { createStickyColumnSx } from "../../shared/stickColumn.styles";
 
 import {
   createEmptyPropertyIncomeExpenseDetailRow,
   recalculateBalances,
 } from "./propertyIncomeExpenseDetailRowUtils";
 import { createPropertyIncomeExpenseDetailColumns } from "./propertyIncomeExpenseDetailColumns";
-import { type PropertyIncomeExpenseDetailRow } from "./types";
+import { type PropertyIncomeExpenseDetailRow } from "../types";
 
 import { v4 as uuidv4 } from "uuid";
 import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
-import { shouldRecalculateRow } from "./utils";
+import { shouldRecalculateRow } from "../utils";
 import { usePropertyIncomeExpenseDetailStore } from "@/stores/propertyIncomeExpenseDetailStore";
 
 /**

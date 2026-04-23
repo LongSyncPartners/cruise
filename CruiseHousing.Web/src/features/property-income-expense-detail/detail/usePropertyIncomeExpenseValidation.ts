@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { validateRequired, validateMaxLength } from "../shared/validators";
-import { type ListEditRow } from "./types";
+import { validateRequired, validateMaxLength } from "../../shared/validators";
+import { type PropertyIncomeExpenseDetailRow } from "../types";
 
 type ValidationResult = {
   isValid: boolean;
@@ -41,12 +41,55 @@ export const usePropertyIncomeExpenseValidation = () => {
    * Validate single row
    */
   const validateRow = useCallback(
-    (row: ListEditRow): ValidationResult => {
+    (row: PropertyIncomeExpenseDetailRow): ValidationResult => {
       // Date
       if (!row.transactionDate || !isValidDateValue(row.transactionDate)) {
         return {
           isValid: false,
           errorMessage: "日付は正しい形式で入力してください。",
+        };
+      }
+
+      // Counterparty
+      const counterpartyRequired = validateRequired(
+        row.counterparty,
+        "取引先"
+      );
+      if (!counterpartyRequired.isValid) return counterpartyRequired;
+
+      const counterpartyLength = validateMaxLength(
+        row.counterparty ?? "",
+        40,
+        "取引先"
+      );
+      if (!counterpartyLength.isValid) return counterpartyLength;
+
+      // Description
+      const descriptionRequired = validateRequired(
+        row.description,
+        "説明"
+      );
+      if (!descriptionRequired.isValid) return descriptionRequired;
+
+      // Currency fields
+      if (!isValidNumber(row.managementCompanyAmount)) {
+        return {
+          isValid: false,
+          errorMessage: "管理会社入金は数値で入力してください。",
+        };
+      }
+
+      if (!isValidNumber(row.income)) {
+        return {
+          isValid: false,
+          errorMessage: "Incomeは数値で入力してください。",
+        };
+      }
+
+      if (!isValidNumber(row.expense)) {
+        return {
+          isValid: false,
+          errorMessage: "Expenseは数値で入力してください。",
         };
       }
 
@@ -59,7 +102,7 @@ export const usePropertyIncomeExpenseValidation = () => {
    * Validate all rows (for Save button)
    */
   const validateRows = useCallback(
-    (rows: ListEditRow[]): ValidationResult => {
+    (rows: PropertyIncomeExpenseDetailRow[]): ValidationResult => {
       for (const row of rows) {
         const result = validateRow(row);
         if (!result.isValid) {

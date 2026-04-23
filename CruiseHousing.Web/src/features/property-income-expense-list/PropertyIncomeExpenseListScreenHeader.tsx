@@ -1,4 +1,3 @@
-import SummarizeIcon from '@mui/icons-material/Summarize';
 import SubjectIcon from '@mui/icons-material/Subject';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DownloadIcon from '@mui/icons-material/Download';

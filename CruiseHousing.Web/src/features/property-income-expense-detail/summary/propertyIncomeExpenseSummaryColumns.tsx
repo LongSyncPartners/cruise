@@ -1,9 +1,7 @@
+import CreateHeaderEditable from "@/features/shared/CreateHeaderEditable";
 import type { GridColDef } from "@mui/x-data-grid";
-
-import CurrencyCell from "../shared/CurrencyCell";
-import YearMonthCell from "../shared/YearMonthCell";
-import CreateHeaderEditable from "../shared/CreateHeaderEditable";
-import { PropertyIncomeExpenseSummaryRow } from "./types";
+import { PropertyIncomeExpenseSummaryRow } from "../types";
+import CurrencyCell from "@/features/shared/CurrencyCell";
 
 type CreatePropertyIncomeExpenseSummaryColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;

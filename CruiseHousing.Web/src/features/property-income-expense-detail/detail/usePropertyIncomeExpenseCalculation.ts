@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import type { GridRowModel } from "@mui/x-data-grid";
 
-import type { PropertyIncomeExpenseDetailRow } from "./types";
-import { getYearMonth, isSameMonth, parseCurrency } from "../shared/utils";
+import type { PropertyIncomeExpenseDetailRow } from "../types";
+import { getYearMonth, isSameMonth, parseCurrency } from "../../shared/utils";
 
 export const usePropertyIncomeExpenseCalculation = () => {
   /**

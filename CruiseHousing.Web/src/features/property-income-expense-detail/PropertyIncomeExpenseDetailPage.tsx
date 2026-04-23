@@ -11,8 +11,8 @@ import {
   type PropertyIncomeExpenseDetailRow,
 } from "./types";
 
-import PropertyIncomeExpenseDetailGrid from "./PropertyIncomeExpenseDetailGrid";
-import PropertyIncomeExpenseTabs from "./PropertyIncomeExpenseTabs";
+import PropertyIncomeExpenseDetailGrid from "./detail/PropertyIncomeExpenseDetailGrid";
+import PropertyIncomeExpenseTabs from "./detail/PropertyIncomeExpenseTabs";
 
 import CommonToast from "../shared/CommonToast";
 import LoadingDialog from "../shared/LoadingDialog";
@@ -21,8 +21,8 @@ import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTa
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
 import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
-import { usePropertyIncomeExpenseValidation } from "./usePropertyIncomeExpenseValidation";
-import { usePropertyIncomeExpenseCalculation } from "./usePropertyIncomeExpenseCalculation";
+import { usePropertyIncomeExpenseValidation } from "./detail/usePropertyIncomeExpenseValidation";
+import { usePropertyIncomeExpenseCalculation } from "./detail/usePropertyIncomeExpenseCalculation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { getDefaultPropertyCodeByGroup } from "@/api/propertyIncomeExpenseDetailApi";

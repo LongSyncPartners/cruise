@@ -1,17 +1,17 @@
 import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import React from "react";
 
-import MultilineEditCell from "../shared/MultilineEditCell";
-import { formatUSD, parseCurrencyInput } from "../shared/utils";
-import { type PropertyIncomeExpenseDetailRow } from "./types";
-import { createDateCellValidator, createTextCellValidator } from "../shared/gridValidators";
-import CurrencyEditCell from "../shared/CurrencyEditCell";
-import CurrencyCell from "../shared/CurrencyCell";
-import MultilineCell from "../shared/MultilineCell";
-import DateCell from "../shared/DateCell";
-import DateEditCell from "../shared/DateEditCell";
-import YearMonthCell from "../shared/YearMonthCell";
-import CreateHeaderEditable from "../shared/CreateHeaderEditable";
+import MultilineEditCell from "../../shared/MultilineEditCell";
+import { formatUSD, parseCurrencyInput } from "../../shared/utils";
+import { type PropertyIncomeExpenseDetailRow } from "../types";
+import { createDateCellValidator, createTextCellValidator } from "../../shared/gridValidators";
+import CurrencyEditCell from "../../shared/CurrencyEditCell";
+import CurrencyCell from "../../shared/CurrencyCell";
+import MultilineCell from "../../shared/MultilineCell";
+import DateCell from "../../shared/DateCell";
+import DateEditCell from "../../shared/DateEditCell";
+import YearMonthCell from "../../shared/YearMonthCell";
+import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
 
 type CreateColumnsParams = {
   onCellContextMenu: (

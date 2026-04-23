@@ -1,5 +1,5 @@
 
-import { ListEditRow, PropertyTabSummary, SubjectTabInfo, TabInternalOwnerRow, TabOwnerManagementCompanyRow, TabOwnerRow, TabPropertyManagementCompanyRow } from "./types";
+import { ListEditRow, SubjectTabInfo, TabInternalOwnerRow, TabOwnerManagementCompanyRow, TabOwnerRow, TabPropertyManagementCompanyRow } from "./types";
 
 // 👉 generate 100 rows
 export const createTabPropertyManagementCompanyRows = (): TabPropertyManagementCompanyRow[] => {

@@ -13,7 +13,7 @@ import {
   extractPropertyGroups,
   getVisibleGroups,
   getYears,
-} from "./usePropertyIncomeExpenseSummaryPage";
+} from "./summary/usePropertyIncomeExpenseSummaryPage";
 
 export default function PropertyIncomeExpenseSummaryPage() {
   const years = getYears();

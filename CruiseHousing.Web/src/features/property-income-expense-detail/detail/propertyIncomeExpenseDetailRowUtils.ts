@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { type PropertyIncomeExpenseDetailRow } from "./types";
+import { type PropertyIncomeExpenseDetailRow } from "../types";
 
 export const recalculateBalances = (
   rows: PropertyIncomeExpenseDetailRow[]

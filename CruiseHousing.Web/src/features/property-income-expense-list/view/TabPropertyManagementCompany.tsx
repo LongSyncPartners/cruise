@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
 import { createTabPropertyManagementCompanyColumns } from "./TabPropertyManagementCompanyColumn";
 import { TabPropertyManagementCompanyRow } from "../types";
-import { createTabPropertyManagementCompanyRows } from "../data.dump2";
+import { createTabPropertyManagementCompanyRows } from "../data.dump";
 
 type TabPropertyManagementCompanyProps = {
   rows: TabPropertyManagementCompanyRow[];

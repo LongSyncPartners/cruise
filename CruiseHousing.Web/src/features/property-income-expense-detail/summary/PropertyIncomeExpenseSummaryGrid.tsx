@@ -2,11 +2,11 @@ import { Box } from "@mui/material";
 import { DataGrid, GridRowId } from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { dataGridCommonSx } from "../shared/dataGridCommonSx";
 import {
   createPropertyIncomeExpenseSummaryColumns,
   PropertyIncomeExpenseSummaryRow,
 } from "./propertyIncomeExpenseSummaryColumns";
+import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 
 export default function PropertyIncomeExpenseSummaryGrid({
   rows,
