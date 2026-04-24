@@ -277,7 +277,6 @@ export default function ListEditPage() {
           detailTabValue={detailTabValue}
           subjectTabs={subjectTabs} 
           subjectTabValue={subjectTabValue}
-          
         />
       </div>
 

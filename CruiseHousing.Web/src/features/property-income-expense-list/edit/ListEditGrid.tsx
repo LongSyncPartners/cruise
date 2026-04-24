@@ -26,22 +26,37 @@ export default function ListEditGrid({ rows, detailTabs, detailTabValue, subject
     }));
   }, []);
 
-  const filteredDetailTabValue = useMemo(() => {
-    return detailTabs.filter((tab) => tab.value !== DETAIL_TAB_VALUES.ALL);
-  }, [detailTabs]);
+  const filteredDetailTabs = useMemo(() => {
+    if (detailTabValue === DETAIL_TAB_VALUES.ALL) {
+      return detailTabs.filter(
+        (tab) => tab.value !== DETAIL_TAB_VALUES.ALL
+      );
+    }
+
+    return detailTabs.filter(
+      (tab) => tab.value === detailTabValue
+    );
+  }, [detailTabValue]);
 
   const filteredSubjectTabs = useMemo(() => {
-    return subjectTabs.filter((tab) => tab.value !== "all");
-  }, [subjectTabs]);
+    if (subjectTabValue === 0) {
+      // 0 = ALL
+      return subjectTabs.filter((tab) => tab.value !== "all");
+    }
+
+    return subjectTabs.filter(
+      (_, index) => index === subjectTabValue
+    );
+  }, [detailTabValue, subjectTabValue]);
 
   const baseColumns = useMemo(
     () =>
       createListEditColumns({
         onRenameHeader: handleRenameHeader,
-        detailTabs: filteredDetailTabValue,
+        detailTabs: filteredDetailTabs,
         subjectTabs: filteredSubjectTabs
       }),
-    [handleRenameHeader, detailTabs, subjectTabs]
+    [handleRenameHeader, detailTabValue,  subjectTabValue]
   );
 
   const columns = useMemo(() => {
