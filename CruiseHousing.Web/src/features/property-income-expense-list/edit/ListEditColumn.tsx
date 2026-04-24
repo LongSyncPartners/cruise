@@ -4,6 +4,10 @@ import { ListEditRow } from "../types";
 import DateCell from "@/features/shared/DateCell";
 import MultilineCell from "@/features/shared/MultilineCell";
 import CurrencyCell from "@/features/shared/CurrencyCell";
+import { formatUSD, parseCurrencyInput } from "@/features/shared/utils";
+import CurrencyEditCell from "@/features/shared/CurrencyEditCell";
+import MultilineEditCell from "@/features/shared/MultilineEditCell";
+import { createDateCellValidator } from "@/features/shared/gridValidators";
 
 type CreateListEditColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
@@ -33,7 +37,6 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <DateCell {...params} />,
-      renderHeader: renderEditableHeader,
     },
     {
       field: "category",
@@ -43,8 +46,9 @@ export const createListEditColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} required/>,
     },
     {
       field: "subject",
@@ -54,8 +58,9 @@ export const createListEditColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} required/>,
     },
     {
       field: "amount",
@@ -65,8 +70,10 @@ export const createListEditColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      valueFormatter: (value) => formatUSD(value as number),
+      valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <CurrencyEditCell {...params} />,
     },
     {
       field: "masterAmount",
@@ -76,19 +83,22 @@ export const createListEditColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
+      valueFormatter: (value) => formatUSD(value as number),
+      valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <CurrencyEditCell {...params} />,
     },
     {
       field: "accountingSubjectName",
       headerName: "会計データ科目名",
       headerClassName: "align-left-header",
-      width: 120,
+      width: 130,
       editable: true,
       sortable: false,
       filterable: false,
+      preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
     {
       field: "appliedSubjectAux",
@@ -100,7 +110,7 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
     {
       field: "debit",
@@ -112,7 +122,7 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
     {
       field: "debitAux",
@@ -124,7 +134,7 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
     {
       field: "credit",
@@ -136,7 +146,7 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
     {
       field: "creditAux",
@@ -148,7 +158,7 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
-      renderHeader: renderEditableHeader,
+      renderEditCell: (params) => <MultilineEditCell {...params} />,
     },
   ];
 };

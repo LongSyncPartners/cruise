@@ -47,6 +47,7 @@ export default function ListEditGrid({ rows }: ListEditGridProps) {
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",
         }}
+        getRowHeight={() => "auto"}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu
