@@ -1,6 +1,6 @@
 import CreateHeaderEditable from "@/features/shared/CreateHeaderEditable";
 import type { GridColDef } from "@mui/x-data-grid";
-import { ListEditRow } from "../types";
+import { ListEditRow, SubjectTabInfo } from "../types";
 import DateCell from "@/features/shared/DateCell";
 import MultilineCell from "@/features/shared/MultilineCell";
 import CurrencyCell from "@/features/shared/CurrencyCell";
@@ -8,9 +8,11 @@ import { formatUSD, parseCurrencyInput } from "@/features/shared/utils";
 import CurrencyEditCell from "@/features/shared/CurrencyEditCell";
 import MultilineEditCell from "@/features/shared/MultilineEditCell";
 import { createDateCellValidator } from "@/features/shared/gridValidators";
+import { SubjectOption } from "../subjectOptions";
 
 type CreateListEditColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
+  subjectTabs: SubjectOption[];
 };
 
 const createEditableHeader =
@@ -24,7 +26,8 @@ const createEditableHeader =
 
 export const createListEditColumns = ({
   onRenameHeader,
-}: CreateListEditColumnsParams = {}): GridColDef<ListEditRow>[] => {
+  subjectTabs,
+}: CreateListEditColumnsParams): GridColDef<ListEditRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
   return [
@@ -58,9 +61,8 @@ export const createListEditColumns = ({
       editable: true,
       sortable: false,
       filterable: false,
-      preProcessEditCellProps: createDateCellValidator({ required: true }),
-      renderCell: (params) => <MultilineCell {...params} />,
-      renderEditCell: (params) => <MultilineEditCell {...params} required/>,
+      type: "singleSelect",
+      valueOptions: subjectTabs,
     },
     {
       field: "amount",

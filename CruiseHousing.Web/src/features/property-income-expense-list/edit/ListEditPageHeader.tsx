@@ -4,6 +4,7 @@ import type { PropertyInfoProps, SubjectTabInfo } from "../types";
 import { PropertyInfo } from "../../shared/PropertyInfo";
 import { useCenteredScrollableTabs } from "@/features/shared/useCenteredScrollableTabs";
 import { PropertyTabSummary } from "@/features/shared/commonTypes";
+import { DetailTabValue, SubjectOption, TabOption } from "../subjectOptions";
 
 const getDetailTabProps = (index: number) => ({
   id: `property-tab-${index}`,
@@ -24,11 +25,12 @@ type ListEditPageHeaderProps = {
 
   header?: PropertyInfoProps;
 
-  detailTabValue: number;
-  onChangeDetailTab: (newValue: number) => void;
+  detailTabValue: DetailTabValue;
+  detailTabs: TabOption[];
+  onChangeDetailTab: (newValue: DetailTabValue) => void;
 
   subjectTabValue: number;
-  subjectTabs: SubjectTabInfo[];
+  subjectTabs: SubjectOption[];
   onChangeSubjectTab: (newValue: number) => void;
 };
 
@@ -40,6 +42,7 @@ export default function ListEditPageHeader({
   onChangePropertyTab,
   header,
   detailTabValue,
+  detailTabs,
   onChangeDetailTab,
   subjectTabValue,
   subjectTabs,
@@ -125,15 +128,18 @@ export default function ListEditPageHeader({
       >
         <Tabs
           value={detailTabValue}
-          onChange={(_event, newValue: number) => onChangeDetailTab(newValue)}
+          onChange={(_event, newValue: DetailTabValue) => onChangeDetailTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{ flex: 1 }}
         >
-          <Tab
-            label="全て"
-            sx={{
-              textTransform: "none",
+          {detailTabs.map((detailTab, index) => (
+            <Tab
+              key={detailTab.value}
+              value={detailTab.value}
+              label={detailTab.label}
+              sx={{
+                textTransform: "none",
                 whiteSpace: "nowrap",
                 minWidth: 100,
                 minHeight: 30,
@@ -142,70 +148,11 @@ export default function ListEditPageHeader({
                   backgroundColor: "#1976d2",
                   color: "white",
                 },
-            }}
-            {...getDetailTabProps(0)}
-          />
-          <Tab
-            label="物件管理会社"
-            sx={{
-              textTransform: "none",
-                whiteSpace: "nowrap",
-                minWidth: 120,
-                minHeight: 30,
-                px: 1,
-                "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                },
-            }}
-            {...getDetailTabProps(1)}
-          />
-          <Tab
-            label="オーナー管理会社"
-            sx={{
-              textTransform: "none",
-                whiteSpace: "nowrap",
-                minWidth: 120,
-                minHeight: 30,
-                px: 1,
-                "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                },
-            }}
-            {...getDetailTabProps(2)}
-          />
-          <Tab
-            label="貸主（自社）"
-            sx={{
-              textTransform: "none",
-                whiteSpace: "nowrap",
-                minWidth: 100,
-                minHeight: 30,
-                px: 1,
-                "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                },
-            }}
-            {...getDetailTabProps(3)}
-          />
-          <Tab
-            label="オーナー"
-            sx={{
-              textTransform: "none",
-                whiteSpace: "nowrap",
-                minWidth: 100,
-                minHeight: 30,
-                px: 1,
-                "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                },
-            }}
-            {...getDetailTabProps(4)}
-          />
-        </Tabs>
+              }}
+              {...getDetailTabProps(index)}
+            />
+          ))}
+</Tabs>
       </Box>
 
       <Box
@@ -225,9 +172,11 @@ export default function ListEditPageHeader({
           scrollButtons="auto"
           sx={{ flex: 1 }}
         >
+
           {subjectTabs.map((subjectTab, index) => (
             <Tab
-              key={subjectTab.code}
+              key={`${subjectTab.value}-${index}`}
+              value={index}
               label={subjectTab.label}
               sx={{
                 textTransform: "none",

@@ -21,11 +21,11 @@ import ListEditPageHeader from "./edit/ListEditPageHeader";
 
 import {
   createListEditRows,
-  createSubjectTabs,
 } from "./data.dump";
 import ListEditGrid from "./edit/ListEditGrid";
 import { Button, Typography } from "@mui/material";
 import { PropertyTabSummary } from "../shared/commonTypes";
+import { DETAIL_TAB_OPTIONS, DETAIL_TAB_VALUES, DetailTabValue, getSubjectOptionsByDetailTab } from "./subjectOptions";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: ListEditRow[] = [];
@@ -34,7 +34,9 @@ export default function ListEditPage() {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
-  const [detailTabValue, setDetailTabValue] = useState(0);
+  const [detailTabValue, setDetailTabValue] = useState<DetailTabValue>(
+    DETAIL_TAB_VALUES.ALL
+  );
   const [subjectTabValue, setSubjectTabValue] = useState(0);
 
   const [editedRows, setEditedRows] = useState<ListEditRow[]>([]);
@@ -86,13 +88,17 @@ export default function ListEditPage() {
   const { mutateAsync: saveRows, isPending: isSaving } =
     useSavePropertyIncomeExpenseRows();
 
-  const subjectTabs = useMemo<SubjectTabInfo[]>(() => {
-    return createSubjectTabs();
+  const detailTabs = useMemo(() => {
+    return DETAIL_TAB_OPTIONS;
   }, []);
 
+  const subjectTabs = useMemo(() => {
+    return getSubjectOptionsByDetailTab(detailTabValue);
+  }, [detailTabValue]);
+
   const listEditRows = useMemo(() => {
-    return createListEditRows();
-  }, []);
+    return createListEditRows(detailTabValue, subjectTabValue);
+  }, [detailTabValue, subjectTabValue]);
 
   const handleGroupChange = async (newGroup: string) => {
     if (newGroup === selectedGroup) return;
@@ -105,8 +111,9 @@ export default function ListEditPage() {
     setIsDirty(false);
   };
 
-  const handleChangeDetailTab = (newValue: number) => {
+  const handleChangeDetailTab = (newValue: DetailTabValue) => {
     setDetailTabValue(newValue);
+    setSubjectTabValue(0);
   };
 
   const handleChangeSubjectTab = (newValue: number) => {
@@ -256,6 +263,7 @@ export default function ListEditPage() {
         onChangePropertyTab={handleTabChange}
         header={activeProperty?.header}
         detailTabValue={detailTabValue}
+        detailTabs={detailTabs}
         onChangeDetailTab={handleChangeDetailTab}
         subjectTabValue={subjectTabValue}
         subjectTabs={subjectTabs}
@@ -263,7 +271,7 @@ export default function ListEditPage() {
       />
 
       <div className="property-income-expense-list-grid-contaniner">
-        <ListEditGrid rows={listEditRows} />
+        <ListEditGrid rows={listEditRows} subjectTabs={subjectTabs} subjectTabValue={subjectTabValue}/>
       </div>
 
       {/* Show guidance when no property is selected */}

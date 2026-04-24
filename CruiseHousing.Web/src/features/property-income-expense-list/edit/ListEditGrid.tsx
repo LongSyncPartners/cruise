@@ -4,14 +4,17 @@ import { useCallback, useMemo, useState } from "react";
 
 import { createListEditColumns } from "./ListEditColumn";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
-import { ListEditRow } from "../types";
+import { ListEditRow, SubjectTabInfo } from "../types";
+import { SubjectOption } from "../subjectOptions";
 
 
 type ListEditGridProps = {
   rows: ListEditRow[];
+  subjectTabs: SubjectOption[];
+  subjectTabValue: number;
 };
 
-export default function ListEditGrid({ rows }: ListEditGridProps) {
+export default function ListEditGrid({ rows, subjectTabs, subjectTabValue }: ListEditGridProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
@@ -21,12 +24,17 @@ export default function ListEditGrid({ rows }: ListEditGridProps) {
     }));
   }, []);
 
+  const filteredSubjectTabs = useMemo(() => {
+    return subjectTabs.filter((tab) => tab.value !== "all");
+  }, [subjectTabs]);
+
   const baseColumns = useMemo(
     () =>
       createListEditColumns({
         onRenameHeader: handleRenameHeader,
+        subjectTabs
       }),
-    [handleRenameHeader]
+    [handleRenameHeader, filteredSubjectTabs]
   );
 
   const columns = useMemo(() => {

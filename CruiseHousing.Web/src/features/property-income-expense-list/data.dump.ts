@@ -204,46 +204,82 @@ export const createSubjectTabs = (): SubjectTabInfo[] => {
   }));
 };
 
-export const createListEditRows = (): ListEditRow[] => {
-  const categories = ["収入", "支出", "調整"];
-  const subjects = [
-    "賃料",
-    "修繕費",
-    "管理料",
-    "その他",
-    "仲介手数料",
-  ];
+import { DetailTabValue } from "./subjectOptions";
+
+export const createListEditRows = (
+  detailTabValue: DetailTabValue,
+  subjectTabValue: number
+): ListEditRow[] => {
+  const categoriesMap: Record<number, string[]> = {
+    0: ["収入", "支出", "調整"],
+    1: ["収入"],
+    2: ["支出"],
+    3: ["調整"],
+    4: ["収入", "支出"],
+  };
+
+  const subjectsMap: Record<number, string[]> = {
+    0: ["rent", "repairCost", "managementFee"],
+    1: ["otherIncome", "brokerageFee"],
+    2: ["gardenMaintenance", "otherExpense"],
+  };
+
+  const categories = categoriesMap[detailTabValue] ?? ["収入", "支出"];
+  const subjects = subjectsMap[subjectTabValue] ?? ["rent"];
 
   const debitOptions = ["現金", "普通預金", "未収金"];
   const creditOptions = ["売上", "雑収入", "未払金"];
 
+  const seed = detailTabValue * 100 + subjectTabValue;
+
+  const random = (i: number, max: number) => {
+    return Math.abs(Math.sin(i + seed)) * max;
+  };
+
   return Array.from({ length: 30 }, (_, i) => {
     const day = (i % 28) + 1;
+
+    const categoryIndex =
+      Math.floor(random(i, categories.length)) % categories.length;
+
+    const subjectIndex =
+      Math.floor(random(i + 1, subjects.length)) % subjects.length;
+
+    const amountBase = Math.floor(random(i + 2, 5000)) + 1000;
 
     return {
       id: i + 1,
 
       transactionDate: `2024-04-${day.toString().padStart(2, "0")}`,
 
-      category: categories[i % categories.length],
+      category: categories[categoryIndex],
 
-      subject: subjects[i % subjects.length],
+      // Select の valueOptions に合わせて code を入れる
+      subject: subjects[subjectIndex],
 
-      amount: (i + 1) * 1000,
+      amount: amountBase,
 
-      masterAmount: (i + 1) * 900,
+      masterAmount: Math.floor(amountBase * 0.9),
 
-      accountingSubjectName: `会計科目_${i + 1}`,
+      accountingSubjectName: `会計科目_${Math.floor(random(i + 3, 20))}`,
 
-      appliedSubjectAux: `補助_${(i % 5) + 1}`,
+      appliedSubjectAux: `補助_${Math.floor(random(i + 4, 5)) + 1}`,
 
-      debit: debitOptions[i % debitOptions.length],
+      debit:
+        debitOptions[
+          Math.floor(random(i + 5, debitOptions.length)) %
+            debitOptions.length
+        ],
 
-      debitAux: `借方補助_${(i % 3) + 1}`,
+      debitAux: `借方補助_${Math.floor(random(i + 6, 3)) + 1}`,
 
-      credit: creditOptions[i % creditOptions.length],
+      credit:
+        creditOptions[
+          Math.floor(random(i + 7, creditOptions.length)) %
+            creditOptions.length
+        ],
 
-      creditAux: `貸方補助_${(i % 3) + 1}`,
+      creditAux: `貸方補助_${Math.floor(random(i + 8, 3)) + 1}`,
     };
   });
 };
