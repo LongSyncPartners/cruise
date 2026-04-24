@@ -4,9 +4,13 @@ import { useCallback, useMemo, useState } from "react";
 
 import { createListEditColumns } from "./ListEditColumn";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
-import { ListEditRow, SubjectTabInfo } from "../types";
-import { DETAIL_TAB_VALUES, SubjectOption, TabOption } from "../subjectOptions";
-
+import CustomPagination from "@/features/shared/CustomPagination";
+import { ListEditRow } from "../types";
+import {
+  DETAIL_TAB_VALUES,
+  SubjectOption,
+  TabOption,
+} from "../subjectOptions";
 
 type ListEditGridProps = {
   rows: ListEditRow[];
@@ -16,8 +20,21 @@ type ListEditGridProps = {
   subjectTabValue: number;
 };
 
-export default function ListEditGrid({ rows, detailTabs, detailTabValue, subjectTabs, subjectTabValue }: ListEditGridProps) {
+const PAGE_SIZE = 20;
+
+export default function ListEditGrid({
+  rows,
+  detailTabs,
+  detailTabValue,
+  subjectTabs,
+  subjectTabValue,
+}: ListEditGridProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: PAGE_SIZE,
+  });
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
     setHeaderNames((prev) => ({
@@ -28,35 +45,30 @@ export default function ListEditGrid({ rows, detailTabs, detailTabValue, subject
 
   const filteredDetailTabs = useMemo(() => {
     if (detailTabValue === DETAIL_TAB_VALUES.ALL) {
-      return detailTabs.filter(
-        (tab) => tab.value !== DETAIL_TAB_VALUES.ALL
-      );
+      return detailTabs.filter((tab) => tab.value !== DETAIL_TAB_VALUES.ALL);
     }
 
-    return detailTabs.filter(
-      (tab) => tab.value === detailTabValue
-    );
-  }, [detailTabValue]);
+    return detailTabs.filter((tab) => tab.value === detailTabValue);
+  }, [detailTabs, detailTabValue]);
 
   const filteredSubjectTabs = useMemo(() => {
-    if (subjectTabValue === 0) {
-      // 0 = ALL
+    const selectedSubjectValue = subjectTabs[subjectTabValue]?.value;
+
+    if (!selectedSubjectValue || selectedSubjectValue === "all") {
       return subjectTabs.filter((tab) => tab.value !== "all");
     }
 
-    return subjectTabs.filter(
-      (_, index) => index === subjectTabValue
-    );
-  }, [detailTabValue, subjectTabValue]);
+    return subjectTabs.filter((tab) => tab.value === selectedSubjectValue);
+  }, [subjectTabs, subjectTabValue]);
 
   const baseColumns = useMemo(
     () =>
       createListEditColumns({
         onRenameHeader: handleRenameHeader,
         detailTabs: filteredDetailTabs,
-        subjectTabs: filteredSubjectTabs
+        subjectTabs: filteredSubjectTabs,
       }),
-    [handleRenameHeader, detailTabValue,  subjectTabValue]
+    [handleRenameHeader, filteredDetailTabs, filteredSubjectTabs]
   );
 
   const columns = useMemo(() => {
@@ -78,13 +90,30 @@ export default function ListEditGrid({ rows, detailTabs, detailTabValue, subject
           noResultsOverlayLabel: "データがありません",
         }}
         getRowHeight={() => "auto"}
-        hideFooter
         disableRowSelectionOnClick
         disableColumnMenu
         disableColumnFilter
         disableColumnSelector
         disableDensitySelector
+        pageSizeOptions={[PAGE_SIZE]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
         sx={[dataGridCommonSx]}
+        slots={{
+          footer: () => (
+            <CustomPagination
+              page={paginationModel.page}
+              pageSize={paginationModel.pageSize}
+              rowCount={rows.length}
+              onPageChange={(newPage) =>
+                setPaginationModel((prev) => ({
+                  ...prev,
+                  page: newPage,
+                }))
+              }
+            />
+          ),
+        }}
       />
     </Box>
   );
