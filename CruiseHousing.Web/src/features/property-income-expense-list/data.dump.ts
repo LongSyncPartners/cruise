@@ -204,19 +204,32 @@ export const createSubjectTabs = (): SubjectTabInfo[] => {
   }));
 };
 
-import { DetailTabValue } from "./subjectOptions";
+import { DETAIL_TAB_VALUES, DetailTabValue } from "./subjectOptions";
 
 export const createListEditRows = (
   detailTabValue: DetailTabValue,
   subjectTabValue: number
 ): ListEditRow[] => {
-  const categoriesMap: Record<number, string[]> = {
-    0: ["収入", "支出", "調整"],
-    1: ["収入"],
-    2: ["支出"],
-    3: ["調整"],
-    4: ["収入", "支出"],
-  };
+  const categoriesMap: Record<DetailTabValue, DetailTabValue[]> = {
+    [DETAIL_TAB_VALUES.ALL]: [
+      DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY,
+      DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY,
+      DETAIL_TAB_VALUES.INTERNAL_OWNER,
+      DETAIL_TAB_VALUES.OWNER,
+    ],
+    [DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]: [
+      DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY,
+    ],
+    [DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY]: [
+      DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY,
+    ],
+    [DETAIL_TAB_VALUES.INTERNAL_OWNER]: [
+      DETAIL_TAB_VALUES.INTERNAL_OWNER,
+    ],
+    [DETAIL_TAB_VALUES.OWNER]: [
+      DETAIL_TAB_VALUES.OWNER,
+    ],
+};
 
   const subjectsMap: Record<number, string[]> = {
     0: ["rent", "repairCost", "managementFee"],
@@ -224,7 +237,7 @@ export const createListEditRows = (
     2: ["gardenMaintenance", "otherExpense"],
   };
 
-  const categories = categoriesMap[detailTabValue] ?? ["収入", "支出"];
+  const categories = categoriesMap[detailTabValue] ?? categoriesMap[DETAIL_TAB_VALUES.ALL];
   const subjects = subjectsMap[subjectTabValue] ?? ["rent"];
 
   const debitOptions = ["現金", "普通預金", "未収金"];
@@ -249,36 +262,24 @@ export const createListEditRows = (
 
     return {
       id: i + 1,
-
       transactionDate: `2024-04-${day.toString().padStart(2, "0")}`,
-
-      category: categories[categoryIndex],
-
-      // Select の valueOptions に合わせて code を入れる
+      detailType: categories[categoryIndex],
       subject: subjects[subjectIndex],
-
       amount: amountBase,
-
       masterAmount: Math.floor(amountBase * 0.9),
-
       accountingSubjectName: `会計科目_${Math.floor(random(i + 3, 20))}`,
-
       appliedSubjectAux: `補助_${Math.floor(random(i + 4, 5)) + 1}`,
-
       debit:
         debitOptions[
           Math.floor(random(i + 5, debitOptions.length)) %
             debitOptions.length
         ],
-
       debitAux: `借方補助_${Math.floor(random(i + 6, 3)) + 1}`,
-
       credit:
         creditOptions[
           Math.floor(random(i + 7, creditOptions.length)) %
             creditOptions.length
         ],
-
       creditAux: `貸方補助_${Math.floor(random(i + 8, 3)) + 1}`,
     };
   });

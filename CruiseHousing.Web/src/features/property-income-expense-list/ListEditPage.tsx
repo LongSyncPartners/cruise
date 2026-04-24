@@ -271,7 +271,14 @@ export default function ListEditPage() {
       />
 
       <div className="property-income-expense-list-grid-contaniner">
-        <ListEditGrid rows={listEditRows} subjectTabs={subjectTabs} subjectTabValue={subjectTabValue}/>
+        <ListEditGrid 
+          rows={listEditRows} 
+          detailTabs={detailTabs}
+          detailTabValue={detailTabValue}
+          subjectTabs={subjectTabs} 
+          subjectTabValue={subjectTabValue}
+          
+        />
       </div>
 
       {/* Show guidance when no property is selected */}

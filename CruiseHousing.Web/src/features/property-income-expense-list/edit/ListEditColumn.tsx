@@ -8,10 +8,11 @@ import { formatUSD, parseCurrencyInput } from "@/features/shared/utils";
 import CurrencyEditCell from "@/features/shared/CurrencyEditCell";
 import MultilineEditCell from "@/features/shared/MultilineEditCell";
 import { createDateCellValidator } from "@/features/shared/gridValidators";
-import { SubjectOption } from "../subjectOptions";
+import { SubjectOption, TabOption } from "../subjectOptions";
 
 type CreateListEditColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
+  detailTabs: TabOption[];
   subjectTabs: SubjectOption[];
 };
 
@@ -26,6 +27,7 @@ const createEditableHeader =
 
 export const createListEditColumns = ({
   onRenameHeader,
+  detailTabs,
   subjectTabs,
 }: CreateListEditColumnsParams): GridColDef<ListEditRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
@@ -42,16 +44,15 @@ export const createListEditColumns = ({
       renderCell: (params) => <DateCell {...params} />,
     },
     {
-      field: "category",
+      field: "detailType",
       headerName: "分類",
       headerClassName: "align-center-header",
-      width: 60,
+      width: 120,
       editable: true,
       sortable: false,
       filterable: false,
-      preProcessEditCellProps: createDateCellValidator({ required: true }),
-      renderCell: (params) => <MultilineCell {...params} />,
-      renderEditCell: (params) => <MultilineEditCell {...params} required/>,
+      type: "singleSelect",
+      valueOptions: detailTabs,
     },
     {
       field: "subject",

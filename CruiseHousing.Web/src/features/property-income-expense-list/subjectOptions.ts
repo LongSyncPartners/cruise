@@ -2,7 +2,7 @@ export const DETAIL_TAB_VALUES = {
   ALL: 0,
   PROPERTY_MANAGEMENT_COMPANY: 1,
   OWNER_MANAGEMENT_COMPANY: 2,
-  LESSOR_SELF: 3,
+  INTERNAL_OWNER: 3,
   OWNER: 4,
 } as const;
 
@@ -29,7 +29,7 @@ export const DETAIL_TAB_OPTIONS: TabOption[] = [
     value: DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY,
     label: "オーナー管理会社",
   },
-  { value: DETAIL_TAB_VALUES.LESSOR_SELF, label: "貸主（自社）" },
+  { value: DETAIL_TAB_VALUES.INTERNAL_OWNER, label: "貸主（自社）" },
   { value: DETAIL_TAB_VALUES.OWNER, label: "オーナー" },
 ];
 
@@ -55,7 +55,7 @@ export const SUBJECT_OPTIONS_BY_DETAIL_TAB: Record<
     { value: "fee", label: "手数料" },
   ],
 
-  [DETAIL_TAB_VALUES.LESSOR_SELF]: [
+  [DETAIL_TAB_VALUES.INTERNAL_OWNER]: [
     { value: "all", label: "全て" },
     { value: "rent", label: "家賃" },
     { value: "managementFee", label: "管理料" },

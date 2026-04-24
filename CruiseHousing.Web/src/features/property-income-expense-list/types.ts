@@ -135,7 +135,7 @@ export type SubjectTabInfo = {
 export type ListEditRow = {
   id: GridRowId;
   transactionDate: string | null;      // 年月日
-  category: string | null;             // 分類
+  detailType: number;                  // 分類
   subject: string | null;              // 科目
   amount: number | null;               // 金額
   masterAmount: number | null;         // ﾏｽﾀｰ金額
