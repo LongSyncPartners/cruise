@@ -126,12 +126,11 @@ export default function ListViewPageHeader({
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 1,
+            gap: 0,
             pl: 1,
-            minWidth: 180,
+            minWidth: 120,
           }}
         >
-          <Typography variant="body2">年月</Typography>
 
           <Select
             size="small"

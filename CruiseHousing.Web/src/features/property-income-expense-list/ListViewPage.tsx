@@ -66,7 +66,7 @@ export default function ListViewPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [detailTabValue, setDetailTabValue] = useState(0);
   const [loadedDetailTabs, setLoadedDetailTabs] = useState<number[]>([0]);
-  const [selectedYearMonth, setSelectedYearMonth] = useState("202604");
+  const [selectedYearMonth, setSelectedYearMonth] = useState("2026/04");
 
 
   const selectedPropertyCode = usePropertySelectionStore(
@@ -95,7 +95,7 @@ export default function ListViewPage() {
   const { data: defaultPropertyCode } =
     useDefaultPropertyCodeByGroup(selectedGroup);
 
-  const yearMonths: string[] = ["202604", "202605"];
+  const yearMonths: string[] = ["2026/04", "2026/05"];
 
   // 4 tab rows 
   const propertyManagementCompanyRows =
@@ -189,33 +189,35 @@ export default function ListViewPage() {
         onChangeDetailTab={handleChangeDetailTab}
       />
 
-      <DetailTabPanel
-        active={detailTabValue === 0}
-        loaded={loadedDetailTabs.includes(0)}
-      >
-        <TabPropertyManagementCompany rows={propertyManagementCompanyRows} />
-      </DetailTabPanel>
+      <div className=".property-income-expense-list-grid-contaniner">
+        <DetailTabPanel
+          active={detailTabValue === 0}
+          loaded={loadedDetailTabs.includes(0)}
+        >
+          <TabPropertyManagementCompany rows={propertyManagementCompanyRows} />
+        </DetailTabPanel>
 
-      <DetailTabPanel
-        active={detailTabValue === 1}
-        loaded={loadedDetailTabs.includes(1)}
-      >
-        <TabOwnerManagementCompany rows={ownerManagementCompanyRows} />
-      </DetailTabPanel>
+        <DetailTabPanel
+          active={detailTabValue === 1}
+          loaded={loadedDetailTabs.includes(1)}
+        >
+          <TabOwnerManagementCompany rows={ownerManagementCompanyRows} />
+        </DetailTabPanel>
 
-      <DetailTabPanel
-        active={detailTabValue === 2}
-        loaded={loadedDetailTabs.includes(2)}
-      >
-        <TabInternalOwner rows={internalOwnerRows} />
-      </DetailTabPanel>
+        <DetailTabPanel
+          active={detailTabValue === 2}
+          loaded={loadedDetailTabs.includes(2)}
+        >
+          <TabInternalOwner rows={internalOwnerRows} />
+        </DetailTabPanel>
 
-      <DetailTabPanel
-        active={detailTabValue === 3}
-        loaded={loadedDetailTabs.includes(3)}
-      >
-        <TabOwner rows={ownerRows} />
-      </DetailTabPanel>
+        <DetailTabPanel
+          active={detailTabValue === 3}
+          loaded={loadedDetailTabs.includes(3)}
+        >
+          <TabOwner rows={ownerRows} />
+        </DetailTabPanel>
+      </div>
 
       <LoadingDialog open={isScreenLoading} />
     </div>

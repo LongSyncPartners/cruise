@@ -85,7 +85,7 @@ export default function ListEditPageHeader({
           scrollButtons="auto"
           allowScrollButtonsMobile
           aria-label="Property income expense tabs"
-          sx={{ minHeight: 48, flex: 1 }}
+          sx={{ flex: 1 }}
         >
           {propertyTabs.map((propertyTab, index) => (
             <Tab
@@ -99,6 +99,7 @@ export default function ListEditPageHeader({
                 whiteSpace: "nowrap",
                 minWidth: 60,
                 maxWidth: 80,
+                minHeight: 30,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -132,50 +133,75 @@ export default function ListEditPageHeader({
           <Tab
             label="全て"
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#1976d2",
-                color: "white",
-              },
+              textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: 100,
+                minHeight: 30,
+                px: 1,
+                "&.Mui-selected": {
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                },
             }}
             {...getDetailTabProps(0)}
           />
           <Tab
             label="物件管理会社"
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#1976d2",
-                color: "white",
-              },
+              textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: 120,
+                minHeight: 30,
+                px: 1,
+                "&.Mui-selected": {
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                },
             }}
             {...getDetailTabProps(1)}
           />
           <Tab
             label="オーナー管理会社"
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#1976d2",
-                color: "white",
-              },
+              textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: 120,
+                minHeight: 30,
+                px: 1,
+                "&.Mui-selected": {
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                },
             }}
             {...getDetailTabProps(2)}
           />
           <Tab
             label="貸主（自社）"
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#1976d2",
-                color: "white",
-              },
+              textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: 100,
+                minHeight: 30,
+                px: 1,
+                "&.Mui-selected": {
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                },
             }}
             {...getDetailTabProps(3)}
           />
           <Tab
             label="オーナー"
             sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#1976d2",
-                color: "white",
-              },
+              textTransform: "none",
+                whiteSpace: "nowrap",
+                minWidth: 100,
+                minHeight: 30,
+                px: 1,
+                "&.Mui-selected": {
+                  backgroundColor: "#1976d2",
+                  color: "white",
+                },
             }}
             {...getDetailTabProps(4)}
           />
@@ -188,6 +214,7 @@ export default function ListEditPageHeader({
           alignItems: "center",
           borderBottom: 1,
           borderColor: "divider",
+          paddingTop:2
         }}
       >
 
@@ -205,7 +232,8 @@ export default function ListEditPageHeader({
               sx={{
                 textTransform: "none",
                 whiteSpace: "nowrap",
-                minWidth: 80,
+                minWidth: 100,
+                minHeight: 30,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
