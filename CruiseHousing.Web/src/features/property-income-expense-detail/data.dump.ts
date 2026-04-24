@@ -2,11 +2,11 @@ import { addDays, format } from "date-fns";
 import {
   PropertyIncomeExpenseSummaryItem,
   PropertyIncomeExpenseSummaryRow,
-  type PropertyHeaderProps,
   type PropertyIncomeExpenseDetailRow,
   type PropertyTabData,
-  type PropertyTabSummary,
+
 } from "./types";
+import { PropertyHeaderProps, PropertyTabSummary } from "../shared/commonTypes";
 
 const today = new Date();
 

@@ -249,7 +249,7 @@ export const createListEditRows = (
     return Math.abs(Math.sin(i + seed)) * max;
   };
 
-  return Array.from({ length: 5 }, (_, i) => {
+  return Array.from({ length: 1000 }, (_, i) => {
     const day = (i % 28) + 1;
 
     const categoryIndex =
