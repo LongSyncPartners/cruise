@@ -17,7 +17,7 @@ export const TabPanel = ({
   onSelectedRowsChange,
   onSelectedRowChange,
   isScreenLoading,
-  onOpenFloatPannelClick
+  onOpenFloatPanelClick
 }: {
   active: boolean;
   header?: PropertyHeaderProps;
@@ -27,7 +27,7 @@ export const TabPanel = ({
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
   onSelectedRowChange?: (row: PropertyIncomeExpenseDetailRow) => void;
   isScreenLoading: boolean;
-  onOpenFloatPannelClick: (menu: NonNullable<CellContextMenuState>) => void;
+  onOpenFloatPanelClick: (menu: NonNullable<CellContextMenuState>) => void;
 }) => {
   // Do not render anything when the tab is inactive
   // or when header information is not available.
@@ -48,7 +48,7 @@ export const TabPanel = ({
           onSelectedRowsChange={onSelectedRowsChange}
           onSelectedRowChange={onSelectedRowChange}
           isScreenLoading={isScreenLoading}
-          onOpenFloatPannelClick={onOpenFloatPannelClick}
+          onOpenFloatPanelClick={onOpenFloatPanelClick}
         />
       </div>
     </>

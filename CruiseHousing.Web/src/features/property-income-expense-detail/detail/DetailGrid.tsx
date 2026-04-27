@@ -38,7 +38,7 @@ type PropertyIncomeExpenseDetailGridProps = {
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
   onSelectedRowChange?: (row: PropertyIncomeExpenseDetailRow) => void; 
   isScreenLoading: boolean;
-  onOpenFloatPannelClick?: (menu: NonNullable<CellContextMenuState>) => void
+  onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void
 };
 
 /**
@@ -57,7 +57,7 @@ export default function PropertyIncomeExpenseDetailGrid({
   onSelectedRowsChange,
   onSelectedRowChange,
   isScreenLoading,
-  onOpenFloatPannelClick
+  onOpenFloatPanelClick
 }: PropertyIncomeExpenseDetailGridProps) {
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
 
@@ -428,6 +428,16 @@ export default function PropertyIncomeExpenseDetailGrid({
       <CustomContextMenu
         contextMenu={contextMenu}
         onClose={handleCloseContextMenu}
+        features={{
+          copy: true,
+          paste: true,
+          pasteBelow: true,
+          color: true,
+          addRows: true,
+          delete: true,
+          copyAll: false,
+          openFloatingPanel: true,
+        }}
         onCopy={handleCopy}
         onCopyAll={handleCopyAll}
         onPaste={handlePaste}
@@ -436,7 +446,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         onDelete={handleDelete}
         onSetSelectedRowsColor={handleSetSelectedRowsColor}
         canPaste={copiedRows.length > 0 || copyAllRows.length > 0}
-        onOpenFloatPannelClick={onOpenFloatPannelClick}
+        onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>
   );

@@ -276,7 +276,7 @@ export default function DetailPage() {
 
   const [selectedRow, setSelectedRow] = useState<PropertyIncomeExpenseDetailRow | null>(null);
 
-  const onOpenFloatPannelClick = (_menu: NonNullable<CellContextMenuState>) => {
+  const onOpenFloatPanelClick = (_menu: NonNullable<CellContextMenuState>) => {
     setSelectedRow(_menu.row as PropertyIncomeExpenseDetailRow);
     setIsFloatPanelOpen(true);
   };
@@ -357,7 +357,7 @@ export default function DetailPage() {
           onSelectedRowsChange={setSelectedPropertyIncomeExpenseDetailRows}
           onSelectedRowChange={setSelectedRow}
           isScreenLoading={isScreenLoading}
-          onOpenFloatPannelClick={onOpenFloatPannelClick}
+          onOpenFloatPanelClick={onOpenFloatPanelClick}
         />
       ))}
 
