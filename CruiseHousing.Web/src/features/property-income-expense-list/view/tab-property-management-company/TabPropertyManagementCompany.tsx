@@ -1,18 +1,54 @@
 import { Box } from "@mui/material";
-import { DataGrid, GridRowId } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridRowId,
+  type GridRenderCellParams,
+} from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
+import { dataGridCommonSx } from "../../../shared/dataGridCommonSx";
 import { createTabPropertyManagementCompanyColumns } from "./TabPropertyManagementCompanyColumn";
-import { TabPropertyManagementCompanyRow } from "../types";
-import { createTabPropertyManagementCompanyRows } from "../data.dump";
+import { TabPropertyManagementCompanyRow } from "../../types";
+import CustomContextMenu, {
+  type CellContextMenuState,
+} from "@/features/shared/CustomContextMenu";
 
 type TabPropertyManagementCompanyProps = {
   rows: TabPropertyManagementCompanyRow[];
+  onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
+  onSelectedRowChange?: (row: TabPropertyManagementCompanyRow) => void;
 };
 
-export default function TabPropertyManagementCompany({ rows }: TabPropertyManagementCompanyProps) {
+export default function TabPropertyManagementCompany({
+  rows,
+  onOpenFloatPanelClick,
+  onSelectedRowChange
+}: TabPropertyManagementCompanyProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+  const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleCellContextMenu = (
+    params: GridRenderCellParams<TabPropertyManagementCompanyRow>,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (params.id.toString().includes("total")) return;
+
+    setContextMenu({
+      mouseX: event.clientX,
+      mouseY: event.clientY - 30,
+      rowId: params.id,
+      field: params.field,
+      row: params.row,
+      value: params.value,
+    });
+  };
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
     setHeaderNames((prev) => ({
@@ -25,6 +61,7 @@ export default function TabPropertyManagementCompany({ rows }: TabPropertyManage
     () =>
       createTabPropertyManagementCompanyColumns({
         onRenameHeader: handleRenameHeader,
+        onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
   );
@@ -45,6 +82,13 @@ export default function TabPropertyManagementCompany({ rows }: TabPropertyManage
       )?.id;
   }, [rows]);
 
+
+  const handleRowClick = (params: { row: TabPropertyManagementCompanyRow }) => {
+    if (params.row.id.toString().includes("total")) return;
+
+    onSelectedRowChange?.(params.row);
+  };
+
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
@@ -63,6 +107,7 @@ export default function TabPropertyManagementCompany({ rows }: TabPropertyManage
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",
         }}
+        onRowClick={handleRowClick}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu
@@ -70,6 +115,22 @@ export default function TabPropertyManagementCompany({ rows }: TabPropertyManage
         disableColumnSelector
         disableDensitySelector
         sx={[dataGridCommonSx]}
+      />
+
+      <CustomContextMenu
+        contextMenu={contextMenu}
+        onClose={handleCloseContextMenu}
+        features={{
+          copy: false,
+          paste: false,
+          pasteBelow: false,
+          color: false,
+          addRows: false,
+          delete: false,
+          copyAll: false,
+          openFloatingPanel: true,
+        }}
+        onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>
   );

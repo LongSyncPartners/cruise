@@ -2,42 +2,51 @@ import { Box } from "@mui/material";
 import { DataGrid, GridRowId } from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
-import { createTabOwnerColumns } from "./TabOwnerColumn";
-import { TabOwnerRow } from "../types";
 
-type TabOwnerProps = {
-  rows: TabOwnerRow[];
+import { createTabOwnerManagementCompanyColumns } from "./TabOwnerManagementCompanyColumn";
+import { TabOwnerManagementCompanyRow } from "../../types";
+import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
+
+
+type TabOwnerManagementCompanyProps = {
+  rows: TabOwnerManagementCompanyRow[];
 };
 
-export default function TabOwner({ rows }: TabOwnerProps) {
+export default function TabOwnerManagementCompany({ rows }: TabOwnerManagementCompanyProps){
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
 
-  const handleRenameHeader = useCallback((field: string, headerName: string) => {
-    setHeaderNames((prev) => ({ ...prev, [field]: headerName }));
-  }, []);
+  const handleRenameHeader = useCallback(
+    (field: string, headerName: string) => {
+      setHeaderNames((prev) => ({
+        ...prev,
+        [field]: headerName,
+      }));
+    },
+    []
+  );
 
   const baseColumns = useMemo(
-    () => createTabOwnerColumns({ onRenameHeader: handleRenameHeader }),
+    () =>
+      createTabOwnerManagementCompanyColumns({
+        onRenameHeader: handleRenameHeader,
+      }),
     [handleRenameHeader]
   );
 
-  const columns = useMemo(
-    () =>
-      baseColumns.map((c) => ({
-        ...c,
-        headerName: headerNames[c.field] ?? c.headerName,
-      })),
-    [baseColumns, headerNames]
-  );
+  const columns = useMemo(() => {
+    return baseColumns.map((col) => ({
+      ...col,
+      headerName: headerNames[col.field] ?? col.headerName,
+    }));
+  }, [baseColumns, headerNames]);
 
   const selectedRowId = useMemo<GridRowId | undefined>(() => {
     return [...rows]
       .reverse()
       .find(
-        (r) =>
-          !r.id.toString().includes("total") &&
-          r.totalIncomeAmount !== null
+        (row) =>
+          !row.id.toString().includes("total") &&
+          row.managementEntrust !== null
       )?.id;
   }, [rows]);
 
@@ -48,8 +57,8 @@ export default function TabOwner({ rows }: TabOwnerProps) {
         columns={columns}
         rowHeight={40}
         columnHeaderHeight={40}
-        getRowClassName={(p) =>
-          p.id.toString().includes("total") ? "summary-total-row" : ""
+        getRowClassName={(params) =>
+          params.id.toString().includes("total") ? "summary-total-row" : ""
         }
         rowSelectionModel={{
           type: "include",

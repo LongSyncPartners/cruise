@@ -2,46 +2,43 @@ import { Box } from "@mui/material";
 import { DataGrid, GridRowId } from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
-import { createTabInternalOwnerColumns } from "./TabInternalOwnerColumn";
-import { TabInternalOwnerRow } from "../types";
 
-type TabInternalOwnerProps = {
-  rows: TabInternalOwnerRow[];
+import { createTabOwnerColumns } from "./TabOwnerColumn";
+import { TabOwnerRow } from "../../types";
+import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
+
+type TabOwnerProps = {
+  rows: TabOwnerRow[];
 };
 
-export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
+export default function TabOwner({ rows }: TabOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
-    setHeaderNames((prev) => ({
-      ...prev,
-      [field]: headerName,
-    }));
+    setHeaderNames((prev) => ({ ...prev, [field]: headerName }));
   }, []);
 
   const baseColumns = useMemo(
-    () =>
-      createTabInternalOwnerColumns({
-        onRenameHeader: handleRenameHeader,
-      }),
+    () => createTabOwnerColumns({ onRenameHeader: handleRenameHeader }),
     [handleRenameHeader]
   );
 
-  const columns = useMemo(() => {
-    return baseColumns.map((col) => ({
-      ...col,
-      headerName: headerNames[col.field] ?? col.headerName,
-    }));
-  }, [baseColumns, headerNames]);
+  const columns = useMemo(
+    () =>
+      baseColumns.map((c) => ({
+        ...c,
+        headerName: headerNames[c.field] ?? c.headerName,
+      })),
+    [baseColumns, headerNames]
+  );
 
   const selectedRowId = useMemo<GridRowId | undefined>(() => {
     return [...rows]
       .reverse()
       .find(
-        (row) =>
-          !row.id.toString().includes("total") &&
-          row.totalIncomeAmount !== null
+        (r) =>
+          !r.id.toString().includes("total") &&
+          r.totalIncomeAmount !== null
       )?.id;
   }, [rows]);
 
@@ -52,8 +49,8 @@ export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
         columns={columns}
         rowHeight={40}
         columnHeaderHeight={40}
-        getRowClassName={(params) =>
-          params.id.toString().includes("total") ? "summary-total-row" : ""
+        getRowClassName={(p) =>
+          p.id.toString().includes("total") ? "summary-total-row" : ""
         }
         rowSelectionModel={{
           type: "include",

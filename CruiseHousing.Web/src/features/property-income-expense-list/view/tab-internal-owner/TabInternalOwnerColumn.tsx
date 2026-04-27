@@ -1,11 +1,11 @@
 import type { GridColDef } from "@mui/x-data-grid";
 
-import CurrencyCell from "../../shared/CurrencyCell";
-import YearMonthCell from "../../shared/YearMonthCell";
-import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
-import { TabPropertyManagementCompanyRow } from "../types";
+import CurrencyCell from "../../../shared/CurrencyCell";
+import YearMonthCell from "../../../shared/YearMonthCell";
+import CreateHeaderEditable from "../../../shared/CreateHeaderEditable";
+import { TabInternalOwnerRow } from "../../types";
 
-type CreateTabPropertyManagementCompanyColumnsParams = {
+type CreateTabInternalOwnerColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
 };
 
@@ -18,9 +18,9 @@ const createEditableHeader =
     />
   );
 
-export const createTabPropertyManagementCompanyColumns = ({
+export const createTabInternalOwnerColumns = ({
   onRenameHeader,
-}: CreateTabPropertyManagementCompanyColumnsParams = {}): GridColDef<TabPropertyManagementCompanyRow>[] => {
+}: CreateTabInternalOwnerColumnsParams = {}): GridColDef<TabInternalOwnerRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
   return [
@@ -36,13 +36,29 @@ export const createTabPropertyManagementCompanyColumns = ({
       renderHeader: renderEditableHeader,
     },
 
-    // ===== 收入 =====
+    {
+      field: "totalIncomeAmount",
+      headerName: "収入計",
+      headerClassName: "align-right-header",
+      minWidth: 100,
+      flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <CurrencyCell {...params} showZero />
+      ),
+      renderHeader: renderEditableHeader,
+    },
     {
       field: "rentAmount",
       headerName: "家賃",
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
     },
@@ -52,22 +68,27 @@ export const createTabPropertyManagementCompanyColumns = ({
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
     },
+
     {
-      field: "totalIncomeAmount",
-      headerName: "収入計",
+      field: "totalExpenseAmount",
+      headerName: "支出計",
       headerClassName: "align-right-header",
-      minWidth: 100,
+      minWidth: 110,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => (
         <CurrencyCell {...params} showZero />
       ),
       renderHeader: renderEditableHeader,
     },
-
-    // ===== 支出 =====
     {
       field: "managementFee",
       headerName: "管理料",
@@ -117,6 +138,18 @@ export const createTabPropertyManagementCompanyColumns = ({
       renderHeader: renderEditableHeader,
     },
     {
+      field: "subleaseCost",
+      headerName: "ｻﾌﾞﾘｰｽ原価",
+      headerClassName: "align-right-header",
+      minWidth: 100,
+      flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => <CurrencyCell {...params} showZero />,
+      renderHeader: renderEditableHeader,
+    },
+    {
       field: "otherExpenseAmount",
       headerName: "その他支出",
       headerClassName: "align-right-header",
@@ -129,38 +162,8 @@ export const createTabPropertyManagementCompanyColumns = ({
       renderHeader: renderEditableHeader,
     },
     {
-      field: "totalExpenseAmount",
-      headerName: "支出計",
-      headerClassName: "align-right-header",
-      minWidth: 100,
-      flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <CurrencyCell {...params} showZero />
-      ),
-      renderHeader: renderEditableHeader,
-    },
-
-    // ===== 結果 =====
-    {
-      field: "netAmount",
-      headerName: "差引計",
-      headerClassName: "align-right-header",
-      minWidth: 100,
-      flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <CurrencyCell {...params} showZero />
-      ),
-      renderHeader: renderEditableHeader,
-    },
-    {
-      field: "receivedAmount",
-      headerName: "入金額",
+      field: "extraPaymentCost",
+      headerName: "別途支払費用",
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -170,20 +173,18 @@ export const createTabPropertyManagementCompanyColumns = ({
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
     },
+
     {
-      field: "differenceAmount",
-      headerName: "差額",
+      field: "managementCompanyIncome",
+      headerName: "管理会社収入",
       headerClassName: "align-right-header",
-      minWidth: 100,
+      minWidth: 120,
       flex: 1,
       editable: false,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <CurrencyCell
-          {...params}
-          showZero
-        />
+        <CurrencyCell {...params} showZero />
       ),
       renderHeader: renderEditableHeader,
     },

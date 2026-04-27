@@ -1,9 +1,9 @@
 import type { GridColDef } from "@mui/x-data-grid";
+import { TabOwnerRow } from "../../types";
+import CreateHeaderEditable from "@/features/shared/CreateHeaderEditable";
+import YearMonthCell from "@/features/shared/YearMonthCell";
+import CurrencyCell from "@/features/shared/CurrencyCell";
 
-import CurrencyCell from "../../shared/CurrencyCell";
-import YearMonthCell from "../../shared/YearMonthCell";
-import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
-import { TabOwnerRow } from "../types";
 
 type CreateTabOwnerColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;

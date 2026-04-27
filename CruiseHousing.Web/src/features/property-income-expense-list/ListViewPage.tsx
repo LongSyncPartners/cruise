@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import "./index.style.css";
 import {
@@ -16,10 +16,9 @@ import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByG
 
 import ListViewPageHeader from "./view/ListViewPageHeader";
 
-import TabInternalOwner from "./view/TabInternalOwner";
-import TabOwner from "./view/TabOwner";
-import TabOwnerManagementCompany from "./view/TabOwnerManagementCompany";
-import TabPropertyManagementCompany from "./view/TabPropertyManagementCompany";
+import TabInternalOwner from "./view/tab-internal-owner/TabInternalOwner";
+import TabOwnerManagementCompany from "./view/tab-owner-management-company/TabOwnerManagementCompany";
+import TabPropertyManagementCompany from "./view/tab-property-management-company/TabPropertyManagementCompany";
 
 import {
   createTabInternalOwnerRows,
@@ -29,6 +28,9 @@ import {
 } from "./data.dump";
 import { PropertyTabSummary } from "../shared/types";
 import { PropertyIncomeExpenseDetailRow } from "../property-income-expense-detail/types";
+import TabPropertyManagementCompanyFloatingPanel from "./view/tab-property-management-company/TabPropertyManagementCompanyFloatingPanel";
+import { CellContextMenuState } from "../shared/CustomContextMenu";
+import TabOwner from "./view/tab-owner/TabOwner";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -68,6 +70,12 @@ export default function ListViewPage() {
   const [loadedDetailTabs, setLoadedDetailTabs] = useState<number[]>([0]);
   const [selectedYearMonth, setSelectedYearMonth] = useState("2026/04");
 
+  const [
+    selectedPropertyManagementCompanyRow,
+    setSelectedPropertyManagementCompanyRow,
+  ] = useState<TabPropertyManagementCompanyRow | null>(null);
+
+  const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
 
   const selectedPropertyCode = usePropertySelectionStore(
     (state) => state.selectedPropertyCode
@@ -116,6 +124,13 @@ export default function ListViewPage() {
     return createTabOwnerRows();
   }, []);
 
+  const onOpenFloatPanelClick = (_menu: NonNullable<CellContextMenuState>) => {
+    setSelectedPropertyManagementCompanyRow(
+      _menu.row as TabPropertyManagementCompanyRow
+    );
+    setIsFloatPanelOpen(true);
+  };
+
   const handleGroupChange = async (newGroup: string) => {
     if (newGroup === selectedGroup) return;
 
@@ -152,6 +167,14 @@ export default function ListViewPage() {
       setLoading(false);
     }
   };
+
+  const handleSelectedRowChange = useCallback(
+    (row: TabPropertyManagementCompanyRow) => {
+      if (!isFloatPanelOpen) return;
+      setSelectedPropertyManagementCompanyRow(row);
+    },
+    [isFloatPanelOpen]
+  );
 
   const isScreenLoading = loading || isTabsLoading;
 
@@ -194,7 +217,11 @@ export default function ListViewPage() {
           active={detailTabValue === 0}
           loaded={loadedDetailTabs.includes(0)}
         >
-          <TabPropertyManagementCompany rows={propertyManagementCompanyRows} />
+          <TabPropertyManagementCompany 
+            rows={propertyManagementCompanyRows} 
+            onOpenFloatPanelClick={onOpenFloatPanelClick}
+            onSelectedRowChange={handleSelectedRowChange}
+          />
         </DetailTabPanel>
 
         <DetailTabPanel
@@ -218,6 +245,12 @@ export default function ListViewPage() {
           <TabOwner rows={ownerRows} />
         </DetailTabPanel>
       </div>
+
+      <TabPropertyManagementCompanyFloatingPanel
+        open={isFloatPanelOpen}
+        onClose={() => setIsFloatPanelOpen(false)}
+        selectedRow={selectedPropertyManagementCompanyRow}
+      />
 
       <LoadingDialog open={isScreenLoading} />
     </div>

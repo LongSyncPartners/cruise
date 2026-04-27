@@ -2,30 +2,27 @@ import { Box } from "@mui/material";
 import { DataGrid, GridRowId } from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { dataGridCommonSx } from "../../shared/dataGridCommonSx";
-import { createTabOwnerManagementCompanyColumns } from "./TabOwnerManagementCompanyColumn";
-import { TabOwnerManagementCompanyRow } from "../types";
+import { createTabInternalOwnerColumns } from "./TabInternalOwnerColumn";
+import { TabInternalOwnerRow } from "../../types";
+import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 
-type TabOwnerManagementCompanyProps = {
-  rows: TabOwnerManagementCompanyRow[];
+type TabInternalOwnerProps = {
+  rows: TabInternalOwnerRow[];
 };
 
-export default function TabOwnerManagementCompany({ rows }: TabOwnerManagementCompanyProps){
+export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
 
-  const handleRenameHeader = useCallback(
-    (field: string, headerName: string) => {
-      setHeaderNames((prev) => ({
-        ...prev,
-        [field]: headerName,
-      }));
-    },
-    []
-  );
+  const handleRenameHeader = useCallback((field: string, headerName: string) => {
+    setHeaderNames((prev) => ({
+      ...prev,
+      [field]: headerName,
+    }));
+  }, []);
 
   const baseColumns = useMemo(
     () =>
-      createTabOwnerManagementCompanyColumns({
+      createTabInternalOwnerColumns({
         onRenameHeader: handleRenameHeader,
       }),
     [handleRenameHeader]
@@ -44,7 +41,7 @@ export default function TabOwnerManagementCompany({ rows }: TabOwnerManagementCo
       .find(
         (row) =>
           !row.id.toString().includes("total") &&
-          row.managementEntrust !== null
+          row.totalIncomeAmount !== null
       )?.id;
   }, [rows]);
 

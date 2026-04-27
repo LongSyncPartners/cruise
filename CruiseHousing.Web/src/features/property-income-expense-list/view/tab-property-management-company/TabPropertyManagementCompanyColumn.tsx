@@ -1,12 +1,18 @@
-import type { GridColDef } from "@mui/x-data-grid";
+import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 
-import CurrencyCell from "../../shared/CurrencyCell";
-import YearMonthCell from "../../shared/YearMonthCell";
-import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
-import { TabInternalOwnerRow } from "../types";
+import CurrencyCell from "../../../shared/CurrencyCell";
+import YearMonthCell from "../../../shared/YearMonthCell";
+import CreateHeaderEditable from "../../../shared/CreateHeaderEditable";
+import { TabPropertyManagementCompanyRow } from "../../types";
+import { withContextMenu } from "@/features/shared/withContextMenu";
+import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./TabPropertyManagementCompanyColumnLabels";
 
-type CreateTabInternalOwnerColumnsParams = {
+type CreateTabPropertyManagementCompanyColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
+  onCellContextMenu: (
+    params: GridRenderCellParams<TabPropertyManagementCompanyRow>,
+    event: React.MouseEvent<HTMLElement>
+  ) => void;
 };
 
 const createEditableHeader =
@@ -18,15 +24,19 @@ const createEditableHeader =
     />
   );
 
-export const createTabInternalOwnerColumns = ({
+export const createTabPropertyManagementCompanyColumns = ({
   onRenameHeader,
-}: CreateTabInternalOwnerColumnsParams = {}): GridColDef<TabInternalOwnerRow>[] => {
+  onCellContextMenu,
+}: CreateTabPropertyManagementCompanyColumnsParams): GridColDef<TabPropertyManagementCompanyRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
+  const addContextMenu = (col: GridColDef<TabPropertyManagementCompanyRow>) =>
+    withContextMenu(col, onCellContextMenu);
+
   return [
-    {
+    addContextMenu({
       field: "yearMonth",
-      headerName: "年月",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.yearMonth,
       headerClassName: "align-center-header",
       width: 80,
       editable: false,
@@ -34,64 +44,41 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <YearMonthCell {...params} />,
       renderHeader: renderEditableHeader,
-    },
+    }),
 
-    {
-      field: "totalIncomeAmount",
-      headerName: "収入計",
-      headerClassName: "align-right-header",
-      minWidth: 100,
-      flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <CurrencyCell {...params} showZero />
-      ),
-      renderHeader: renderEditableHeader,
-    },
-    {
+    addContextMenu({
       field: "rentAmount",
-      headerName: "家賃",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.rentAmount,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+    addContextMenu({
       field: "otherIncomeAmount",
-      headerName: "その他収入",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.otherIncomeAmount,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-
-    {
-      field: "totalExpenseAmount",
-      headerName: "支出計",
+    }),
+    addContextMenu({
+      field: "totalIncomeAmount",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.totalIncomeAmount,
       headerClassName: "align-right-header",
-      minWidth: 110,
+      minWidth: 100,
       flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <CurrencyCell {...params} showZero />
-      ),
+      renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+
+    addContextMenu({
       field: "managementFee",
-      headerName: "管理料",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.managementFee,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -100,10 +87,10 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+    addContextMenu({
       field: "repairCost",
-      headerName: "修繕費",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.repairCost,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -112,10 +99,11 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+    addContextMenu({
       field: "gardenMaintenanceCost",
-      headerName: "庭手入れ",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.gardenMaintenanceCost,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -124,10 +112,10 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+    addContextMenu({
       field: "brokerageFee",
-      headerName: "仲介手数料",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.brokerageFee,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -136,22 +124,11 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
-      field: "subleaseCost",
-      headerName: "ｻﾌﾞﾘｰｽ原価",
-      headerClassName: "align-right-header",
-      minWidth: 100,
-      flex: 1,
-      editable: false,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
-    },
-    {
+    }),
+    addContextMenu({
       field: "otherExpenseAmount",
-      headerName: "その他支出",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.otherExpenseAmount,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -160,10 +137,11 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
-    {
-      field: "extraPaymentCost",
-      headerName: "別途支払費用",
+    }),
+    addContextMenu({
+      field: "totalExpenseAmount",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.totalExpenseAmount,
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
@@ -172,21 +150,44 @@ export const createTabInternalOwnerColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
+    }),
 
-    {
-      field: "managementCompanyIncome",
-      headerName: "管理会社収入",
+    addContextMenu({
+      field: "netAmount",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.netAmount,
       headerClassName: "align-right-header",
-      minWidth: 120,
+      minWidth: 100,
       flex: 1,
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => (
-        <CurrencyCell {...params} showZero />
-      ),
+      renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderHeader: renderEditableHeader,
-    },
+    }),
+    addContextMenu({
+      field: "receivedAmount",
+      headerName: TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.receivedAmount,
+      headerClassName: "align-right-header",
+      minWidth: 100,
+      flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => <CurrencyCell {...params} showZero />,
+      renderHeader: renderEditableHeader,
+    }),
+    addContextMenu({
+      field: "differenceAmount",
+      headerName:
+        TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS.differenceAmount,
+      headerClassName: "align-right-header",
+      minWidth: 100,
+      flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => <CurrencyCell {...params} showZero />,
+      renderHeader: renderEditableHeader,
+    }),
   ];
 };
