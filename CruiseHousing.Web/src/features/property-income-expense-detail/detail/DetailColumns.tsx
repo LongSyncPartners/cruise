@@ -15,7 +15,7 @@ import DateCell from "../../shared/DateCell";
 import DateEditCell from "../../shared/DateEditCell";
 import YearMonthCell from "../../shared/YearMonthCell";
 import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
-import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./propertyIncomeExpenseDetailColumnLabels";
+import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./DetailColumnLabels";
 
 type CreateColumnsParams = {
   onCellContextMenu: (

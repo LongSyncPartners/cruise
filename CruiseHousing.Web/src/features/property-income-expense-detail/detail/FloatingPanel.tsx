@@ -1,5 +1,5 @@
 import { type PropertyIncomeExpenseDetailRow } from "../types";
-import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./propertyIncomeExpenseDetailColumnLabels";
+import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./DetailColumnLabels";
 
 import CommonFloatingPanel from "@/features/shared/CommonFloatingPanel";
 import {
