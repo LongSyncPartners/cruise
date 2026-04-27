@@ -36,7 +36,7 @@ const isValidNumber = (value: unknown): boolean => {
   return !isNaN(Number(value));
 };
 
-export const usePropertyIncomeExpenseValidation = () => {
+export const useListEditPageValidation = () => {
   /**
    * Validate single row
    */

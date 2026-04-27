@@ -20,14 +20,33 @@ export type PropertyTabSummary = {
 /**
  * FloatingPanel
  */
-export type FloatPanelField = "text" | "currency" | "date";
+export type FloatPanelField = "text" | "currency" | "date" | "select";
 
-export type FloatingPanelFieldConfig = {
-  type: FloatPanelField;
+export type FloatingPanelOption = {
+  value: string | number;
+  label: string;
+};
+
+type BaseFloatingPanelFieldConfig = {
   required?: boolean;
   maxLength?: number;
   readOnly?: boolean;
 };
+
+export type FloatingPanelFieldConfig =
+  | (BaseFloatingPanelFieldConfig & {
+      type: "text";
+    })
+  | (BaseFloatingPanelFieldConfig & {
+      type: "currency";
+    })
+  | (BaseFloatingPanelFieldConfig & {
+      type: "date";
+    })
+  | (BaseFloatingPanelFieldConfig & {
+      type: "select";
+      options: FloatingPanelOption[];
+    });
 
 export type CommonFloatingPanelProps<TRow extends { id?: string | number }, TField extends keyof TRow> = {
   open: boolean;

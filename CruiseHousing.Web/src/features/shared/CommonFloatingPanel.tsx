@@ -11,6 +11,7 @@ import EditableDateField from "@/features/shared/EditableDateField";
 import {
   type CommonFloatingPanelProps,
 } from "@/features/shared/types";
+import EditableDropdownList from "./EditableDropdownList";
 
 export default function CommonFloatingPanel<
   TRow extends { id?: string | number },
@@ -80,6 +81,18 @@ export default function CommonFloatingPanel<
             value={value as string | null | undefined}
             required={config.required}
             maxLength={config.maxLength}
+            onChange={(nextValue) =>
+              updateSelectedRow(key, nextValue ?? undefined)
+            }
+          />
+        );
+
+      case "select":
+        return (
+          <EditableDropdownList
+            value={value as string | number | null | undefined}
+            options={config.options ?? []}
+            required={config.required}
             onChange={(nextValue) =>
               updateSelectedRow(key, nextValue ?? undefined)
             }

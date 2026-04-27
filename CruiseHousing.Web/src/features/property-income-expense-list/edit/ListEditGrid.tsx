@@ -1,10 +1,20 @@
 import { Box } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { useCallback, useMemo, useState } from "react";
+import {
+  DataGrid,
+  useGridApiRef,
+  type GridRenderCellParams,
+  type GridRowModel,
+} from "@mui/x-data-grid";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { createListEditColumns } from "./ListEditColumn";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 import CustomPagination from "@/features/shared/CustomPagination";
+import CustomContextMenu, {
+  type CellContextMenuState,
+} from "@/features/shared/CustomContextMenu";
+
 import { ListEditRow } from "../types";
 import {
   DETAIL_TAB_VALUES,
@@ -14,27 +24,80 @@ import {
 
 type ListEditGridProps = {
   rows: ListEditRow[];
+  onRowsChange: (nextRows: ListEditRow[]) => void;
+  onDirtyChange?: () => void;
+  onSelectedRowsChange?: (rows: ListEditRow[]) => void;
+  onSelectedRowChange?: (row: ListEditRow) => void;
   detailTabs: TabOption[];
   detailTabValue: number;
   subjectTabs: SubjectOption[];
   subjectTabValue: number;
+  onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
 };
 
 const PAGE_SIZE = 20;
 
+const createEmptyListEditRow = (): ListEditRow => ({
+  id: uuidv4(),
+  transactionDate: "",
+  detailType: 0,
+  subject: "",
+  amount: 0,
+  masterAmount: 0,
+  accountingSubjectName: "",
+  appliedSubjectAux: "",
+  debit: "",
+  debitAux: "",
+  credit: "",
+  creditAux: "",
+});
+
 export default function ListEditGrid({
   rows,
+  onRowsChange,
+  onDirtyChange,
+  onSelectedRowsChange,
+  onSelectedRowChange,
   detailTabs,
   detailTabValue,
   subjectTabs,
   subjectTabValue,
+  onOpenFloatPanelClick,
 }: ListEditGridProps) {
+  const apiRef = useGridApiRef();
+
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+  const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
+  const [copiedRows, setCopiedRows] = useState<ListEditRow[]>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(
+    new Set()
+  );
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: PAGE_SIZE,
   });
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleCellContextMenu = (
+    params: GridRenderCellParams<ListEditRow>,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setContextMenu({
+      mouseX: event.clientX,
+      mouseY: event.clientY - 30,
+      rowId: params.id,
+      field: params.field,
+      row: params.row,
+      value: params.value,
+    });
+  };
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
     setHeaderNames((prev) => ({
@@ -65,6 +128,7 @@ export default function ListEditGrid({
     () =>
       createListEditColumns({
         onRenameHeader: handleRenameHeader,
+        onCellContextMenu: handleCellContextMenu,
         detailTabs: filteredDetailTabs,
         subjectTabs: filteredSubjectTabs,
       }),
@@ -77,6 +141,148 @@ export default function ListEditGrid({
       headerName: headerNames[col.field] ?? col.headerName,
     }));
   }, [baseColumns, headerNames]);
+
+  const handleRowClick = useCallback(
+    (
+      params: { id: string | number; row: ListEditRow },
+      event: React.MouseEvent
+    ) => {
+      onSelectedRowChange?.(params.row);
+
+      setSelectedRowIds((prev) => {
+        if (event.ctrlKey) {
+          const next = new Set(prev);
+
+          if (next.has(params.id)) {
+            next.delete(params.id);
+          } else {
+            next.add(params.id);
+          }
+
+          return next;
+        }
+
+        return new Set([params.id]);
+      });
+    },
+    [onSelectedRowChange]
+  );
+
+  const handleAdd = (
+    menu: NonNullable<CellContextMenuState>,
+    addRowCount: number
+  ) => {
+    const nextRows = rows.flatMap((row) => {
+      if (row.id !== menu.rowId) return [row];
+
+      const newRows = Array.from({ length: addRowCount }, () =>
+        createEmptyListEditRow()
+      );
+
+      return [row, ...newRows];
+    });
+
+    onRowsChange(nextRows);
+    onDirtyChange?.();
+  };
+
+  const handleDelete = () => {
+    if (selectedRowIds.size === 0) return;
+
+    const nextRows = rows.filter((row) => !selectedRowIds.has(row.id));
+
+    onRowsChange(nextRows);
+    setSelectedRowIds(new Set());
+    onDirtyChange?.();
+  };
+
+  const handleCopy = () => {
+    if (selectedRowIds.size === 0) return;
+
+    const nextCopiedRows = rows
+      .filter((row) => selectedRowIds.has(row.id))
+      .map((row) => ({ ...row }));
+
+    setCopiedRows(nextCopiedRows);
+  };
+
+  const handlePaste = () => {
+    if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
+
+    const firstCopiedRow = copiedRows[0];
+    const firstSelectedId = rows.find((row) => selectedRowIds.has(row.id))?.id;
+
+    if (!firstSelectedId) return;
+
+    const nextRows = rows.map((row) =>
+      row.id === firstSelectedId
+        ? {
+            ...firstCopiedRow,
+            id: row.id,
+          }
+        : row
+    );
+
+    onRowsChange(nextRows);
+    onDirtyChange?.();
+    setCopiedRows([]);
+  };
+
+  const handlePasteBelow = () => {
+    if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
+
+    const firstSelectedIndex = rows.findIndex((row) =>
+      selectedRowIds.has(row.id)
+    );
+
+    if (firstSelectedIndex < 0) return;
+
+    const rowsToInsert = copiedRows.map((row) => ({
+      ...row,
+      id: uuidv4(),
+    }));
+
+    const nextRows = [...rows];
+    nextRows.splice(firstSelectedIndex + 1, 0, ...rowsToInsert);
+
+    onRowsChange(nextRows);
+    onDirtyChange?.();
+    setCopiedRows([]);
+  };
+
+  const processRowUpdate = useCallback(
+    (updatedRow: GridRowModel<ListEditRow>) => {
+      const nextRows = rows.map((row) =>
+        row.id === updatedRow.id
+          ? {
+              ...row,
+              ...updatedRow,
+            }
+          : row
+      );
+
+      const returnedRow =
+        nextRows.find((row) => row.id === updatedRow.id) ??
+        (updatedRow as ListEditRow);
+
+      onRowsChange(nextRows);
+      onSelectedRowChange?.(returnedRow);
+
+      return returnedRow;
+    },
+    [rows, onRowsChange, onSelectedRowChange]
+  );
+
+  useEffect(() => {
+    setTimeout(() => {
+      apiRef.current?.resetRowHeights();
+    }, 0);
+  }, [apiRef, rows]);
+
+  useEffect(() => {
+    const selectedRows = rows.filter((row) => selectedRowIds.has(row.id));
+    onSelectedRowsChange?.(selectedRows);
+  }, [rows, selectedRowIds, onSelectedRowsChange]);
 
   return (
     <Box sx={{ width: "auto", height: 520 }}>
@@ -98,6 +304,11 @@ export default function ListEditGrid({
         pageSizeOptions={[PAGE_SIZE]}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
+        onRowClick={handleRowClick}
+        editMode="cell"
+        apiRef={apiRef}
+        processRowUpdate={processRowUpdate}
+        onCellEditStart={onDirtyChange}
         sx={[dataGridCommonSx]}
         slots={{
           footer: () => (
@@ -114,6 +325,28 @@ export default function ListEditGrid({
             />
           ),
         }}
+      />
+
+      <CustomContextMenu
+        contextMenu={contextMenu}
+        onClose={handleCloseContextMenu}
+        features={{
+          copy: true,
+          paste: true,
+          pasteBelow: true,
+          color: false,
+          addRows: true,
+          delete: true,
+          copyAll: false,
+          openFloatingPanel: true,
+        }}
+        onCopy={handleCopy}
+        onPaste={handlePaste}
+        onPasteBelow={handlePasteBelow}
+        onAdd={handleAdd}
+        onDelete={handleDelete}
+        canPaste={copiedRows.length > 0}
+        onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>
   );

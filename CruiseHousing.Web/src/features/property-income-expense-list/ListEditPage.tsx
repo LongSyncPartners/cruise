@@ -1,31 +1,33 @@
 import { useEffect, useMemo, useState } from "react";
+import { Button, Typography } from "@mui/material";
 
 import "./index.style.css";
-import {
-  ListEditRow,
-  type SubjectTabInfo,
-} from "./types";
+import { ListEditRow } from "./types";
 
 import LoadingDialog from "../shared/LoadingDialog";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
 import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
-import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
-import { usePropertyIncomeExpenseValidation } from "./edit/useListEditPageValidation";
+import { useListEditPageValidation } from "./edit/useListEditPageValidation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { useAppToast } from "@/providers/ToastProvider";
 
 import ListEditPageHeader from "./edit/ListEditPageHeader";
-
-import {
-  createListEditRows,
-} from "./data.dump";
 import ListEditGrid from "./edit/ListEditGrid";
-import { Button, Typography } from "@mui/material";
+
+import { createListEditRows } from "./data.dump";
 import { PropertyTabSummary } from "../shared/types";
-import { DETAIL_TAB_OPTIONS, DETAIL_TAB_VALUES, DetailTabValue, getSubjectOptionsByDetailTab } from "./subjectOptions";
+import { CellContextMenuState } from "../shared/CustomContextMenu";
+import {
+  DETAIL_TAB_OPTIONS,
+  DETAIL_TAB_VALUES,
+  DetailTabValue,
+  getSubjectOptionsByDetailTab,
+} from "./subjectOptions";
+import FloatingPanel from "./edit/FloatingPanel";
+import { useSavePropertyIncomeExpenseListRows } from "@/hooks/useSavePropertyIncomeExpenseListRows";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: ListEditRow[] = [];
@@ -40,13 +42,17 @@ export default function ListEditPage() {
   const [subjectTabValue, setSubjectTabValue] = useState(0);
 
   const [editedRows, setEditedRows] = useState<ListEditRow[]>([]);
-  const [selectedListEditRows, setSelectedListEditRows] =
-    useState<ListEditRow[]>([]);
+  const [selectedListEditRows, setSelectedListEditRows] = useState<
+    ListEditRow[]
+  >([]);
+  const [selectedRow, setSelectedRow] = useState<ListEditRow | null>(null);
+  const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
+
   const [isDirty, setIsDirty] = useState(false);
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
 
-  const { validateRows } = usePropertyIncomeExpenseValidation();
+  const { validateRows } = useListEditPageValidation();
   const { showToast } = useAppToast();
 
   const selectedPropertyCode = usePropertySelectionStore(
@@ -86,7 +92,7 @@ export default function ListEditPage() {
     useDefaultPropertyCodeByGroup(selectedGroup);
 
   const { mutateAsync: saveRows, isPending: isSaving } =
-    useSavePropertyIncomeExpenseRows();
+    useSavePropertyIncomeExpenseListRows();
 
   const detailTabs = useMemo(() => {
     return DETAIL_TAB_OPTIONS;
@@ -105,19 +111,25 @@ export default function ListEditPage() {
 
     setSelectedGroup(newGroup);
     setActiveTab(0);
-    setDetailTabValue(0);
+    setDetailTabValue(DETAIL_TAB_VALUES.ALL);
     setSubjectTabValue(0);
     setEditedRows([]);
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
     setIsDirty(false);
   };
 
   const handleChangeDetailTab = (newValue: DetailTabValue) => {
     setDetailTabValue(newValue);
     setSubjectTabValue(0);
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
   };
 
   const handleChangeSubjectTab = (newValue: number) => {
     setSubjectTabValue(newValue);
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
   };
 
   const updateActiveRows = (nextRows: ListEditRow[]) => {
@@ -147,7 +159,10 @@ export default function ListEditPage() {
     try {
       setLoading(true);
 
-
+      await saveRows({
+        propertyCode: activePropertyCode,
+        rows: editedRows,
+      });
 
       showToast(`${activePropertyCode} を保存しました。`);
       setIsDirty(false);
@@ -184,14 +199,20 @@ export default function ListEditPage() {
 
     const validationResult = validateRows(editedRows);
     if (!validationResult.isValid) {
-      showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
+      showToast(
+        validationResult.errorMessage ?? "入力内容に誤りがあります。",
+        "error"
+      );
       return;
     }
 
     try {
       setLoading(true);
 
-
+      await saveRows({
+        propertyCode: activePropertyCode,
+        rows: editedRows,
+      });
 
       setIsDirty(false);
       showToast(`${activePropertyCode} を保存しました。`);
@@ -213,7 +234,7 @@ export default function ListEditPage() {
       const res = await refetchRows();
 
       if (res.data) {
-        setEditedRows((res.data));
+        setEditedRows(res.data);
         setIsDirty(false);
       }
 
@@ -224,8 +245,25 @@ export default function ListEditPage() {
   };
 
   const handleCancel = () => {
-    setEditedRows((fetchedRows ?? []));
+    setEditedRows(fetchedRows ?? []);
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
     setIsDirty(false);
+  };
+
+  const onOpenFloatPanelClick = (_menu: NonNullable<CellContextMenuState>) => {
+    setSelectedRow(_menu.row as ListEditRow);
+    setIsFloatPanelOpen(true);
+  };
+
+  const handleSelectedRowChange = (nextRow: ListEditRow) => {
+    setSelectedRow(nextRow);
+
+    setEditedRows((prevRows) =>
+      prevRows.map((row) => (row.id === nextRow.id ? nextRow : row))
+    );
+
+    setIsDirty(true);
   };
 
   const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
@@ -249,9 +287,11 @@ export default function ListEditPage() {
   }, [selectedPropertyCode, propertyTabs, activeTab]);
 
   useEffect(() => {
-    setEditedRows((fetchedRows));
+    setEditedRows(listEditRows);
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
     setIsDirty(false);
-  }, [fetchedRows, ]);
+  }, [listEditRows]);
 
   return (
     <div>
@@ -271,22 +311,25 @@ export default function ListEditPage() {
       />
 
       <div className="property-income-expense-list-grid-contaniner">
-        <ListEditGrid 
-          rows={listEditRows} 
+        <ListEditGrid
+          rows={editedRows}
+          onRowsChange={updateActiveRows}
+          onDirtyChange={() => setIsDirty(true)}
+          onSelectedRowsChange={setSelectedListEditRows}
+          onSelectedRowChange={setSelectedRow}
           detailTabs={detailTabs}
           detailTabValue={detailTabValue}
-          subjectTabs={subjectTabs} 
+          subjectTabs={subjectTabs}
           subjectTabValue={subjectTabValue}
+          onOpenFloatPanelClick={onOpenFloatPanelClick}
         />
       </div>
 
-      {/* Show guidance when no property is selected */}
       {!selectedPropertyCode ? (
         <Typography sx={{ mt: 4, color: "text.secondary" }}>
           物件グループをお選択ください。
         </Typography>
       ) : (
-        /* Footer actions */
         <div className="property-income-expense-detail-footer">
           <Button
             variant="contained"
@@ -307,6 +350,15 @@ export default function ListEditPage() {
           </Button>
         </div>
       )}
+
+      <FloatingPanel
+        open={isFloatPanelOpen}
+        onClose={() => setIsFloatPanelOpen(false)}
+        selectedRow={selectedRow}
+        onSelectedRowChange={handleSelectedRowChange}
+        detailTabs={detailTabs}
+        subjectTabs={subjectTabs}
+      />
 
       <UnsavedChangesDialog
         open={confirmTabChangeOpen}

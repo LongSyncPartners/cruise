@@ -1,6 +1,6 @@
 import CreateHeaderEditable from "@/features/shared/CreateHeaderEditable";
-import type { GridColDef } from "@mui/x-data-grid";
-import { ListEditRow, SubjectTabInfo } from "../types";
+import type { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { ListEditRow } from "../types";
 import DateCell from "@/features/shared/DateCell";
 import MultilineCell from "@/features/shared/MultilineCell";
 import CurrencyCell from "@/features/shared/CurrencyCell";
@@ -9,9 +9,15 @@ import CurrencyEditCell from "@/features/shared/CurrencyEditCell";
 import MultilineEditCell from "@/features/shared/MultilineEditCell";
 import { createDateCellValidator } from "@/features/shared/gridValidators";
 import { SubjectOption, TabOption } from "../subjectOptions";
+import { LIST_EDIT_COLUMN_LABELS } from "./ListEditColumnLabels";
+import { withContextMenu } from "@/features/shared/withContextMenu";
 
 type CreateListEditColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
+  onCellContextMenu: (
+    params: GridRenderCellParams<ListEditRow>,
+    event: React.MouseEvent<HTMLElement>
+  ) => void;
   detailTabs: TabOption[];
   subjectTabs: SubjectOption[];
 };
@@ -27,25 +33,29 @@ const createEditableHeader =
 
 export const createListEditColumns = ({
   onRenameHeader,
+  onCellContextMenu,
   detailTabs,
   subjectTabs,
 }: CreateListEditColumnsParams): GridColDef<ListEditRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
+  const addContextMenu = (col: GridColDef<ListEditRow>) =>
+    withContextMenu(col, onCellContextMenu);
+
   return [
-    {
+    addContextMenu({
       field: "transactionDate",
-      headerName: "年月日",
+      headerName: LIST_EDIT_COLUMN_LABELS.transactionDate,
       headerClassName: "align-center-header",
       width: 110,
       editable: true,
       sortable: false,
       filterable: false,
       renderCell: (params) => <DateCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "detailType",
-      headerName: "分類",
+      headerName: LIST_EDIT_COLUMN_LABELS.detailType,
       headerClassName: "align-center-header",
       width: 120,
       editable: true,
@@ -53,10 +63,10 @@ export const createListEditColumns = ({
       filterable: false,
       type: "singleSelect",
       valueOptions: detailTabs,
-    },
-    {
+    }),
+    addContextMenu({
       field: "subject",
-      headerName: "科目",
+      headerName: LIST_EDIT_COLUMN_LABELS.subject,
       headerClassName: "align-left-header",
       width: 110,
       editable: true,
@@ -64,10 +74,10 @@ export const createListEditColumns = ({
       filterable: false,
       type: "singleSelect",
       valueOptions: subjectTabs,
-    },
-    {
+    }),
+    addContextMenu({
       field: "amount",
-      headerName: "金額",
+      headerName: LIST_EDIT_COLUMN_LABELS.amount,
       headerClassName: "align-right-header",
       width: 100,
       editable: true,
@@ -77,10 +87,10 @@ export const createListEditColumns = ({
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "masterAmount",
-      headerName: "マスター金額",
+      headerName: LIST_EDIT_COLUMN_LABELS.masterAmount,
       headerClassName: "align-right-header",
       width: 100,
       editable: true,
@@ -90,10 +100,10 @@ export const createListEditColumns = ({
       valueParser: (value) => parseCurrencyInput(value),
       renderCell: (params) => <CurrencyCell {...params} showZero />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "accountingSubjectName",
-      headerName: "会計データ科目名",
+      headerName: LIST_EDIT_COLUMN_LABELS.accountingSubjectName,
       headerClassName: "align-left-header",
       width: 130,
       editable: true,
@@ -102,10 +112,10 @@ export const createListEditColumns = ({
       preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "appliedSubjectAux",
-      headerName: "適用欄科目補助",
+      headerName: LIST_EDIT_COLUMN_LABELS.appliedSubjectAux,
       headerClassName: "align-left-header",
       minWidth: 160,
       flex: 1,
@@ -114,10 +124,10 @@ export const createListEditColumns = ({
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "debit",
-      headerName: "借方",
+      headerName: LIST_EDIT_COLUMN_LABELS.debit,
       headerClassName: "align-left-header",
       minWidth: 120,
       flex: 1,
@@ -126,10 +136,10 @@ export const createListEditColumns = ({
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "debitAux",
-      headerName: "借方補助",
+      headerName: LIST_EDIT_COLUMN_LABELS.debitAux,
       headerClassName: "align-left-header",
       minWidth: 120,
       flex: 1,
@@ -138,10 +148,10 @@ export const createListEditColumns = ({
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "credit",
-      headerName: "貸方",
+      headerName: LIST_EDIT_COLUMN_LABELS.credit,
       headerClassName: "align-left-header",
       minWidth: 120,
       flex: 1,
@@ -150,10 +160,10 @@ export const createListEditColumns = ({
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
-    {
+    }),
+    addContextMenu({
       field: "creditAux",
-      headerName: "貸方補助",
+      headerName: LIST_EDIT_COLUMN_LABELS.creditAux,
       headerClassName: "align-left-header",
       minWidth: 120,
       flex: 1,
@@ -162,6 +172,6 @@ export const createListEditColumns = ({
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
-    },
+    }),
   ];
 };

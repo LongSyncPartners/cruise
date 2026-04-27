@@ -196,63 +196,64 @@ export default function CustomContextMenu({
         </MenuItem>
       )}
 
-      {enabledFeatures.color && (
-        <>
-          <Divider />
+      {enabledFeatures.color && 
+      [
+        <Divider key="divider-color" />,
 
-          <MenuItem onClick={() => setShowColorOptions((prev) => !prev)}>
-            <ColorizeIcon sx={{ mr: 2 }} />
-            選択行の背景色を設定
+        <MenuItem
+          key="set-color"
+          onClick={() => setShowColorOptions((prev) => !prev)}
+        >
+          <ColorizeIcon sx={{ mr: 2 }} />
+          選択行の背景色を設定
+        </MenuItem>,
+
+        showColorOptions && (
+          <MenuItem key="color-options" sx={{ pl: 2 }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              {renderColorBox("none", "#ffffff", true)}
+              {renderColorBox("gray", "#e0e0e0")}
+              {renderColorBox("yellow", "#faed77")}
+              {renderColorBox("blue", "#90caf9")}
+              {renderColorBox("pink", "#f48fb1")}
+            </div>
           </MenuItem>
+        ),
+      ]}
 
-          {showColorOptions && (
-            <MenuItem sx={{ pl: 2 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                {renderColorBox("none", "#ffffff", true)}
-                {renderColorBox("gray", "#e0e0e0")}
-                {renderColorBox("yellow", "#faed77")}
-                {renderColorBox("blue", "#90caf9")}
-                {renderColorBox("pink", "#f48fb1")}
-              </div>
-            </MenuItem>
-          )}
-        </>
-      )}
+      {enabledFeatures.addRows && 
+      [
+        <Divider key="divider-add" />,
 
-      {enabledFeatures.addRows && (
-        <>
-          <Divider />
-
-          <MenuItem onClick={handleAddMultiple}>
-            <ControlPointIcon sx={{ mr: 2 }} />
-            下に
-            <Select
-              size="small"
-              value={String(addRowCount)}
-              onChange={(e: SelectChangeEvent<string>) =>
-                setAddRowCount(Number(e.target.value))
-              }
-              onClick={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
-              variant="standard"
-              sx={{
-                fontSize: 14,
-                "& .MuiSelect-select": {
-                  py: 0,
-                  pr: 2,
-                },
-                textAlign: "right",
-              }}
-            >
-              <MenuItem value="1">1</MenuItem>
-              <MenuItem value="2">2</MenuItem>
-              <MenuItem value="5">5</MenuItem>
-              <MenuItem value="10">10</MenuItem>
-            </Select>
-            行を追加
-          </MenuItem>
-        </>
-      )}
+        <MenuItem key="add-rows" onClick={handleAddMultiple}>
+          <ControlPointIcon sx={{ mr: 2 }} />
+          下に
+          <Select
+            size="small"
+            value={String(addRowCount)}
+            onChange={(e: SelectChangeEvent<string>) =>
+              setAddRowCount(Number(e.target.value))
+            }
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            variant="standard"
+            sx={{
+              fontSize: 14,
+              "& .MuiSelect-select": {
+                py: 0,
+                pr: 2,
+              },
+              textAlign: "right",
+            }}
+          >
+            <MenuItem value="1">1</MenuItem>
+            <MenuItem value="2">2</MenuItem>
+            <MenuItem value="5">5</MenuItem>
+            <MenuItem value="10">10</MenuItem>
+          </Select>
+          行を追加
+        </MenuItem>,
+      ]}
 
       {enabledFeatures.delete && (
         <MenuItem onClick={handleDelete}>
@@ -261,27 +262,25 @@ export default function CustomContextMenu({
         </MenuItem>
       )}
 
-      {enabledFeatures.copyAll && (
-        <>
-          <Divider />
+      {enabledFeatures.copyAll && 
+      [
+        <Divider key="divider-copy-all" />,
 
-          <MenuItem onClick={handleCopyAll}>
-            <ContentCopyIcon sx={{ mr: 2 }} />
-            全ての収支データをコピー
-          </MenuItem>
-        </>
-      )}
+        <MenuItem key="copy-all" onClick={handleCopyAll}>
+          <ContentCopyIcon sx={{ mr: 2 }} />
+          全ての収支データをコピー
+        </MenuItem>,
+      ]}
 
-      {enabledFeatures.openFloatingPanel && (
-        <>
-          <Divider />
-
-          <MenuItem onClick={handleOpenFloatPanelClick}>
+      {enabledFeatures.openFloatingPanel && 
+        [
+          <Divider key="divider-open-float-panel"/>,
+          <MenuItem key="open-float-panel" onClick={handleOpenFloatPanelClick}>
             <ReadMoreIcon sx={{ mr: 2 }} />
             更に詳細項目を表示
-          </MenuItem>
-        </>
-      )}
+          </MenuItem>,
+        ]
+      }
     </Menu>
   );
 }

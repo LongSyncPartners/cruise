@@ -16,6 +16,7 @@ import DateEditCell from "../../shared/DateEditCell";
 import YearMonthCell from "../../shared/YearMonthCell";
 import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
 import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./DetailColumnLabels";
+import { withContextMenu } from "@/features/shared/withContextMenu";
 
 type CreateColumnsParams = {
   onCellContextMenu: (
@@ -42,33 +43,11 @@ export const createPropertyIncomeExpenseDetailColumns = ({
 }: CreateColumnsParams): GridColDef<PropertyIncomeExpenseDetailRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
-  const withContextMenu = (
-    col: GridColDef<PropertyIncomeExpenseDetailRow>
-  ): GridColDef<PropertyIncomeExpenseDetailRow> => {
-    const originalRenderCell = col.renderCell;
-
-    return {
-      ...col,
-      renderCell: (params) => (
-        <div
-          onContextMenu={(event) => onCellContextMenu(params, event)}
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          {originalRenderCell
-            ? originalRenderCell(params)
-            : params.formattedValue ?? params.value ?? ""}
-        </div>
-      ),
-    };
-  };
+  const addContextMenu = (col: GridColDef<PropertyIncomeExpenseDetailRow>) =>
+    withContextMenu(col, onCellContextMenu);
 
   return [
-    withContextMenu({
+    addContextMenu({
       field: "yearMonth",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.yearMonth,
       headerClassName: "align-right-header",
@@ -83,7 +62,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
         />
       ),
     }),
-    withContextMenu({
+    addContextMenu({
       field: "expectedAmount",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.expectedAmount,
       headerClassName: "align-right-header",
@@ -93,7 +72,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "managementCompanyAmount",
       headerName:
         PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.managementCompanyAmount,
@@ -108,7 +87,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       renderCell: (params) => <CurrencyCell {...params} />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "transactionDate",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.transactionDate,
       width: 100,
@@ -119,7 +98,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       preProcessEditCellProps: createDateCellValidator({ required: true }),
       renderEditCell: (params) => <DateEditCell {...params} required />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "counterparty",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.counterparty,
       width: 150,
@@ -134,7 +113,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
         <MultilineEditCell {...params} maxLength={40} required />
       ),
     }),
-    withContextMenu({
+    addContextMenu({
       field: "description",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.description,
       width: 250,
@@ -145,7 +124,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} required />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "income",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.income,
       headerClassName: "align-right-header",
@@ -158,7 +137,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       renderCell: (params) => <CurrencyCell {...params} />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "expense",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.expense,
       headerClassName: "align-right-header",
@@ -171,7 +150,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       renderCell: (params) => <CurrencyCell {...params} />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "balance",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.balance,
       headerClassName: "align-right-header",
@@ -181,7 +160,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} />,
     }),
-    withContextMenu({
+    addContextMenu({
       field: "note",
       headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.note,
       flex: 1,
