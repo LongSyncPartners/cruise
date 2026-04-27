@@ -61,14 +61,11 @@ export default function CustomContextMenu({
 }: Props) {
   const [showColorOptions, setShowColorOptions] = useState(false);
   const [addRowCount, setAddRowCount] = useState<number>(2);
-  const [headerName, setHeaderName] = useState("");
 
-  const isHeader = contextMenu?.rowId === "header";
 
   React.useEffect(() => {
     if (!contextMenu) {
       setShowColorOptions(false);
-      setHeaderName("");
     }
   }, [contextMenu]);
 
@@ -126,13 +123,6 @@ export default function CustomContextMenu({
     onClose();
   };
 
-  const handleRenameHeaderClick = () => {
-    if (contextMenu && headerName.trim()) {
-      onRenameHeader?.(contextMenu.field, headerName.trim());
-    }
-    onClose();
-  };
-
   const handlOpenFloatPannelClick = () => {
     if (contextMenu && onOpenFloatPannelClick) {
       onOpenFloatPannelClick?.(contextMenu);
@@ -161,52 +151,9 @@ export default function CustomContextMenu({
           : undefined
       }
     >
-      {isHeader
+      {false
         ? [
-            <MenuItem
-              key="rename-header"
-              disableRipple
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "stretch",
-                gap: 1,
-                width: 260,
-                cursor: "default",
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Typography fontSize={14} fontWeight={600}>
-                Change Header Name
-              </Typography>
-
-              <TextField
-                size="small"
-                value={headerName}
-                onChange={(e) => setHeaderName(e.target.value)}
-                placeholder="Enter new name"
-                autoFocus
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => {
-                  e.stopPropagation();
-                  if (e.key === "Enter") {
-                    handleRenameHeaderClick();
-                  }
-                }}
-              />
-
-              <Button
-                variant="contained"
-                size="small"
-                disabled={!headerName.trim()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRenameHeaderClick();
-                }}
-              >
-                Apply
-              </Button>
-            </MenuItem>,
+            
           ]
         : [
             <MenuItem key="copy" onClick={handleCopy}>
