@@ -22,6 +22,8 @@ import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByG
 import { useAppToast } from "@/providers/ToastProvider";
 import { PropertyTabSummary } from "@/features/shared/commonTypes";
 import { TabPanel } from "./detail/DetailTabPanel";
+import FloatingPanel from "./detail/FloatingPanel";
+import { CellContextMenuState } from "../shared/CustomContextMenu";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -271,6 +273,15 @@ export default function DetailPage() {
     setIsDirty(false);
   };
 
+  const [selectedRow, setSelectedRow] = useState<PropertyIncomeExpenseDetailRow | null>(null);
+
+  const onOpenFloatPannelClick = (_menu: NonNullable<CellContextMenuState>) => {
+    setSelectedRow(_menu.row as PropertyIncomeExpenseDetailRow);
+    setIsFloatPanelOpen(true);
+  };
+
+  const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
+
   /**
    * Combined loading flag for the whole screen.
    */
@@ -332,7 +343,9 @@ export default function DetailPage() {
           onRowsChange={updateActiveRows}
           onDirtyChange={() => setIsDirty(true)}
           onSelectedRowsChange={setSelectedPropertyIncomeExpenseDetailRows}
+          onSelectedRowChange={setSelectedRow}
           isScreenLoading={isScreenLoading}
+          onOpenFloatPannelClick={onOpenFloatPannelClick}
         />
       ))}
 
@@ -361,8 +374,21 @@ export default function DetailPage() {
           >
             キャンセル
           </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => setIsFloatPanelOpen(true)}
+          >
+            Open Panel
+          </Button>
         </div>
       )}
+
+      <FloatingPanel
+        open={isFloatPanelOpen}
+        onClose={() => setIsFloatPanelOpen(false)}
+        selectedRow={selectedRow}
+      />
 
       {/* Confirm dialog shown when leaving a tab with unsaved changes */}
       <UnsavedChangesDialog

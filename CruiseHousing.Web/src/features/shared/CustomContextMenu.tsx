@@ -15,6 +15,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import ColorizeIcon from "@mui/icons-material/Colorize";
+import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { useState } from "react";
 
 export type CellContextMenuState = {
@@ -41,6 +42,7 @@ type Props = {
   ) => void;
   onRenameHeader?: (field: string, headerName: string) => void;
   canPaste?: boolean;
+  onOpenFloatPannelClick? : (menu: NonNullable<CellContextMenuState>) => void;
 };
 
 export default function CustomContextMenu({
@@ -55,6 +57,7 @@ export default function CustomContextMenu({
   onSetSelectedRowsColor,
   onRenameHeader,
   canPaste = false,
+  onOpenFloatPannelClick,
 }: Props) {
   const [showColorOptions, setShowColorOptions] = useState(false);
   const [addRowCount, setAddRowCount] = useState<number>(2);
@@ -126,6 +129,13 @@ export default function CustomContextMenu({
   const handleRenameHeaderClick = () => {
     if (contextMenu && headerName.trim()) {
       onRenameHeader?.(contextMenu.field, headerName.trim());
+    }
+    onClose();
+  };
+
+  const handlOpenFloatPannelClick = () => {
+    if (contextMenu && onOpenFloatPannelClick) {
+      onOpenFloatPannelClick?.(contextMenu);
     }
     onClose();
   };
@@ -322,11 +332,17 @@ export default function CustomContextMenu({
               選択行を削除
             </MenuItem>,
 
-            <Divider key="divider-copy-all-3" />,
+            <Divider key="divider-copy-all" />,
 
             <MenuItem key="copy-all" onClick={handleCopyAll}>
               <ContentCopyIcon sx={{ mr: 2 }} />
               全ての収支データをコピー
+            </MenuItem>,
+
+            <Divider key="divider-open-float-pannel" />,
+            <MenuItem key="open-float-pannel" onClick={handlOpenFloatPannelClick}>
+              <ReadMoreIcon sx={{ mr: 2 }} />
+              更に詳細項目を表示
             </MenuItem>,
           ]}
     </Menu>

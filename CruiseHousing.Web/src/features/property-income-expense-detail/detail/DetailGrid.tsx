@@ -36,7 +36,9 @@ type PropertyIncomeExpenseDetailGridProps = {
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
+  onSelectedRowChange?: (row: PropertyIncomeExpenseDetailRow) => void; 
   isScreenLoading: boolean;
+  onOpenFloatPannelClick?: (menu: NonNullable<CellContextMenuState>) => void
 };
 
 /**
@@ -53,7 +55,9 @@ export default function PropertyIncomeExpenseDetailGrid({
   onRowsChange,
   onDirtyChange,
   onSelectedRowsChange,
+  onSelectedRowChange,
   isScreenLoading,
+  onOpenFloatPannelClick
 }: PropertyIncomeExpenseDetailGridProps) {
   const stickySx = createStickyColumnSx([80, 100, 110, 100]);
 
@@ -244,7 +248,10 @@ export default function PropertyIncomeExpenseDetailGrid({
   }, [baseColumns, headerNames]);
 
   const handleRowClick = useCallback(
-    (params: { id: string | number }, event: React.MouseEvent) => {
+    (params: { id: string | number, row: PropertyIncomeExpenseDetailRow  }, event: React.MouseEvent) => {
+
+      onSelectedRowChange?.(params.row);
+
       setSelectedRowIds((prev) => {
         if (event.ctrlKey) {
           const next = new Set(prev);
@@ -261,7 +268,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         return new Set([params.id]);
       });
     },
-    []
+    [onSelectedRowChange]
   );
 
   const { updateRowAndRecalculate } = usePropertyIncomeExpenseCalculation();
@@ -289,15 +296,17 @@ export default function PropertyIncomeExpenseDetailGrid({
           (updatedRow as PropertyIncomeExpenseDetailRow);
 
         onRowsChange(nextRows);
+
         return returnedRow;
       }
 
       const { nextRows, returnedRow } = updateRowAndRecalculate(rows, updatedRow);
 
       onRowsChange(nextRows);
+      onSelectedRowChange?.(returnedRow);
       return returnedRow;
     },
-    [onRowsChange, rows, updateRowAndRecalculate]
+    [onRowsChange, onSelectedRowChange, rows, updateRowAndRecalculate]
   );
 
   const handleSetSelectedRowsColor = useCallback(
@@ -427,6 +436,7 @@ export default function PropertyIncomeExpenseDetailGrid({
         onDelete={handleDelete}
         onSetSelectedRowsColor={handleSetSelectedRowsColor}
         canPaste={copiedRows.length > 0 || copyAllRows.length > 0}
+        onOpenFloatPannelClick={onOpenFloatPannelClick}
       />
     </Box>
   );

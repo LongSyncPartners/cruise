@@ -4,7 +4,10 @@ import React from "react";
 import MultilineEditCell from "../../shared/MultilineEditCell";
 import { formatUSD, parseCurrencyInput } from "../../shared/utils";
 import { type PropertyIncomeExpenseDetailRow } from "../types";
-import { createDateCellValidator, createTextCellValidator } from "../../shared/gridValidators";
+import {
+  createDateCellValidator,
+  createTextCellValidator,
+} from "../../shared/gridValidators";
 import CurrencyEditCell from "../../shared/CurrencyEditCell";
 import CurrencyCell from "../../shared/CurrencyCell";
 import MultilineCell from "../../shared/MultilineCell";
@@ -12,6 +15,7 @@ import DateCell from "../../shared/DateCell";
 import DateEditCell from "../../shared/DateEditCell";
 import YearMonthCell from "../../shared/YearMonthCell";
 import CreateHeaderEditable from "../../shared/CreateHeaderEditable";
+import { PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS } from "./propertyIncomeExpenseDetailColumnLabels";
 
 type CreateColumnsParams = {
   onCellContextMenu: (
@@ -22,9 +26,6 @@ type CreateColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
 };
 
-/**
- * Reusable header renderer
- */
 const createEditableHeader =
   (onRenameHeader?: (field: string, headerName: string) => void) =>
   (params: Parameters<NonNullable<GridColDef["renderHeader"]>>[0]) => (
@@ -69,7 +70,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
   return [
     withContextMenu({
       field: "yearMonth",
-      headerName: "年月",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.yearMonth,
       headerClassName: "align-right-header",
       width: 80,
       editable: false,
@@ -84,7 +85,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "expectedAmount",
-      headerName: "本来入金額",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.expectedAmount,
       headerClassName: "align-right-header",
       width: 100,
       editable: false,
@@ -94,7 +95,8 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "managementCompanyAmount",
-      headerName: "管理会社入金",
+      headerName:
+        PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.managementCompanyAmount,
       width: 120,
       editable: true,
       sortable: false,
@@ -108,7 +110,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "transactionDate",
-      headerName: "Date",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.transactionDate,
       width: 100,
       editable: true,
       sortable: false,
@@ -119,7 +121,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "counterparty",
-      headerName: "Payee/Payer",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.counterparty,
       width: 150,
       editable: true,
       sortable: false,
@@ -134,7 +136,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "description",
-      headerName: "Description",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.description,
       width: 250,
       editable: true,
       sortable: false,
@@ -145,7 +147,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "income",
-      headerName: "Income",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.income,
       headerClassName: "align-right-header",
       width: 100,
       editable: true,
@@ -158,7 +160,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "expense",
-      headerName: "Expense",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.expense,
       headerClassName: "align-right-header",
       width: 100,
       editable: true,
@@ -171,7 +173,7 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "balance",
-      headerName: "Balance",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.balance,
       headerClassName: "align-right-header",
       width: 120,
       editable: false,
@@ -181,13 +183,13 @@ export const createPropertyIncomeExpenseDetailColumns = ({
     }),
     withContextMenu({
       field: "note",
-      headerName: "備考",
+      headerName: PROPERTY_INCOME_EXPENSE_DETAIL_COLUMN_LABELS.note,
       flex: 1,
       minWidth: 180,
       editable: true,
       sortable: false,
       filterable: false,
-      preProcessEditCellProps: createTextCellValidator({ }),
+      preProcessEditCellProps: createTextCellValidator({}),
       renderCell: (params) => <MultilineCell {...params} />,
       renderEditCell: (params) => <MultilineEditCell {...params} />,
     }),

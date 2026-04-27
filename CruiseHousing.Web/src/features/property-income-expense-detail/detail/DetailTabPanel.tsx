@@ -2,6 +2,7 @@ import { PropertyHeaderProps } from "@/features/shared/commonTypes";
 import { PropertyIncomeExpenseDetailRow } from "../types";
 import PropertyIncomeExpenseDetailGrid from "./DetailGrid";
 import { PropertyInfo } from "@/features/shared/PropertyInfo";
+import { CellContextMenuState } from "@/features/shared/CustomContextMenu";
 
 /**
  * Tab panel component for displaying the selected property's header and editable grid.
@@ -14,7 +15,9 @@ export const TabPanel = ({
   onRowsChange,
   onDirtyChange,
   onSelectedRowsChange,
+  onSelectedRowChange,
   isScreenLoading,
+  onOpenFloatPannelClick
 }: {
   active: boolean;
   header?: PropertyHeaderProps;
@@ -22,7 +25,9 @@ export const TabPanel = ({
   onRowsChange: (nextRows: PropertyIncomeExpenseDetailRow[]) => void;
   onDirtyChange?: () => void;
   onSelectedRowsChange?: (rows: PropertyIncomeExpenseDetailRow[]) => void;
+  onSelectedRowChange?: (row: PropertyIncomeExpenseDetailRow) => void;
   isScreenLoading: boolean;
+  onOpenFloatPannelClick: (menu: NonNullable<CellContextMenuState>) => void;
 }) => {
   // Do not render anything when the tab is inactive
   // or when header information is not available.
@@ -41,7 +46,9 @@ export const TabPanel = ({
           onRowsChange={onRowsChange}
           onDirtyChange={onDirtyChange}
           onSelectedRowsChange={onSelectedRowsChange}
+          onSelectedRowChange={onSelectedRowChange}
           isScreenLoading={isScreenLoading}
+          onOpenFloatPannelClick={onOpenFloatPannelClick}
         />
       </div>
     </>
