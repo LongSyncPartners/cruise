@@ -27,7 +27,7 @@ import {
   createTabOwnerRows,
   createTabPropertyManagementCompanyRows,
 } from "./data.dump";
-import { PropertyTabSummary } from "../shared/commonTypes";
+import { PropertyTabSummary } from "../shared/types";
 import { PropertyIncomeExpenseDetailRow } from "../property-income-expense-detail/types";
 
 /**

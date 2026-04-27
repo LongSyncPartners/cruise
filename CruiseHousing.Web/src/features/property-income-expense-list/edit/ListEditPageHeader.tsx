@@ -3,7 +3,7 @@ import { Box, MenuItem, Select, Tab, Tabs } from "@mui/material";
 import type { PropertyInfoProps, SubjectTabInfo } from "../types";
 import { PropertyInfo } from "../../shared/PropertyInfo";
 import { useCenteredScrollableTabs } from "@/features/shared/useCenteredScrollableTabs";
-import { PropertyTabSummary } from "@/features/shared/commonTypes";
+import { PropertyTabSummary } from "@/features/shared/types";
 import { DetailTabValue, SubjectOption, TabOption } from "../subjectOptions";
 
 const getDetailTabProps = (index: number) => ({

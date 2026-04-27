@@ -3,7 +3,7 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 
 import type { PropertyInfoProps } from "../types";
 import { PropertyInfo } from "../../shared/PropertyInfo";
-import { PropertyTabSummary } from "../../shared/commonTypes";
+import { PropertyTabSummary } from "../../shared/types";
 import { useCenteredScrollableTabs } from "@/features/shared/useCenteredScrollableTabs";
 
 const getDetailTabProps = (index: number) => ({

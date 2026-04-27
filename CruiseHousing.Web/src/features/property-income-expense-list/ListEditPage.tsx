@@ -24,7 +24,7 @@ import {
 } from "./data.dump";
 import ListEditGrid from "./edit/ListEditGrid";
 import { Button, Typography } from "@mui/material";
-import { PropertyTabSummary } from "../shared/commonTypes";
+import { PropertyTabSummary } from "../shared/types";
 import { DETAIL_TAB_OPTIONS, DETAIL_TAB_VALUES, DetailTabValue, getSubjectOptionsByDetailTab } from "./subjectOptions";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];

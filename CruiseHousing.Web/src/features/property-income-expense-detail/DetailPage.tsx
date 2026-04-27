@@ -20,10 +20,11 @@ import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpense
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 
 import { useAppToast } from "@/providers/ToastProvider";
-import { PropertyTabSummary } from "@/features/shared/commonTypes";
+import { PropertyTabSummary } from "@/features/shared/types";
 import { TabPanel } from "./detail/DetailTabPanel";
 import FloatingPanel from "./detail/FloatingPanel";
 import { CellContextMenuState } from "../shared/CustomContextMenu";
+import { recalculateBalances } from "./detail/DetailRowUtils";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -280,6 +281,17 @@ export default function DetailPage() {
     setIsFloatPanelOpen(true);
   };
 
+  const handleSelectedRowChange = (nextRow: PropertyIncomeExpenseDetailRow) => {
+    setSelectedRow(nextRow);
+    setEditedRows((prevRows) => {
+      const nextRows = prevRows.map((row) =>
+        row.id === nextRow.id ? nextRow : row
+      );
+
+      return recalculateBalances(nextRows);
+    });
+  };
+
   const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
 
   /**
@@ -374,13 +386,6 @@ export default function DetailPage() {
           >
             キャンセル
           </Button>
-
-          <Button
-            variant="contained"
-            onClick={() => setIsFloatPanelOpen(true)}
-          >
-            Open Panel
-          </Button>
         </div>
       )}
 
@@ -388,6 +393,7 @@ export default function DetailPage() {
         open={isFloatPanelOpen}
         onClose={() => setIsFloatPanelOpen(false)}
         selectedRow={selectedRow}
+        onSelectedRowChange={handleSelectedRowChange}
       />
 
       {/* Confirm dialog shown when leaving a tab with unsaved changes */}

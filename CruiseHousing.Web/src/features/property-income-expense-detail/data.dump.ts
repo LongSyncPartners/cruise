@@ -6,7 +6,7 @@ import {
   type PropertyTabData,
 
 } from "./types";
-import { PropertyHeaderProps, PropertyTabSummary } from "../shared/commonTypes";
+import { PropertyHeaderProps, PropertyTabSummary } from "../shared/types";
 
 const today = new Date();
 

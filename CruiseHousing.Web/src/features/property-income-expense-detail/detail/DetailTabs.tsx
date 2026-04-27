@@ -1,5 +1,5 @@
 import { Box, MenuItem, Select, Tab, Tabs } from "@mui/material";
-import { PropertyTabSummary } from "../../shared/commonTypes";
+import { PropertyTabSummary } from "../../shared/types";
 import { useCenteredScrollableTabs } from "../../shared/useCenteredScrollableTabs";
 
 type PropertyIncomeExpenseTabsProps = {

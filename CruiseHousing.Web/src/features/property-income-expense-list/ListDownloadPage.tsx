@@ -9,7 +9,7 @@ import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTa
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { PropertyInfo } from "../shared/PropertyInfo";
-import { PropertyTabSummary } from "../shared/commonTypes";
+import { PropertyTabSummary } from "../shared/types";
 import { useCenteredScrollableTabs } from "../shared/useCenteredScrollableTabs";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];

@@ -1,4 +1,4 @@
-import { PropertyTabSummary } from "@/features/shared/commonTypes";
+import { PropertyTabSummary } from "@/features/shared/types";
 import { type GridRowId } from "@mui/x-data-grid";
 
 // Property income/expense detail row
