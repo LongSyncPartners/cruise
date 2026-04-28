@@ -1,5 +1,5 @@
 import { type TabPropertyManagementCompanyRow } from "../../types";
-import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./TabPropertyManagementCompanyColumnLabels";
+import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./ColumnLabels";
 
 import CommonFloatingPanel from "@/features/shared/CommonFloatingPanel";
 import { type FloatingPanelFieldConfig } from "@/features/shared/types";

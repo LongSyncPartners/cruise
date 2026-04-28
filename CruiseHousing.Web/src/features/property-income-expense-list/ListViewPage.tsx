@@ -18,7 +18,7 @@ import ListViewPageHeader from "./view/ListViewPageHeader";
 
 import TabInternalOwner from "./view/tab-internal-owner/TabInternalOwner";
 import TabOwnerManagementCompany from "./view/tab-owner-management-company/TabOwnerManagementCompany";
-import TabPropertyManagementCompany from "./view/tab-property-management-company/TabPropertyManagementCompany";
+
 
 import {
   createTabInternalOwnerRows,
@@ -28,9 +28,10 @@ import {
 } from "./data.dump";
 import { PropertyTabSummary } from "../shared/types";
 import { PropertyIncomeExpenseDetailRow } from "../property-income-expense-detail/types";
-import TabPropertyManagementCompanyFloatingPanel from "./view/tab-property-management-company/TabPropertyManagementCompanyFloatingPanel";
+import TabPropertyManagementCompanyFloatingPanel from "./view/tab-property-management-company/FloatingPanel";
 import { CellContextMenuState } from "../shared/CustomContextMenu";
 import TabOwner from "./view/tab-owner/TabOwner";
+import TabPropertyManagementCompany from "./view/tab-property-management-company/Tab";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.

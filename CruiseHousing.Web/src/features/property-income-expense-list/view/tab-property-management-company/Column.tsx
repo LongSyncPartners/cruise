@@ -5,7 +5,7 @@ import YearMonthCell from "../../../shared/YearMonthCell";
 import CreateHeaderEditable from "../../../shared/CreateHeaderEditable";
 import { TabPropertyManagementCompanyRow } from "../../types";
 import { withContextMenu } from "@/features/shared/withContextMenu";
-import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./TabPropertyManagementCompanyColumnLabels";
+import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./ColumnLabels";
 
 type CreateTabPropertyManagementCompanyColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;

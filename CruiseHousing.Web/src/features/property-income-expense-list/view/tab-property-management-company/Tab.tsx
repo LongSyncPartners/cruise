@@ -7,7 +7,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 
 import { dataGridCommonSx } from "../../../shared/dataGridCommonSx";
-import { createTabPropertyManagementCompanyColumns } from "./TabPropertyManagementCompanyColumn";
+import { createTabPropertyManagementCompanyColumns } from "./Column";
 import { TabPropertyManagementCompanyRow } from "../../types";
 import CustomContextMenu, {
   type CellContextMenuState,
