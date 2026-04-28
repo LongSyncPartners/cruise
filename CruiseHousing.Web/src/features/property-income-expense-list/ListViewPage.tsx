@@ -79,7 +79,7 @@ export default function ListViewPage({ onOpenEditPage  }: Props) {
   const [activeTab, setActiveTab] = useState(0);
   const [detailTabValue, setDetailTabValue] = useState<DetailTabValue>(DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY);
   const [loadedDetailTabs, setLoadedDetailTabs] = useState<DetailTabValue[]>([DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]);
-  const [selectedYearMonth, setSelectedYearMonth] = useState("2026/04");
+  const [selectedYearMonth, setSelectedYearMonth] = useState("2026/01");
 
   const [
     selectedPropertyManagementCompanyRow,
@@ -150,7 +150,7 @@ export default function ListViewPage({ onOpenEditPage  }: Props) {
   const { data: defaultPropertyCode } =
     useDefaultPropertyCodeByGroup(selectedGroup);
 
-  const yearMonths: string[] = ["2026/04", "2026/05"];
+  const yearMonths: string[] = ["2026/01", "2026/02", "2026/03"];
 
   const propertyManagementCompanyRows =
     useMemo<TabPropertyManagementCompanyRow[]>(() => {

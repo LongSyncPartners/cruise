@@ -1,6 +1,7 @@
 
 import { ListEditRow, SubjectTabInfo, TabInternalOwnerRow, TabOwnerManagementCompanyRow, TabOwnerRow, TabPropertyManagementCompanyRow } from "./types";
 
+
 // 👉 generate 100 rows
 export const createTabPropertyManagementCompanyRows = (): TabPropertyManagementCompanyRow[] => {
   return Array.from({ length: 12 }, (_, i) => {
@@ -24,7 +25,7 @@ export const createTabPropertyManagementCompanyRows = (): TabPropertyManagementC
     return {
       id: i + 1,
 
-      yearMonth: `2025/${String((i % 12) + 1).padStart(2, "0")}`,
+      yearMonth: `2026/${String((i % 12) + 1).padStart(2, "0")}`,
 
       rentAmount: rent,
       otherIncomeAmount: otherIncome,
@@ -40,6 +41,7 @@ export const createTabPropertyManagementCompanyRows = (): TabPropertyManagementC
       netAmount: net,
       receivedAmount: received,
       differenceAmount: diff,
+      executedState: false,
     };
   });
 };
@@ -58,13 +60,14 @@ export const createTabOwnerManagementCompanyRows =
 
       return {
         id: i + 1,
-        yearMonth: `2025/${month}`,
+        yearMonth: `2026/${month}`,
 
         managementEntrust,
         managementConsignment,
         constructionDeposit,
         repairCost,
         fee,
+        executedState: false,
       };
     });
   };
@@ -99,7 +102,7 @@ export const createTabOwnerManagementCompanyRows =
 
     return {
       id: i + 1,
-      yearMonth: `2025/${month}`,
+      yearMonth: `2026/${month}`,
 
       totalIncomeAmount,
       rentAmount,
@@ -115,6 +118,7 @@ export const createTabOwnerManagementCompanyRows =
       extraPaymentCost,
 
       managementCompanyIncome,
+      executedState: false,
     };
   });
 };
@@ -157,7 +161,7 @@ export const createTabOwnerRows = (): TabOwnerRow[] => {
 
     return {
       id: i + 1,
-      yearMonth: `2025/${m}`,
+      yearMonth: `2026/${m}`,
 
       totalIncomeAmount: totalIncome,
       subleaseRent,
@@ -177,6 +181,7 @@ export const createTabOwnerRows = (): TabOwnerRow[] => {
       otherExpenseAmount: otherExpense,
 
       ownerPaymentAmount: ownerPayment,
+      executedState: false,
     };
   });
 };
@@ -204,7 +209,11 @@ export const createSubjectTabs = (): SubjectTabInfo[] => {
   }));
 };
 
-import { DETAIL_TAB_VALUES, DetailTabValue } from "./subjectOptions";
+import {
+  DETAIL_TAB_VALUES,
+  DetailTabValue,
+  getSubjectOptionsByDetailTab,
+} from "./subjectOptions";
 
 export const createListEditRows = (
   detailTabValue: DetailTabValue,
@@ -223,24 +232,23 @@ export const createListEditRows = (
     [DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY]: [
       DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY,
     ],
-    [DETAIL_TAB_VALUES.INTERNAL_OWNER]: [
-      DETAIL_TAB_VALUES.INTERNAL_OWNER,
-    ],
-    [DETAIL_TAB_VALUES.OWNER]: [
-      DETAIL_TAB_VALUES.OWNER,
-    ],
+    [DETAIL_TAB_VALUES.INTERNAL_OWNER]: [DETAIL_TAB_VALUES.INTERNAL_OWNER],
+    [DETAIL_TAB_VALUES.OWNER]: [DETAIL_TAB_VALUES.OWNER],
   };
 
-  const subjectsMap: Record<string, string[]> = {
-    all: ["rent", "repairCost", "managementFee"],
-    income: ["otherIncome", "brokerageFee"],
-    expense: ["gardenMaintenance", "otherExpense"],
-  };
+  const subjectOptions = getSubjectOptionsByDetailTab(detailTabValue).filter(
+    (item) => item.value !== "all"
+  );
+
+  const subjects =
+    subjectTabValue === "all"
+      ? subjectOptions.map((item) => item.value)
+      : subjectOptions.some((item) => item.value === subjectTabValue)
+        ? [subjectTabValue]
+        : subjectOptions.map((item) => item.value);
 
   const categories =
     categoriesMap[detailTabValue] ?? categoriesMap[DETAIL_TAB_VALUES.ALL];
-
-  const subjects = subjectsMap[subjectTabValue] ?? subjectsMap.all;
 
   const debitOptions = ["現金", "普通預金", "未収金"];
   const creditOptions = ["売上", "雑収入", "未払金"];
@@ -255,7 +263,7 @@ export const createListEditRows = (
     return Math.abs(Math.sin(i + seed)) * max;
   };
 
-  return Array.from({ length: 1000 }, (_, i) => {
+  return Array.from({ length: 100 }, (_, i) => {
     const day = (i % 28) + 1;
 
     const categoryIndex =
@@ -290,3 +298,4 @@ export const createListEditRows = (
     };
   });
 };
+
