@@ -8,27 +8,15 @@ import { withContextMenu } from "@/features/shared/withContextMenu";
 import { TAB_OWNER_COLUMN_LABELS } from "./ColumnLabels";
 
 type CreateTabOwnerColumnsParams = {
-  onRenameHeader?: (field: string, headerName: string) => void;
   onCellContextMenu: (
     params: GridRenderCellParams<TabOwnerRow>,
     event: React.MouseEvent<HTMLElement>
   ) => void;
 };
 
-const createEditableHeader =
-  (onRenameHeader?: (field: string, headerName: string) => void) =>
-  (params: Parameters<NonNullable<GridColDef["renderHeader"]>>[0]) => (
-    <CreateHeaderEditable
-      value={params.colDef.headerName ?? ""}
-      onChange={(newValue) => onRenameHeader?.(params.field, newValue)}
-    />
-  );
-
 export const createTabOwnerColumns = ({
-  onRenameHeader,
   onCellContextMenu,
 }: CreateTabOwnerColumnsParams): GridColDef<TabOwnerRow>[] => {
-  const renderEditableHeader = createEditableHeader(onRenameHeader);
 
   const addContextMenu = (col: GridColDef<TabOwnerRow>) =>
     withContextMenu(col, onCellContextMenu);
@@ -43,7 +31,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <YearMonthCell {...p} />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -56,7 +43,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "subleaseRent",
@@ -68,7 +54,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "otherIncomeAmount",
@@ -80,7 +65,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -93,7 +77,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "managementFee",
@@ -105,7 +88,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "repairCost",
@@ -117,7 +99,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "constructionFee",
@@ -129,7 +110,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "gardenMaintenanceCost",
@@ -141,7 +121,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "fee",
@@ -153,7 +132,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "propertyTax",
@@ -165,7 +143,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "fireInsurance",
@@ -177,7 +154,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "floodInsurance",
@@ -189,7 +165,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "hoaDues",
@@ -201,7 +176,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "fixedRepairCost",
@@ -213,7 +187,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "otherExpenseAmount",
@@ -225,7 +198,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -238,7 +210,6 @@ export const createTabOwnerColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (p) => <CurrencyCell {...p} showZero />,
-      renderHeader: renderEditableHeader,
     }),
   ];
 };

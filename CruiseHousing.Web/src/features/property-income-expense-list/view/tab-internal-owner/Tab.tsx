@@ -1,6 +1,8 @@
 import { Box } from "@mui/material";
 import {
   DataGrid,
+  GridCellParams,
+  GridColumnHeaderParams,
   GridRowId,
   type GridRenderCellParams,
 } from "@mui/x-data-grid";
@@ -17,12 +19,14 @@ type TabInternalOwnerProps = {
   rows: TabInternalOwnerRow[];
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
   onSelectedRowChange?: (row: TabInternalOwnerRow) => void;
+  onGridDoubleClick?:  (params: GridCellParams | GridColumnHeaderParams)  => void;
 };
 
 export default function TabInternalOwner({
   rows,
   onOpenFloatPanelClick,
   onSelectedRowChange,
+  onGridDoubleClick
 }: TabInternalOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
@@ -60,7 +64,6 @@ export default function TabInternalOwner({
   const baseColumns = useMemo(
     () =>
       createTabInternalOwnerColumns({
-        onRenameHeader: handleRenameHeader,
         onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
@@ -108,6 +111,8 @@ export default function TabInternalOwner({
           noResultsOverlayLabel: "データがありません",
         }}
         onRowClick={handleRowClick}
+        onCellDoubleClick={(params) => onGridDoubleClick?.(params)}
+        onColumnHeaderDoubleClick={(params) => onGridDoubleClick?.(params)}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu

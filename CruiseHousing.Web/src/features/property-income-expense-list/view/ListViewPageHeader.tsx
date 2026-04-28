@@ -5,10 +5,12 @@ import type { PropertyInfoProps } from "../types";
 import { PropertyInfo } from "../../shared/PropertyInfo";
 import { PropertyTabSummary } from "../../shared/types";
 import { useCenteredScrollableTabs } from "@/features/shared/useCenteredScrollableTabs";
+import { DETAIL_TAB_VALUES, DetailTabValue } from "../subjectOptions";
 
-const getDetailTabProps = (index: number) => ({
-  id: `property-tab-${index}`,
-  "aria-controls": `property-tabpanel-${index}`,
+const getDetailTabProps = (value: DetailTabValue) => ({
+  value,
+  id: `property-tab-${value}`,
+  "aria-controls": `property-tabpanel-${value}`,
 });
 
 type ListViewPageHeaderProps = {
@@ -24,8 +26,8 @@ type ListViewPageHeaderProps = {
   yearMonths: string[];
   onYearMonthChange: (value: string) => void;
 
-  detailTabValue: number;
-  onChangeDetailTab: (newValue: number) => void;
+  detailTabValue: DetailTabValue;
+  onChangeDetailTab: (newValue: DetailTabValue) => void;
 };
 
 export default function ListViewPageHeader({
@@ -148,7 +150,7 @@ export default function ListViewPageHeader({
 
         <Tabs
           value={detailTabValue}
-          onChange={(_event, newValue: number) => onChangeDetailTab(newValue)}
+          onChange={(_event, newValue: DetailTabValue) => onChangeDetailTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{ flex: 1 }}
@@ -161,7 +163,7 @@ export default function ListViewPageHeader({
                 color: "white",
               },
             }}
-            {...getDetailTabProps(0)}
+            {...getDetailTabProps(DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY)}
           />
           <Tab
             label="オーナー管理会社"
@@ -171,7 +173,7 @@ export default function ListViewPageHeader({
                 color: "white",
               },
             }}
-            {...getDetailTabProps(1)}
+            {...getDetailTabProps(DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY)}
           />
           <Tab
             label="貸主（自社）"
@@ -181,7 +183,7 @@ export default function ListViewPageHeader({
                 color: "white",
               },
             }}
-            {...getDetailTabProps(2)}
+            {...getDetailTabProps(DETAIL_TAB_VALUES.INTERNAL_OWNER)}
           />
           <Tab
             label="オーナー"
@@ -191,7 +193,7 @@ export default function ListViewPageHeader({
                 color: "white",
               },
             }}
-            {...getDetailTabProps(3)}
+            {...getDetailTabProps(DETAIL_TAB_VALUES.OWNER)}
           />
         </Tabs>
       </Box>

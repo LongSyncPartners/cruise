@@ -8,27 +8,15 @@ import { withContextMenu } from "@/features/shared/withContextMenu";
 import { TAB_PROPERTY_MANAGEMENT_COMPANY_COLUMN_LABELS } from "./ColumnLabels";
 
 type CreateTabPropertyManagementCompanyColumnsParams = {
-  onRenameHeader?: (field: string, headerName: string) => void;
   onCellContextMenu: (
     params: GridRenderCellParams<TabPropertyManagementCompanyRow>,
     event: React.MouseEvent<HTMLElement>
   ) => void;
 };
 
-const createEditableHeader =
-  (onRenameHeader?: (field: string, headerName: string) => void) =>
-  (params: Parameters<NonNullable<GridColDef["renderHeader"]>>[0]) => (
-    <CreateHeaderEditable
-      value={params.colDef.headerName ?? ""}
-      onChange={(newValue) => onRenameHeader?.(params.field, newValue)}
-    />
-  );
-
 export const createTabPropertyManagementCompanyColumns = ({
-  onRenameHeader,
   onCellContextMenu,
 }: CreateTabPropertyManagementCompanyColumnsParams): GridColDef<TabPropertyManagementCompanyRow>[] => {
-  const renderEditableHeader = createEditableHeader(onRenameHeader);
 
   const addContextMenu = (col: GridColDef<TabPropertyManagementCompanyRow>) =>
     withContextMenu(col, onCellContextMenu);
@@ -43,7 +31,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <YearMonthCell {...params} />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -52,8 +39,10 @@ export const createTabPropertyManagementCompanyColumns = ({
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "otherIncomeAmount",
@@ -62,8 +51,10 @@ export const createTabPropertyManagementCompanyColumns = ({
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "totalIncomeAmount",
@@ -72,8 +63,10 @@ export const createTabPropertyManagementCompanyColumns = ({
       headerClassName: "align-right-header",
       minWidth: 100,
       flex: 1,
+      editable: false,
+      sortable: false,
+      filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -86,7 +79,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "repairCost",
@@ -98,7 +90,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "gardenMaintenanceCost",
@@ -111,7 +102,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "brokerageFee",
@@ -123,7 +113,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "otherExpenseAmount",
@@ -136,7 +125,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "totalExpenseAmount",
@@ -149,7 +137,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
 
     addContextMenu({
@@ -162,7 +149,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "receivedAmount",
@@ -174,7 +160,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
     addContextMenu({
       field: "differenceAmount",
@@ -187,7 +172,6 @@ export const createTabPropertyManagementCompanyColumns = ({
       sortable: false,
       filterable: false,
       renderCell: (params) => <CurrencyCell {...params} showZero />,
-      renderHeader: renderEditableHeader,
     }),
   ];
 };

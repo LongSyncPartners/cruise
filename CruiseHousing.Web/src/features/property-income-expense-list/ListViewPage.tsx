@@ -38,6 +38,9 @@ import {
 import { PropertyTabSummary } from "../shared/types";
 import { PropertyIncomeExpenseDetailRow } from "../property-income-expense-detail/types";
 import { CellContextMenuState } from "../shared/CustomContextMenu";
+import { GridCellParams, GridColumnHeaderParams } from "@mui/x-data-grid";
+import { EditOpenContext } from "./PropertyIncomeExpenseListScreen";
+import { DETAIL_TAB_VALUES, DetailTabValue } from "./subjectOptions";
 
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
@@ -67,11 +70,15 @@ const DetailTabPanel = ({
   );
 };
 
-export default function ListViewPage() {
+type Props = {
+  onOpenEditPage?: (context: EditOpenContext) => void;
+};
+
+export default function ListViewPage({ onOpenEditPage  }: Props) {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [detailTabValue, setDetailTabValue] = useState(0);
-  const [loadedDetailTabs, setLoadedDetailTabs] = useState<number[]>([0]);
+  const [detailTabValue, setDetailTabValue] = useState<DetailTabValue>(DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY);
+  const [loadedDetailTabs, setLoadedDetailTabs] = useState<DetailTabValue[]>([DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]);
   const [selectedYearMonth, setSelectedYearMonth] = useState("2026/04");
 
   const [
@@ -200,11 +207,11 @@ export default function ListViewPage() {
 
     setSelectedGroup(newGroup);
     setActiveTab(0);
-    setDetailTabValue(0);
-    setLoadedDetailTabs([0]);
+    setDetailTabValue(DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY);
+    setLoadedDetailTabs([DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]);
   };
 
-  const handleChangeDetailTab = (newValue: number) => {
+  const handleChangeDetailTab = (newValue: DetailTabValue) => {
     if (newValue === detailTabValue) return;
     closeAllFloatingPanels();
     setDetailTabValue(newValue);
@@ -268,6 +275,13 @@ export default function ListViewPage() {
 
   const isScreenLoading = loading || isTabsLoading;
 
+  const handleGridDoubleClick = (params: GridCellParams | GridColumnHeaderParams) => {
+    onOpenEditPage?.({
+      detailTabValue: detailTabValue as DetailTabValue,
+      subjectTabField: params.field,
+    });
+  };
+
   useEffect(() => {
     if (selectedGroup) {
       setSelectedPropertyCode(defaultPropertyCode ?? "");
@@ -304,8 +318,8 @@ export default function ListViewPage() {
 
       <div className="property-income-expense-list-grid-contaniner">
         <DetailTabPanel
-          active={detailTabValue === 0}
-          loaded={loadedDetailTabs.includes(0)}
+          active={detailTabValue === DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY}
+          loaded={loadedDetailTabs.includes(DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY)}
         >
           <TabPropertyManagementCompany
             rows={propertyManagementCompanyRows}
@@ -315,12 +329,13 @@ export default function ListViewPage() {
             onSelectedRowChange={
               handleSelectedPropertyManagementCompanyRowChange
             }
+            onGridDoubleClick={handleGridDoubleClick}
           />
         </DetailTabPanel>
 
         <DetailTabPanel
-          active={detailTabValue === 1}
-          loaded={loadedDetailTabs.includes(1)}
+          active={detailTabValue === DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY}
+          loaded={loadedDetailTabs.includes(DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY)}
         >
           <TabOwnerManagementCompany
             rows={ownerManagementCompanyRows}
@@ -330,28 +345,31 @@ export default function ListViewPage() {
             onSelectedRowChange={
               handleSelectedOwnerManagementCompanyRowChange
             }
+            onGridDoubleClick={handleGridDoubleClick}
           />
         </DetailTabPanel>
 
         <DetailTabPanel
-          active={detailTabValue === 2}
-          loaded={loadedDetailTabs.includes(2)}
+          active={detailTabValue === DETAIL_TAB_VALUES.INTERNAL_OWNER}
+          loaded={loadedDetailTabs.includes(DETAIL_TAB_VALUES.INTERNAL_OWNER)}
         >
           <TabInternalOwner
             rows={internalOwnerRows}
             onOpenFloatPanelClick={onOpenTabInternalOwnerFloatPanelClick}
             onSelectedRowChange={handleSelectedInternalOwnerRowChange}
+            onGridDoubleClick={handleGridDoubleClick}
           />
         </DetailTabPanel>
 
         <DetailTabPanel
-          active={detailTabValue === 3}
-          loaded={loadedDetailTabs.includes(3)}
+          active={detailTabValue === DETAIL_TAB_VALUES.OWNER}
+          loaded={loadedDetailTabs.includes(DETAIL_TAB_VALUES.OWNER)}
         >
           <TabOwner
             rows={ownerRows}
             onOpenFloatPanelClick={onOpenTabOwnerFloatPanelClick}
             onSelectedRowChange={handleSelectedOwnerRowChange}
+            onGridDoubleClick={handleGridDoubleClick}
           />
         </DetailTabPanel>
       </div>

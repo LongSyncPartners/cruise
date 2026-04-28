@@ -1,6 +1,8 @@
 import { Box } from "@mui/material";
 import {
   DataGrid,
+  GridCellParams,
+  GridColumnHeaderParams,
   GridRowId,
   type GridRenderCellParams,
 } from "@mui/x-data-grid";
@@ -17,12 +19,14 @@ type TabOwnerProps = {
   rows: TabOwnerRow[];
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
   onSelectedRowChange?: (row: TabOwnerRow) => void;
+  onGridDoubleClick?:  (params: GridCellParams | GridColumnHeaderParams)  => void;
 };
 
 export default function TabOwner({
   rows,
   onOpenFloatPanelClick,
   onSelectedRowChange,
+  onGridDoubleClick
 }: TabOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
@@ -57,7 +61,6 @@ export default function TabOwner({
   const baseColumns = useMemo(
     () =>
       createTabOwnerColumns({
-        onRenameHeader: handleRenameHeader,
         onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
@@ -107,6 +110,8 @@ export default function TabOwner({
           noResultsOverlayLabel: "データがありません",
         }}
         onRowClick={handleRowClick}
+        onCellDoubleClick={(params) => onGridDoubleClick?.(params)}
+        onColumnHeaderDoubleClick={(params) => onGridDoubleClick?.(params)}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu
