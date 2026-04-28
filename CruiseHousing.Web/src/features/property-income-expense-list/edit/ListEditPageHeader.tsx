@@ -165,15 +165,6 @@ export default function ListEditPageHeader({
           paddingTop:2
         }}
       >
-
-         {(() => {
-  console.log("🔍 Tabs debug:", {
-    subjectTabValue,
-    subjectTabs: subjectTabs.map((t) => t.value),
-  });
-  return null;
-})()}
-
         <Tabs
           value={subjectTabValue}
           onChange={(_event, newValue: string) => onChangeSubjectTab(newValue)}
