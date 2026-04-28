@@ -41,6 +41,8 @@ export type TabPropertyManagementCompanyRow = {
   netAmount: number | null;               // 差引計
   receivedAmount: number | null;          // 入金額
   differenceAmount: number | null;        // 差額
+
+  executedState: boolean; // For context menu toggle
 };
 
 /** 
@@ -58,6 +60,8 @@ export type TabOwnerManagementCompanyRow = {
   constructionDeposit: number | null;   // 工事預り金
   repairCost: number | null;            // 修繕費
   fee: number | null;                  // 手数料
+
+  executedState: boolean; // For context menu toggle
 };
 
 /** 
@@ -86,6 +90,8 @@ export type TabInternalOwnerRow = {
 
   // ===== 管理会社 =====
   managementCompanyIncome: number | null; // 管理会社収入
+
+  executedState: boolean; // For context menu toggle
 };
 
 /** 
@@ -118,6 +124,8 @@ export type TabOwnerRow = {
 
   // ===== 結果 =====
   ownerPaymentAmount: number | null;  // ｵｰﾅｰ支払額
+
+  executedState: boolean; // For context menu toggle
 };
 
 

@@ -6,7 +6,7 @@ import {
   GridRowId,
   type GridRenderCellParams,
 } from "@mui/x-data-grid";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createTabOwnerColumns } from "./Column";
 import { TabOwnerRow } from "../../types";
@@ -14,6 +14,7 @@ import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 import CustomContextMenu, {
   type CellContextMenuState,
 } from "@/features/shared/CustomContextMenu";
+import { DETAIL_TAB_VALUES, SUBJECT_OPTIONS_BY_DETAIL_TAB } from "../../subjectOptions";
 
 type TabOwnerProps = {
   rows: TabOwnerRow[];
@@ -30,6 +31,7 @@ export default function TabOwner({
 }: TabOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
+  const [gridRows, setGridRows] = useState<TabOwnerRow[]>(rows);
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
@@ -91,10 +93,47 @@ export default function TabOwner({
     onSelectedRowChange?.(params.row);
   };
 
+  const handleToggleExecutedState = useCallback((rowId: GridRowId) => {
+      setGridRows((prev) =>
+        prev.map((row) =>
+          row.id === rowId
+            ? { ...row, executedState: !row.executedState }
+            : row
+        )
+      );
+    }, []);
+  
+    const handleGridDoubleClick = useCallback(
+      (params: GridCellParams | GridColumnHeaderParams) => {
+        const columnField = params.field;
+  
+        if (columnField === "yearMonth") {
+          if ("id" in params) {
+            handleToggleExecutedState(params.id);
+          }
+          return;
+        }
+  
+        const editableSubjects =
+                SUBJECT_OPTIONS_BY_DETAIL_TAB[
+                  DETAIL_TAB_VALUES.OWNER
+                ];
+  
+        if (editableSubjects.some((item) => item.value === columnField)) {
+          onGridDoubleClick?.(params);
+        }
+      },
+      [handleToggleExecutedState, onGridDoubleClick]
+    );
+
+  useEffect(() => {
+    setGridRows(rows);
+  }, [rows]);
+
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
-        rows={rows}
+        rows={gridRows}
         columns={columns}
         rowHeight={40}
         columnHeaderHeight={40}
@@ -110,8 +149,8 @@ export default function TabOwner({
           noResultsOverlayLabel: "データがありません",
         }}
         onRowClick={handleRowClick}
-        onCellDoubleClick={(params) => onGridDoubleClick?.(params)}
-        onColumnHeaderDoubleClick={(params) => onGridDoubleClick?.(params)}
+        onCellDoubleClick={handleGridDoubleClick}
+        onColumnHeaderDoubleClick={handleGridDoubleClick}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu

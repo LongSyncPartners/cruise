@@ -103,7 +103,6 @@ export default function ListEditPageHeader({
                 whiteSpace: "nowrap",
                 minWidth: 60,
                 maxWidth: 80,
-                minHeight: 30,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -143,7 +142,6 @@ export default function ListEditPageHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 minWidth: 100,
-                minHeight: 30,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -170,6 +168,13 @@ export default function ListEditPageHeader({
           onChange={(_event, newValue: string) => onChangeSubjectTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
+          slotProps={{
+            indicator: {
+              sx: {
+                display: "none",
+              },
+            },
+          }}
           sx={{ flex: 1 }}
         >
 
@@ -181,7 +186,6 @@ export default function ListEditPageHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 minWidth: 100,
-                minHeight: 30,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",

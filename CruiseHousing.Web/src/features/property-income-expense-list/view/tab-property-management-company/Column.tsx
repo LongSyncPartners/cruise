@@ -30,7 +30,7 @@ export const createTabPropertyManagementCompanyColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (params) => <YearMonthCell {...params} />,
+      renderCell: (params) => <YearMonthCell {...params} disableDoubleClickToggle/>,
     }),
 
     addContextMenu({

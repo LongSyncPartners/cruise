@@ -30,7 +30,7 @@ export const createTabOwnerColumns = ({
       editable: false,
       sortable: false,
       filterable: false,
-      renderCell: (p) => <YearMonthCell {...p} />,
+      renderCell: (p) => <YearMonthCell {...p} disableDoubleClickToggle/>,
     }),
 
     addContextMenu({

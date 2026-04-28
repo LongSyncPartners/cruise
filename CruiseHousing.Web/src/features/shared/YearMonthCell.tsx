@@ -4,10 +4,12 @@ import { GridRenderCellParams } from "@mui/x-data-grid";
 type YearMonthCellProps =
   | (GridRenderCellParams & {
       onToggleExecutedState?: (rowId: string | number) => void;
+      disableDoubleClickToggle?: boolean;
     })
   | {
       value: string | number | null | undefined;
       onToggleExecutedState?: () => void;
+      disableDoubleClickToggle?: boolean;
     };
 
 const formatYearMonth = (value: unknown, isJapanese: boolean): string => {
@@ -20,7 +22,7 @@ const formatYearMonth = (value: unknown, isJapanese: boolean): string => {
   }
 
   const date = new Date(value as string | number);
-  if (isNaN(date.getTime())) return "";
+  if (Number.isNaN(date.getTime())) return "";
 
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -38,7 +40,12 @@ export default function YearMonthCell(props: YearMonthCellProps) {
   const isGray = Boolean((row as any)?.executedState);
 
   const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (props.disableDoubleClickToggle) {
+      return;
+    }
+
     e.stopPropagation();
+
     if (!value) return;
 
     if (isGridMode) {
