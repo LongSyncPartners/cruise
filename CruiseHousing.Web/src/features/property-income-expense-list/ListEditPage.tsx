@@ -44,7 +44,7 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
   const [detailTabValue, setDetailTabValue] = useState<DetailTabValue>(
     DETAIL_TAB_VALUES.ALL
   );
-  const [subjectTabValue, setSubjectTabValue] = useState(0);
+  const [subjectTabValue, setSubjectTabValue] = useState("all");
 
   const [editedRows, setEditedRows] = useState<ListEditRow[]>([]);
   const [selectedListEditRows, setSelectedListEditRows] = useState<
@@ -117,7 +117,7 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
     setSelectedGroup(newGroup);
     setActiveTab(0);
     setDetailTabValue(DETAIL_TAB_VALUES.ALL);
-    setSubjectTabValue(0);
+    setSubjectTabValue("all");
     setEditedRows([]);
     setSelectedRow(null);
     setIsFloatPanelOpen(false);
@@ -126,12 +126,12 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
 
   const handleChangeDetailTab = (newValue: DetailTabValue) => {
     setDetailTabValue(newValue);
-    setSubjectTabValue(0);
+    setSubjectTabValue("all");
     setSelectedRow(null);
     setIsFloatPanelOpen(false);
   };
 
-  const handleChangeSubjectTab = (newValue: number) => {
+  const handleChangeSubjectTab = (newValue: string) => {
     setSubjectTabValue(newValue);
     setSelectedRow(null);
     setIsFloatPanelOpen(false);
@@ -297,7 +297,7 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
     if (!editOpenContext || initialized) return;
     console.log(editOpenContext);
     setDetailTabValue(editOpenContext.detailTabValue ?? DETAIL_TAB_VALUES.ALL);
-    setSubjectTabValue(1);
+    setSubjectTabValue(editOpenContext.subjectTabField);
 
     setInitialized(true);
   }, [editOpenContext, initialized]);

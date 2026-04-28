@@ -208,7 +208,7 @@ import { DETAIL_TAB_VALUES, DetailTabValue } from "./subjectOptions";
 
 export const createListEditRows = (
   detailTabValue: DetailTabValue,
-  subjectTabValue: number
+  subjectTabValue: string
 ): ListEditRow[] => {
   const categoriesMap: Record<DetailTabValue, DetailTabValue[]> = {
     [DETAIL_TAB_VALUES.ALL]: [
@@ -229,21 +229,27 @@ export const createListEditRows = (
     [DETAIL_TAB_VALUES.OWNER]: [
       DETAIL_TAB_VALUES.OWNER,
     ],
-};
-
-  const subjectsMap: Record<number, string[]> = {
-    0: ["rent", "repairCost", "managementFee"],
-    1: ["otherIncome", "brokerageFee"],
-    2: ["gardenMaintenance", "otherExpense"],
   };
 
-  const categories = categoriesMap[detailTabValue] ?? categoriesMap[DETAIL_TAB_VALUES.ALL];
-  const subjects = subjectsMap[subjectTabValue] ?? ["rent"];
+  const subjectsMap: Record<string, string[]> = {
+    all: ["rent", "repairCost", "managementFee"],
+    income: ["otherIncome", "brokerageFee"],
+    expense: ["gardenMaintenance", "otherExpense"],
+  };
+
+  const categories =
+    categoriesMap[detailTabValue] ?? categoriesMap[DETAIL_TAB_VALUES.ALL];
+
+  const subjects = subjectsMap[subjectTabValue] ?? subjectsMap.all;
 
   const debitOptions = ["現金", "普通預金", "未収金"];
   const creditOptions = ["売上", "雑収入", "未払金"];
 
-  const seed = detailTabValue * 100 + subjectTabValue;
+  const subjectSeed = subjectTabValue
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+  const seed = Number(detailTabValue) * 100 + subjectSeed;
 
   const random = (i: number, max: number) => {
     return Math.abs(Math.sin(i + seed)) * max;

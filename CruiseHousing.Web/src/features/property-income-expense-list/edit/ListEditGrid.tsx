@@ -31,7 +31,7 @@ type ListEditGridProps = {
   detailTabs: TabOption[];
   detailTabValue: number;
   subjectTabs: SubjectOption[];
-  subjectTabValue: number;
+  subjectTabValue: string;
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
 };
 
@@ -115,13 +115,12 @@ export default function ListEditGrid({
   }, [detailTabs, detailTabValue]);
 
   const filteredSubjectTabs = useMemo(() => {
-    const selectedSubjectValue = subjectTabs[subjectTabValue]?.value;
 
-    if (!selectedSubjectValue || selectedSubjectValue === "all") {
+    if (!subjectTabValue || subjectTabValue === "all") {
       return subjectTabs.filter((tab) => tab.value !== "all");
     }
 
-    return subjectTabs.filter((tab) => tab.value === selectedSubjectValue);
+    return subjectTabs.filter((tab) => tab.value === subjectTabValue);
   }, [subjectTabs, subjectTabValue]);
 
   const baseColumns = useMemo(

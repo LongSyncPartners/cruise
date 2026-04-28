@@ -6,14 +6,15 @@ import { useCenteredScrollableTabs } from "@/features/shared/useCenteredScrollab
 import { PropertyTabSummary } from "@/features/shared/types";
 import { DetailTabValue, SubjectOption, TabOption } from "../subjectOptions";
 
-const getDetailTabProps = (index: number) => ({
-  id: `property-tab-${index}`,
-  "aria-controls": `property-tabpanel-${index}`,
+const getDetailTabProps = (value: DetailTabValue) => ({
+  id: `property-tab-${value}`,
+  "aria-controls": `property-tabpanel-${value}`,
 });
 
-const getSubjectTabProps = (index: number) => ({
-  id: `subject-tab-${index}`,
-  "aria-controls": `subject-tabpanel-${index}`,
+const getSubjectTabProps = (value: string) => ({
+  value,
+  id: `subject-tab-${value}`,
+  "aria-controls": `subject-tabpanel-${value}`,
 });
 
 type ListEditPageHeaderProps = {
@@ -29,9 +30,9 @@ type ListEditPageHeaderProps = {
   detailTabs: TabOption[];
   onChangeDetailTab: (newValue: DetailTabValue) => void;
 
-  subjectTabValue: number;
+  subjectTabValue: string;
   subjectTabs: SubjectOption[];
-  onChangeSubjectTab: (newValue: number) => void;
+  onChangeSubjectTab: (newValue: string) => void;
 };
 
 export default function ListEditPageHeader({
@@ -149,7 +150,7 @@ export default function ListEditPageHeader({
                   color: "white",
                 },
               }}
-              {...getDetailTabProps(index)}
+              {...getDetailTabProps(detailTab.value)}
             />
           ))}
 </Tabs>
@@ -165,9 +166,17 @@ export default function ListEditPageHeader({
         }}
       >
 
+         {(() => {
+  console.log("🔍 Tabs debug:", {
+    subjectTabValue,
+    subjectTabs: subjectTabs.map((t) => t.value),
+  });
+  return null;
+})()}
+
         <Tabs
           value={subjectTabValue}
-          onChange={(_event, newValue: number) => onChangeSubjectTab(newValue)}
+          onChange={(_event, newValue: string) => onChangeSubjectTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{ flex: 1 }}
@@ -176,7 +185,6 @@ export default function ListEditPageHeader({
           {subjectTabs.map((subjectTab, index) => (
             <Tab
               key={`${subjectTab.value}-${index}`}
-              value={index}
               label={subjectTab.label}
               sx={{
                 textTransform: "none",
@@ -189,7 +197,7 @@ export default function ListEditPageHeader({
                   color: "white",
                 },
               }}
-              {...getSubjectTabProps(index)}
+              {...getSubjectTabProps(subjectTab.value)}
             />
           ))}
         </Tabs>

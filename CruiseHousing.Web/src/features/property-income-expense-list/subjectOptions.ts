@@ -39,13 +39,13 @@ export const SUBJECT_OPTIONS_BY_DETAIL_TAB: Record<
 > = {
   [DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]: [
     { value: "all", label: "全て" },
-    { value: "rent", label: "家賃" },
-    { value: "otherIncome", label: "その他収入" },
+    { value: "rentAmount", label: "家賃" },
+    { value: "otherIncomeAmount", label: "その他収入" },
     { value: "managementFee", label: "管理料" },
     { value: "repairCost", label: "修繕費" },
-    { value: "gardenMaintenance", label: "庭手入れ" },
+    { value: "gardenMaintenanceCost", label: "庭手入れ" },
     { value: "brokerageFee", label: "仲介手数料" },
-    { value: "otherExpense", label: "その他支出" },
+    { value: "otherExpenseAmount", label: "その他支出" },
   ],
 
   [DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY]: [
@@ -57,29 +57,29 @@ export const SUBJECT_OPTIONS_BY_DETAIL_TAB: Record<
 
   [DETAIL_TAB_VALUES.INTERNAL_OWNER]: [
     { value: "all", label: "全て" },
-    { value: "rent", label: "家賃" },
+    { value: "rentAmount", label: "家賃" },
     { value: "managementFee", label: "管理料" },
     { value: "repairCost", label: "修繕費" },
-    { value: "gardenMaintenance", label: "庭手入れ" },
+    { value: "gardenMaintenanceCost", label: "庭手入れ" },
     { value: "brokerageFee", label: "仲介手数料" },
     { value: "subleaseCost", label: "ｻﾌﾞﾘｰｽ原価" },
-    { value: "otherExpense", label: "その他支出" },
-    { value: "separatePaymentCost", label: "別途支払費用" },
+    { value: "otherExpenseAmount", label: "その他支出" },
+    { value: "extraPaymentCost", label: "別途支払費用" },
   ],
 
   [DETAIL_TAB_VALUES.OWNER]: [
     { value: "all", label: "全て" },
-    { value: "otherIncome", label: "その他収入" },
+    { value: "otherIncomeAmount", label: "その他収入" },
     { value: "managementFee", label: "管理料" },
     { value: "repairCost", label: "修繕費" },
     { value: "constructionFee", label: "工事手数料" },
-    { value: "gardenMaintenance", label: "庭手入れ" },
-    { value: "serviceFee", label: "手数料" },
+    { value: "gardenMaintenanceCost", label: "庭手入れ" },
+    { value: "fee", label: "手数料" },
     { value: "propertyTax", label: "固定資産税" },
     { value: "fireInsurance", label: "火災保険料" },
     { value: "floodInsurance", label: "洪水保険料" },
     { value: "hoaDues", label: "HOA Dues" },
-    { value: "otherExpense", label: "その他支出" },
+    { value: "otherExpenseAmount", label: "その他支出" },
     { value: "ownerPaymentAmount", label: "ｵｰﾅｰ支払額" },
   ],
 };
