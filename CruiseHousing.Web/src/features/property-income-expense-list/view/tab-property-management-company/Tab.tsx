@@ -14,6 +14,7 @@ import { TabPropertyManagementCompanyRow } from "../../types";
 import CustomContextMenu, {
   type CellContextMenuState,
 } from "@/features/shared/CustomContextMenu";
+import { DETAIL_TAB_VALUES, SUBJECT_OPTIONS_BY_DETAIL_TAB } from "../../subjectOptions";
 
 type TabPropertyManagementCompanyProps = {
   rows: TabPropertyManagementCompanyRow[];
@@ -92,6 +93,17 @@ export default function TabPropertyManagementCompany({
     onSelectedRowChange?.(params.row);
   };
 
+  const handleGridDoubleClick = useCallback(
+    (params: GridCellParams | GridColumnHeaderParams) => {
+      const columnField = params.field;
+      const editableSubjects = SUBJECT_OPTIONS_BY_DETAIL_TAB[DETAIL_TAB_VALUES.PROPERTY_MANAGEMENT_COMPANY]
+      if (editableSubjects.some(item => item.value === columnField)) {
+        onGridDoubleClick?.(params);
+      };
+    },
+    [onGridDoubleClick]
+  );
+
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
@@ -111,8 +123,8 @@ export default function TabPropertyManagementCompany({
           noResultsOverlayLabel: "データがありません",
         }}
         onRowClick={handleRowClick}
-        onCellDoubleClick={(params) => onGridDoubleClick?.(params)}
-        onColumnHeaderDoubleClick={(params) => onGridDoubleClick?.(params)}
+        onCellDoubleClick={handleGridDoubleClick}
+        onColumnHeaderDoubleClick={handleGridDoubleClick}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu

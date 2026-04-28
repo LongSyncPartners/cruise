@@ -295,7 +295,6 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
 
   useEffect(() => {
     if (!editOpenContext || initialized) return;
-    console.log(editOpenContext);
     setDetailTabValue(editOpenContext.detailTabValue ?? DETAIL_TAB_VALUES.ALL);
     setSubjectTabValue(editOpenContext.subjectTabField);
 
