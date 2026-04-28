@@ -1,17 +1,54 @@
 import { Box } from "@mui/material";
-import { DataGrid, GridRowId } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridRowId,
+  type GridRenderCellParams,
+} from "@mui/x-data-grid";
 import { useCallback, useMemo, useState } from "react";
 
-import { createTabInternalOwnerColumns } from "./TabInternalOwnerColumn";
+import { createTabInternalOwnerColumns } from "./Column";
 import { TabInternalOwnerRow } from "../../types";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
+import CustomContextMenu, {
+  type CellContextMenuState,
+} from "@/features/shared/CustomContextMenu";
 
 type TabInternalOwnerProps = {
   rows: TabInternalOwnerRow[];
+  onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
+  onSelectedRowChange?: (row: TabInternalOwnerRow) => void;
 };
 
-export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
+export default function TabInternalOwner({
+  rows,
+  onOpenFloatPanelClick,
+  onSelectedRowChange,
+}: TabInternalOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
+  const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleCellContextMenu = (
+    params: GridRenderCellParams<TabInternalOwnerRow>,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (params.id.toString().includes("total")) return;
+
+    setContextMenu({
+      mouseX: event.clientX,
+      mouseY: event.clientY - 30,
+      rowId: params.id,
+      field: params.field,
+      row: params.row,
+      value: params.value,
+    });
+  };
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
     setHeaderNames((prev) => ({
@@ -24,6 +61,7 @@ export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
     () =>
       createTabInternalOwnerColumns({
         onRenameHeader: handleRenameHeader,
+        onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
   );
@@ -45,6 +83,12 @@ export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
       )?.id;
   }, [rows]);
 
+  const handleRowClick = (params: { row: TabInternalOwnerRow }) => {
+    if (params.row.id.toString().includes("total")) return;
+
+    onSelectedRowChange?.(params.row);
+  };
+
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
@@ -63,6 +107,7 @@ export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",
         }}
+        onRowClick={handleRowClick}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu
@@ -70,6 +115,22 @@ export default function TabInternalOwner({ rows }: TabInternalOwnerProps) {
         disableColumnSelector
         disableDensitySelector
         sx={[dataGridCommonSx]}
+      />
+
+      <CustomContextMenu
+        contextMenu={contextMenu}
+        onClose={handleCloseContextMenu}
+        features={{
+          copy: false,
+          paste: false,
+          pasteBelow: false,
+          color: false,
+          addRows: false,
+          delete: false,
+          copyAll: false,
+          openFloatingPanel: true,
+        }}
+        onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>
   );
