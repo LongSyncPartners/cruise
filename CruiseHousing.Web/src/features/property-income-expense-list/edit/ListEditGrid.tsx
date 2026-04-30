@@ -50,6 +50,7 @@ const createEmptyListEditRow = (): ListEditRow => ({
   debitAux: "",
   credit: "",
   creditAux: "",
+  uploadProcessedDate: ""
 });
 
 export default function ListEditGrid({

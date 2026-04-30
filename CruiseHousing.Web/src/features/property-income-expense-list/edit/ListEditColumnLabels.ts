@@ -10,4 +10,5 @@ export const LIST_EDIT_COLUMN_LABELS = {
   debitAux: "借方補助",
   credit: "貸方",
   creditAux: "貸方補助",
+  uploadProcessedDate: "アップロード処理日"
 } as const;

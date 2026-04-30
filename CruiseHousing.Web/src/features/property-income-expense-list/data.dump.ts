@@ -295,6 +295,7 @@ export const createListEditRows = (
             creditOptions.length
         ],
       creditAux: `貸方補助_${Math.floor(random(i + 8, 3)) + 1}`,
+      uploadProcessedDate : `2024-04-${day.toString().padStart(2, "0")}`,
     };
   });
 };

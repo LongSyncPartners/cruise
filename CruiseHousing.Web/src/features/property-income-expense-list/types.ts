@@ -153,4 +153,5 @@ export type ListEditRow = {
   debitAux: string | null;             // 借方補助
   credit: string | null;               // 貸方
   creditAux: string | null;            // 貸方補助
+  uploadProcessedDate: string | null;
 };

@@ -22,6 +22,7 @@ export default function ListDownloadPage() {
   const [selectedPropertyNo, setSelectedPropertyNo] = useState<string>("");
   const [selectedRoomNo, setSelectedRoomNo] = useState<string>("");
   const [selectedFileType, setSelectedFileType] = useState<string>("物件別収支一覧");
+  const [selectedTargetPeriod, setSelectedTargetPeriod] = useState<string>("2024-2026");
 
   const selectedPropertyCode = usePropertySelectionStore(
     (state) => state.selectedPropertyCode
@@ -66,6 +67,11 @@ export default function ListDownloadPage() {
 
   const fileTypes = useMemo(() => {
     return ["物件別収支一覧", "会計データ"];
+  }, []);
+
+  
+  const targetPeriods = useMemo(() => {
+    return ["2024-2026", "2023-2025", "2022-2024"];
   }, []);
 
   const handleGroupChange = (newGroup: string) => {
@@ -208,7 +214,7 @@ export default function ListDownloadPage() {
         >
             {/* Row 1 */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography>物件グループ</Typography>
+            <Typography sx={{ minWidth: 90 }}>物件グループ</Typography>
             <Select
                 size="small"
                 value={selectedGroup || selectedGroupFromTab}
@@ -253,7 +259,7 @@ export default function ListDownloadPage() {
 
             {/* Row 2 */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography>ファイル</Typography>
+            <Typography sx={{ minWidth: 90 }}>ファイル</Typography>
             <Select
                 size="small"
                 value={selectedFileType}
@@ -267,7 +273,23 @@ export default function ListDownloadPage() {
                 ))}
             </Select>
 
-            <Button
+            <Typography>対象期間</Typography>
+            <Select
+                size="small"
+                value={selectedTargetPeriod}
+                onChange={(e) => setSelectedTargetPeriod(e.target.value)}
+                sx={{ minWidth: 200 }}
+            >
+                {targetPeriods.map((item) => (
+                <MenuItem key={item} value={item}>
+                    {item}
+                </MenuItem>
+                ))}
+            </Select>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, marginTop: 2 }}>
+              <Typography sx={{ minWidth: 90 }}/>
+              <Button
                 variant="contained"
                 color="success"
                 onClick={handleDownload}
