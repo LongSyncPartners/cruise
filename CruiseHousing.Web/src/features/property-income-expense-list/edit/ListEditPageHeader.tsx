@@ -89,7 +89,7 @@ export default function ListEditPageHeader({
           scrollButtons="auto"
           allowScrollButtonsMobile
           aria-label="Property income expense tabs"
-          sx={{ flex: 1 }}
+          sx={{ minHeight: 32, height: 32, flex: 1 }}
         >
           {propertyTabs.map((propertyTab, index) => (
             <Tab
@@ -103,6 +103,7 @@ export default function ListEditPageHeader({
                 whiteSpace: "nowrap",
                 minWidth: 60,
                 maxWidth: 80,
+                minHeight: 32, height: 32,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -131,7 +132,7 @@ export default function ListEditPageHeader({
           onChange={(_event, newValue: DetailTabValue) => onChangeDetailTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ flex: 1 }}
+          sx={{ minHeight: 32, height: 32, flex: 1 }}
         >
           {detailTabs.map((detailTab, index) => (
             <Tab
@@ -142,6 +143,7 @@ export default function ListEditPageHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 minWidth: 100,
+                minHeight: 32, height: 32,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -151,7 +153,7 @@ export default function ListEditPageHeader({
               {...getDetailTabProps(detailTab.value)}
             />
           ))}
-</Tabs>
+      </Tabs>
       </Box>
 
       <Box
@@ -175,7 +177,7 @@ export default function ListEditPageHeader({
               },
             },
           }}
-          sx={{ flex: 1 }}
+          sx={{ minHeight: 32, height: 32, flex: 1 }}
         >
 
           {subjectTabs.map((subjectTab, index) => (
@@ -186,6 +188,7 @@ export default function ListEditPageHeader({
                 textTransform: "none",
                 whiteSpace: "nowrap",
                 minWidth: 100,
+                minHeight: 32, height: 32,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",

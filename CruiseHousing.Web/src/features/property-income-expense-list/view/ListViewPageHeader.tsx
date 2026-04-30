@@ -87,7 +87,7 @@ export default function ListViewPageHeader({
           scrollButtons="auto"
           allowScrollButtonsMobile
           aria-label="Property income expense tabs"
-          sx={{ minHeight: 48, flex: 1 }}
+          sx={{ minHeight: 32, height: 32, flex: 1 }}
         >
           {propertyTabs.map((propertyTab, index) => (
             <Tab
@@ -101,6 +101,8 @@ export default function ListViewPageHeader({
                 whiteSpace: "nowrap",
                 minWidth: 60,
                 maxWidth: 80,
+                minHeight: 32,
+                height: 32,
                 px: 1,
                 "&.Mui-selected": {
                   backgroundColor: "#1976d2",
@@ -153,11 +155,12 @@ export default function ListViewPageHeader({
           onChange={(_event, newValue: DetailTabValue) => onChangeDetailTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ flex: 1 }}
+          sx={{ minHeight: 32, height: 32, flex: 1 }}
         >
           <Tab
             label="物件管理会社"
             sx={{
+              minHeight: 32, height: 32,
               "&.Mui-selected": {
                 backgroundColor: "#1976d2",
                 color: "white",
@@ -168,6 +171,7 @@ export default function ListViewPageHeader({
           <Tab
             label="オーナー管理会社"
             sx={{
+              minHeight: 32, height: 32,
               "&.Mui-selected": {
                 backgroundColor: "#1976d2",
                 color: "white",
@@ -178,6 +182,7 @@ export default function ListViewPageHeader({
           <Tab
             label="貸主（自社）"
             sx={{
+              minHeight: 32, height: 32,
               "&.Mui-selected": {
                 backgroundColor: "#1976d2",
                 color: "white",
@@ -188,6 +193,7 @@ export default function ListViewPageHeader({
           <Tab
             label="オーナー"
             sx={{
+              minHeight: 32, height: 32,
               "&.Mui-selected": {
                 backgroundColor: "#1976d2",
                 color: "white",
