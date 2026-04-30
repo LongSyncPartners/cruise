@@ -26,7 +26,7 @@ export default function CommonFloatingPanel<
   onSelectedRowChange,
 }: CommonFloatingPanelProps<TRow, TField>) {
   const nodeRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 90, y: 117 });
+  const [position, setPosition] = useState({ x: -50, y: 150 })
 
   if (!open) return null;
 
@@ -117,8 +117,8 @@ export default function CommonFloatingPanel<
         ref={nodeRef}
         style={{
           position: "fixed",
-          top: 100,
-          right: 100,
+          top: 0,
+          right: 0,
           width: 320,
           background: "#fff",
           borderRadius: 8,
@@ -153,7 +153,7 @@ export default function CommonFloatingPanel<
         </div>
 
         {selectedRow && (
-          <div style={{ padding: 16 }}>
+          <div style={{ padding: 16, maxHeight: "calc(100vh - 200px)", overflowY: "auto", }}>
             <dl
               style={{
                 display: "grid",
