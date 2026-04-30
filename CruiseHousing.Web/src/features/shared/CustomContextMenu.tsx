@@ -42,7 +42,7 @@ const DEFAULT_FEATURES: ContextMenuFeature = {
   color: true,
   addRows: true,
   delete: true,
-  copyAll: true,
+  copyAll: false,
   openFloatingPanel: true,
 };
 
@@ -50,9 +50,9 @@ type Props = {
   contextMenu: CellContextMenuState;
   onClose: () => void;
   features?: ContextMenuFeature;
-
   onCopy?: (menu: NonNullable<CellContextMenuState>) => void;
   onCopyAll?: () => void;
+  onPasteAll?: () => void;
   onPaste?: (menu: NonNullable<CellContextMenuState>) => void;
   onPasteBelow?: (menu: NonNullable<CellContextMenuState>) => void;
   onAdd?: (menu: NonNullable<CellContextMenuState>, rowCount: number) => void;
@@ -66,6 +66,7 @@ type Props = {
   ) => void;
 
   canPaste?: boolean;
+  canPasteAll?: boolean;
 };
 
 export default function CustomContextMenu({
@@ -75,12 +76,14 @@ export default function CustomContextMenu({
   onCopy,
   onCopyAll,
   onPaste,
+  onPasteAll,
   onPasteBelow,
   onAdd,
   onDelete,
   onSetSelectedRowsColor,
   onOpenFloatPanelClick,
   canPaste = false,
+  canPasteAll = false,
 }: Props) {
   const enabledFeatures = {
     ...DEFAULT_FEATURES,
@@ -103,6 +106,11 @@ export default function CustomContextMenu({
 
   const handleCopyAll = () => {
     onCopyAll?.();
+    onClose();
+  };
+
+  const handlePasteAll = () => {
+    onPasteAll?.();
     onClose();
   };
 
@@ -268,7 +276,11 @@ export default function CustomContextMenu({
 
         <MenuItem key="copy-all" onClick={handleCopyAll}>
           <ContentCopyIcon sx={{ mr: 2 }} />
-          全ての収支データをコピー
+          全ての収支データを複写
+        </MenuItem>,
+        <MenuItem key="paste-all" onClick={handlePasteAll} disabled={!canPasteAll}>
+          <ContentPasteIcon sx={{ mr: 2 }} />
+          複写データを貼り付け
         </MenuItem>,
       ]}
 

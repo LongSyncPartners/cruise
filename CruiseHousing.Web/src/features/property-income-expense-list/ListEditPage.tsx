@@ -29,6 +29,7 @@ import {
 import FloatingPanel from "./edit/FloatingPanel";
 import { useSavePropertyIncomeExpenseListRows } from "@/hooks/useSavePropertyIncomeExpenseListRows";
 import { EditOpenContext } from "./PropertyIncomeExpenseListScreen";
+import { useCreateEmptyRow } from "./edit/useCreateEmptyRow";
 
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: ListEditRow[] = [];
@@ -107,7 +108,7 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
     return getSubjectOptionsByDetailTab(detailTabValue);
   }, [detailTabValue]);
 
-  const listEditRows = useMemo(() => {
+  const originalRows = useMemo(() => {
     return createListEditRows(detailTabValue, subjectTabValue);
   }, [detailTabValue, subjectTabValue]);
 
@@ -302,11 +303,16 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
   }, [editOpenContext, initialized]);
 
   useEffect(() => {
-    setEditedRows(listEditRows);
+    if (originalRows.length === 0) {
+      setEditedRows([useCreateEmptyRow()]);
+    } else {
+      setEditedRows(originalRows);
+    }
+
     setSelectedRow(null);
     setIsFloatPanelOpen(false);
     setIsDirty(false);
-  }, [listEditRows]);
+  }, [originalRows]);
 
   return (
     <div>

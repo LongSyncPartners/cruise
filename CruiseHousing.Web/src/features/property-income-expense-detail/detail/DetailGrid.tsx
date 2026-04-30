@@ -159,13 +159,6 @@ export default function PropertyIncomeExpenseDetailGrid({
   );
 
   const handlePaste = (_menu: NonNullable<CellContextMenuState>) => {
-    if (copyAllRows.length > 0) {
-      onRowsChange(copyAllRows);
-      clearCopiedAll();
-      onDirtyChange?.();
-      return;
-    }
-
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
     const firstCopiedRow = copiedRows[0];
@@ -188,13 +181,6 @@ export default function PropertyIncomeExpenseDetailGrid({
   };
 
   const handlePasteBelow = (_menu: NonNullable<CellContextMenuState>) => {
-    if (copyAllRows.length > 0) {
-      onRowsChange(copyAllRows);
-      clearCopiedAll();
-      onDirtyChange?.();
-      return;
-    }
-
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
     const firstSelectedIndex = rows.findIndex((row) => selectedRowIds.has(row.id));
@@ -211,6 +197,14 @@ export default function PropertyIncomeExpenseDetailGrid({
     onRowsChange(recalculateBalances(nextRows));
     onDirtyChange?.();
     setCopiedRows([]);
+  };
+
+  const handlePasteAll = () => {
+    if (copyAllRows.length > 0) {
+      onRowsChange(copyAllRows);
+      clearCopiedAll();
+      onDirtyChange?.();
+    }
   };
 
   const handleToggleExecutedState = useCallback(
@@ -435,17 +429,19 @@ export default function PropertyIncomeExpenseDetailGrid({
           color: true,
           addRows: true,
           delete: true,
-          copyAll: false,
+          copyAll: true,
           openFloatingPanel: true,
         }}
         onCopy={handleCopy}
         onCopyAll={handleCopyAll}
         onPaste={handlePaste}
+        onPasteAll={handlePasteAll}
         onPasteBelow={handlePasteBelow}
         onAdd={handleAdd}
         onDelete={handleDelete}
         onSetSelectedRowsColor={handleSetSelectedRowsColor}
-        canPaste={copiedRows.length > 0 || copyAllRows.length > 0}
+        canPaste={copiedRows.length > 0}
+        canPasteAll={copyAllRows.length > 0 && rows.length === 0}
         onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>

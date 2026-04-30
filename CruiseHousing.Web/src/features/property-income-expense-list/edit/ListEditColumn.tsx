@@ -85,7 +85,7 @@ export const createListEditColumns = ({
       filterable: false,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
-      renderCell: (params) => <CurrencyCell {...params} showZero />,
+      renderCell: (params) => <CurrencyCell {...params}  />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
     }),
     addContextMenu({
@@ -98,7 +98,7 @@ export const createListEditColumns = ({
       filterable: false,
       valueFormatter: (value) => formatUSD(value as number),
       valueParser: (value) => parseCurrencyInput(value),
-      renderCell: (params) => <CurrencyCell {...params} showZero />,
+      renderCell: (params) => <CurrencyCell {...params}  />,
       renderEditCell: (params) => <CurrencyEditCell {...params} />,
     }),
     addContextMenu({

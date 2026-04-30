@@ -21,6 +21,7 @@ import {
   SubjectOption,
   TabOption,
 } from "../subjectOptions";
+import { usePropertyIncomeExpenseListStore } from "@/stores/usePropertyIncomeExpenseListStore";
 
 type ListEditGridProps = {
   rows: ListEditRow[];
@@ -206,6 +207,18 @@ export default function ListEditGrid({
     setCopiedRows(nextCopiedRows);
   };
 
+  const setCopiedAll = usePropertyIncomeExpenseListStore(
+    (state) => state.setRows
+  );
+  const handleCopyAll = () => {
+    setCopiedAll(rows);
+  };
+
+  const copyAllRows = usePropertyIncomeExpenseListStore((state) => state.rows);
+  const clearCopiedAll = usePropertyIncomeExpenseListStore(
+    (state) => state.clearRows
+  );
+
   const handlePaste = () => {
     if (copiedRows.length === 0 || selectedRowIds.size === 0) return;
 
@@ -248,6 +261,14 @@ export default function ListEditGrid({
     onRowsChange(nextRows);
     onDirtyChange?.();
     setCopiedRows([]);
+  };
+
+  const handlePasteAll = () => {
+    if (copyAllRows.length > 0) {
+      onRowsChange(copyAllRows);
+      clearCopiedAll();
+      onDirtyChange?.();
+    }
   };
 
   const processRowUpdate = useCallback(
@@ -337,15 +358,18 @@ export default function ListEditGrid({
           color: false,
           addRows: true,
           delete: true,
-          copyAll: false,
+          copyAll: true,
           openFloatingPanel: true,
         }}
         onCopy={handleCopy}
+        onCopyAll={handleCopyAll}
         onPaste={handlePaste}
+        onPasteAll={handlePasteAll}
         onPasteBelow={handlePasteBelow}
         onAdd={handleAdd}
         onDelete={handleDelete}
         canPaste={copiedRows.length > 0}
+        canPasteAll={copyAllRows.length > 0 && rows.length === 1 && rows[0].transactionDate !== ""}
         onOpenFloatPanelClick={onOpenFloatPanelClick}
       />
     </Box>
