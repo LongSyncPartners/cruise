@@ -17,7 +17,7 @@ import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
 import { usePropertyIncomeExpenseValidation } from "./detail/useDetailValidation";
 import { usePropertyIncomeExpenseCalculation } from "./detail/useDetailCalculation";
 import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
-import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
+import { usePropertyIncomeExpenseTabsByGroup } from "@/hooks/usePropertyIncomeExpenseTabsByGroup";
 
 import { useAppToast } from "@/providers/ToastProvider";
 import { PropertyTabSummary } from "@/features/shared/types";
@@ -66,16 +66,32 @@ export default function DetailPage() {
     (state) => state.setSelectedPropertyCode
   );
 
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
+
   /**
    * Fetch property tab list based on selected property code.
    */
   const {
-    data: propertyTabsData,
-    isLoading: isTabsLoading,
-    refetch: refetchTabs,
-  } = usePropertyIncomeExpenseTabs(selectedPropertyCode ?? undefined);
+  data: propertyTabsByPropertyCodeData,
+  isLoading: isTabsByPropertyCodeLoading,
+  refetch: refetchTabsByPropertyCode,
+  } = usePropertyIncomeExpenseTabs(
+    selectedGroup ? undefined : selectedPropertyCode ?? undefined
+  );
 
-  const propertyTabs = propertyTabsData ?? EMPTY_TABS;
+  const {
+    data: propertyTabsByGroupData,
+    isLoading: isTabsByGroupLoading,
+    refetch: refetchTabsByGroup,
+  } = usePropertyIncomeExpenseTabsByGroup(selectedGroup);
+
+  const propertyTabs: PropertyTabSummary[] = selectedGroup
+    ? propertyTabsByGroupData ?? EMPTY_TABS
+    : propertyTabsByPropertyCodeData ?? EMPTY_TABS;
+
+  const isTabsLoading = selectedGroup
+    ? isTabsByGroupLoading
+    : isTabsByPropertyCodeLoading;
 
   /**
    * Resolve the currently active property tab.
@@ -106,20 +122,15 @@ export default function DetailPage() {
   const { showToast } = useAppToast();
 
   const { data: groups = [] } = usePropertyIncomeExpenseGroups();
-  
-  const [selectedGroup, setSelectedGroup] = useState<string>("");
-
-  const { data: defaultPropertyCode, isFetching } = 
-    useDefaultPropertyCodeByGroup(selectedGroup);
 
   const handleGroupChange = async (newGroup: string) => {
-     if (newGroup === selectedGroup) return;
+    if (newGroup === selectedGroup) return;
 
     setSelectedGroup(newGroup);
     setActiveTab(0);
     setEditedRows([]);
     setIsDirty(false);
-  }
+};
 
   /**
    * Update editable rows from child grid.
@@ -132,7 +143,7 @@ export default function DetailPage() {
    * Handle tab switching.
    * If the current tab has unsaved changes, show confirmation dialog first.
    */
-  const handleTabChange = (nextTab: number) => {
+    const handleTabChange = (nextTab: number) => {
     if (nextTab === activeTab) return;
 
     if (isDirty) {
@@ -142,6 +153,11 @@ export default function DetailPage() {
     }
 
     setActiveTab(nextTab);
+
+    const nextPropertyCode = propertyTabs[nextTab]?.header.propertyCode;
+    if (nextPropertyCode) {
+      setSelectedPropertyCode(nextPropertyCode);
+    }
   };
 
   /**
@@ -168,10 +184,17 @@ export default function DetailPage() {
       });
 
       showToast(`${activePropertyCode} を保存しました。`);
+      
       setIsDirty(false);
       setConfirmTabChangeOpen(false);
+      const nextPropertyCode = propertyTabs[pendingTab]?.header.propertyCode;
       setActiveTab(pendingTab);
+      if (nextPropertyCode) {
+        setSelectedPropertyCode(nextPropertyCode);
+      }
+
       setPendingTab(null);
+
     } catch (error) {
       if (error instanceof Error) {
         showToast(error.message, "error");
@@ -189,9 +212,16 @@ export default function DetailPage() {
   const handleDiscardTabChange = () => {
     if (pendingTab === null) return;
 
+    const nextPropertyCode = propertyTabs[pendingTab]?.header.propertyCode;
+
     setConfirmTabChangeOpen(false);
     setIsDirty(false);
     setActiveTab(pendingTab);
+
+    if (nextPropertyCode) {
+      setSelectedPropertyCode(nextPropertyCode);
+    }
+
     setPendingTab(null);
   };
 
@@ -260,7 +290,7 @@ export default function DetailPage() {
         setIsDirty(false);
       }
 
-      await refetchTabs();
+      await (selectedGroup ? refetchTabsByGroup() : refetchTabsByPropertyCode());
     } finally {
       setLoading(false);
     }
@@ -298,12 +328,6 @@ export default function DetailPage() {
    * Combined loading flag for the whole screen.
    */
   const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
-
-  useEffect(() => {
-    if (selectedGroup) {
-      setSelectedPropertyCode(defaultPropertyCode ?? "");
-    }
-  }, [defaultPropertyCode]);
   
   /**
    * When the selected property code changes from the store,
@@ -319,7 +343,7 @@ export default function DetailPage() {
     if (index !== -1 && index !== activeTab) {
       setActiveTab(index);
     }
-  }, [selectedPropertyCode, propertyTabs]);
+  }, [selectedPropertyCode, propertyTabs, activeTab]);
 
   /**
    * Reset editable rows whenever fresh rows are fetched.
@@ -329,6 +353,18 @@ export default function DetailPage() {
     setEditedRows(recalculateRows(fetchedRows));
     setIsDirty(false);
   }, [fetchedRows, recalculateRows]);
+
+
+  useEffect(() => {
+    if (!selectedGroup) return;
+    if (propertyTabs.length === 0) return;
+
+    const firstPropertyCode = propertyTabs[0]?.header.propertyCode;
+    if (!firstPropertyCode) return;
+
+    setActiveTab(0);
+    setSelectedPropertyCode(firstPropertyCode);
+  }, [selectedGroup, propertyTabs, setSelectedPropertyCode]);
 
   /**
    * Recalculate balances and expected amounts for all rows when any row is updated.
@@ -362,7 +398,7 @@ export default function DetailPage() {
       ))}
 
       {/* Show guidance when no property is selected */}
-      {!selectedPropertyCode ? (
+      {!activePropertyCode ? (
         <Typography sx={{ mt: 4, color: "text.secondary" }}>
           物件グループをお選択ください。
         </Typography>

@@ -1,15 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchPropertyIncomeExpenseTabsByPropertyCode } from "@/api/propertyIncomeExpenseDetailApi";
+
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
+import { fetchPropertyIncomeExpenseTabsByGroup } from "@/api/propertyApi";
 
 export const usePropertyIncomeExpenseTabsByGroup = (group?: string) => {
   return useQuery({
     queryKey: propertyIncomeExpenseDetailKeys.tabsByGroup(group ?? ""),
+
     queryFn: () => {
       if (!group) return Promise.resolve([]);
-
-      return fetchPropertyIncomeExpenseTabsByPropertyCode(group);
+      return fetchPropertyIncomeExpenseTabsByGroup(group);
     },
+
     enabled: !!group,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,

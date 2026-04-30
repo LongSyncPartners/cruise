@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { fetchPropertyIncomeExpenseTabsByPropertyCode } from "@/api/propertyIncomeExpenseDetailApi";
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
-import { PropertyTabSummary } from "@/features/property-income-expense-detail/types";
+import { PropertyTabSummary } from "@/features/shared/types";
 
 /**
  * Fetch tab list by propertyCode only

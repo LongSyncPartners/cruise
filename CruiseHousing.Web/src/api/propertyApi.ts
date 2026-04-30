@@ -106,3 +106,34 @@ export const fetchProcessingStatusStateRows = async (
 
 const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+
+export const fetchPropertyIncomeExpenseTabsByGroup = async (
+  group: string
+) => {
+  const USE_FAKE = import.meta.env.VITE_USE_FAKE_API === "true";
+
+  if (USE_FAKE) {
+    await sleep(300);
+
+    // 👉 giả lập filter theo group (ví dụ theo prefix propertyCode)
+    const filtered = paggingdata.filter((item) =>
+      item.propertyCode.startsWith(group)
+    );
+
+    // 👉 map sang dạng tab
+    return filtered.map((item) => ({
+      id: item.id,
+      header: {
+        propertyCode: item.propertyCode,
+        propertyName: item.propertyName,
+      },
+    }));
+  }
+
+  const res = await apiClient.get("/property-income-expense/tabs-by-group", {
+    params: { group },
+  });
+
+  return res.data;
+};
