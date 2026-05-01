@@ -32,7 +32,7 @@ const buildBaseColumnMap = ({
   managementType: {
     field: "managementType",
     headerName: "管理種別",
-    width: 100,
+    width: 90,
     editable: false,
     sortable: false,
     filterable: false,
@@ -44,7 +44,7 @@ const buildBaseColumnMap = ({
   propertyType: {
     field: "propertyType",
     headerName: "建物種別",
-    width: 100,
+    width: 90,
     editable: false,
     sortable: false,
     filterable: false,
@@ -83,7 +83,7 @@ const buildBaseColumnMap = ({
   managementDate: {
     field: "managementDate",
     headerName: "管理開始～終了日",
-    width: 190,
+    width: 180,
     editable: false,
     sortable: false,
     filterable: false,
@@ -92,7 +92,8 @@ const buildBaseColumnMap = ({
   propertyStatus: {
     field: "propertyStatus",
     headerName: "物件ステータス",
-    width: 140,
+    headerClassName: "wrap-header",
+    width: 90,
     editable: false,
     sortable: false,
     filterable: false,

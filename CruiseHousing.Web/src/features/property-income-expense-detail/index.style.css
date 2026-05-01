@@ -38,7 +38,7 @@ div.property-income-expense-detail-common-header {
 /* Icon style inside header */
 div.property-income-expense-detail-common-header svg {
   color: #467ABA;         /* Primary icon color */
-  padding-right: 2px;
+  margin-right: 5px;
 }
 
 /* Header item (clickable action) */

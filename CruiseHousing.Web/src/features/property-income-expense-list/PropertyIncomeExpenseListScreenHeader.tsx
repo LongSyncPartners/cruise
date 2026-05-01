@@ -1,4 +1,4 @@
-import SubjectIcon from '@mui/icons-material/Subject';
+import TableChartIcon from "@mui/icons-material/TableChart";
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Typography } from '@mui/material';
@@ -13,7 +13,7 @@ export default function PropertyIncomeExpenseDetailScreenHeader({ viewMode, onCh
   return (
     <div className="property-income-expense-detail-common-header">
         <div className={`common-header-item ${viewMode === "view" ? "active" : ""}`} onClick={() => onChange("view")}>
-          <SubjectIcon />
+          <TableChartIcon />
           <Typography>照会</Typography>
         </div>
         <div className={`common-header-item ${viewMode === "edit" ? "active" : ""}`} onClick={() => onChange("edit")}>

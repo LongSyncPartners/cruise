@@ -259,7 +259,7 @@ export default function Properties() {
   return (
     <div className="properties-container">
       <div className="properties-common-header">
-        <div className="common-header-item" onClick={handleRefresh}>
+        <div className="common-header-item active" onClick={handleRefresh}>
           <ApartmentIcon />
           <Typography>物件一覧</Typography>
         </div>

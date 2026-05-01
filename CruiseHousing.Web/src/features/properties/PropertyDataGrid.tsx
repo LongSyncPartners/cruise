@@ -154,7 +154,7 @@ export default function PropertyDataGrid({
 
 
   return (
-    <Box sx={{ width: "auto", height: "calc(100vh - 180px)" }}>
+    <Box sx={{ width: "auto", height: "calc(100vh - 160px)" }}>
       <DataGrid
         rows={localRows}
         columns={columns}

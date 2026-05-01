@@ -19,14 +19,8 @@
 
 div.properties-common-header {
     border-bottom: 1px solid rgb(204, 204, 204);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     display: flex;
-
-}
-
-div.properties-common-header svg {
-    color: #467ABA;
-    padding-right: 2px;
 }
 
 div.common-header-item, div.common-header-item-logout{
@@ -40,6 +34,18 @@ div.common-header-item:hover, div.common-header-item-logout:hover {
 
 div.common-header-item-logout {
     margin-left: auto;
+}
+
+div.properties-common-header .common-header-item.active {
+  background-color: #1976d2;
+  color: white;
+  padding-right: 30px;
+}
+
+
+div.properties-common-header .common-header-item.active svg {
+    color: #eae9e9;
+    margin-right: 5px;
 }
 
 /* 検索結果 Component Grid */
@@ -88,3 +94,11 @@ div.common-header-item-logout {
     margin-right: 30px;
 }
 
+.properties-grid-contaniner div.wrap-header .MuiSelect-select{
+    white-space: normal;
+    font-size: 60%;
+}
+
+.properties-grid-contaniner .MuiDataGrid-mainContent .MuiDataGrid-cell {
+    padding: 0 2px;
+}
