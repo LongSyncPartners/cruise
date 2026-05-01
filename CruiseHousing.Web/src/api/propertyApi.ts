@@ -137,3 +137,20 @@ export const fetchPropertyIncomeExpenseTabsByGroup = async (
 
   return res.data;
 };
+
+export const getPropertyGroupByPropertyCode = async (
+  propertyCode: string
+): Promise<string> => {
+
+  const USE_FAKE = import.meta.env.VITE_USE_FAKE_API === "true";
+  if (USE_FAKE) {
+  await sleep(300);
+  return "H";
+  }
+
+  const res = await apiClient.get<string>(
+    `/properties/${propertyCode}/group`
+  );
+
+  return res.data;
+};

@@ -6,7 +6,7 @@ import "./index.style.css";
 import LoadingDialog from "../shared/LoadingDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
-import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
+import { usePropertyGroups } from "@/hooks/usePropertyGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 import { PropertyInfo } from "../shared/PropertyInfo";
 import { PropertyTabSummary } from "../shared/types";
@@ -32,7 +32,7 @@ export default function ListDownloadPage() {
     (state) => state.setSelectedPropertyCode
   );
 
-  const { data: groups = [] } = usePropertyIncomeExpenseGroups();
+  const { data: groups = [] } = usePropertyGroups();
 
   const { data: defaultPropertyCode } =
     useDefaultPropertyCodeByGroup(selectedGroup);

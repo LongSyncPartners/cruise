@@ -11,7 +11,7 @@ import {
 import LoadingDialog from "../shared/LoadingDialog";
 import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
 import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
-import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
+import { usePropertyGroups } from "@/hooks/usePropertyGroups";
 import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByGroup";
 
 import ListViewPageHeader from "./view/ListViewPageHeader";
@@ -145,7 +145,7 @@ export default function ListViewPage({ onOpenEditPage  }: Props) {
     return propertyTabs[activeTab];
   }, [propertyTabs, activeTab]);
 
-  const { data: groups = [] } = usePropertyIncomeExpenseGroups();
+  const { data: groups = [] } = usePropertyGroups();
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
   const { data: defaultPropertyCode } =

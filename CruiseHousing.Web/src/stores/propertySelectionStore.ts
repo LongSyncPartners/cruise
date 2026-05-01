@@ -5,7 +5,7 @@ import type { GridRowId } from "@mui/x-data-grid";
 type PropertySelectionState = {
   selectedRowId: GridRowId | null;
   selectedPropertyCode: string | null;
-  setSelectedPropertyCode: (propertyCode: string) => void;
+  setSelectedPropertyCode: (propertyCode: string | null) => void;
   setSelectedProperty: (rowId: GridRowId, propertyCode: string) => void;
   clearSelectedProperty: () => void;
 };

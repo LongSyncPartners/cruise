@@ -2,62 +2,52 @@ import { useEffect, useMemo, useState } from "react";
 import { Button, Typography } from "@mui/material";
 
 import "./index.style.css";
-import {
-  type PropertyIncomeExpenseDetailRow,
-} from "./types";
+import { type PropertyIncomeExpenseDetailRow } from "./types";
 
 import PropertyIncomeExpenseTabs from "./detail/DetailTabs";
-
 import LoadingDialog from "../shared/LoadingDialog";
-import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
-import { usePropertyIncomeExpenseTabs } from "@/hooks/usePropertyIncomeExpenseTabs";
-import { usePropertyIncomeExpenseRows } from "@/hooks/usePropertyIncomeExpenseRows";
-import { useSavePropertyIncomeExpenseRows } from "@/hooks/useSavePropertyIncomeExpenseRows";
 import UnsavedChangesDialog from "../shared/UnsavedChangesDialog";
-import { usePropertyIncomeExpenseValidation } from "./detail/useDetailValidation";
-import { usePropertyIncomeExpenseCalculation } from "./detail/useDetailCalculation";
-import { usePropertyIncomeExpenseGroups } from "@/hooks/usePropertyIncomeExpenseGroups";
-import { usePropertyIncomeExpenseTabsByGroup } from "@/hooks/usePropertyIncomeExpenseTabsByGroup";
+import FloatingPanel from "./detail/FloatingPanel";
+
+import { usePropertySelectionStore } from "@/stores/propertySelectionStore";
+
+import { usePropertyIncomeExpenseDetailRows } from "@/hooks/usePropertyIncomeExpenseDetailRows";
+import { useSavePropertyIncomeExpenseDetailRows } from "@/hooks/useSavePropertyIncomeExpenseDetailRows";
+import { usePropertyGroups } from "@/hooks/usePropertyGroups";
+import { usePropertiesByGroup } from "@/hooks/usePropertiesByGroup";
+import { usePropertyGroupByPropertyCode } from "@/hooks/usePropertyGroupByPropertyCode";
 
 import { useAppToast } from "@/providers/ToastProvider";
 import { PropertyTabSummary } from "@/features/shared/types";
 import { TabPanel } from "./detail/DetailTabPanel";
-import FloatingPanel from "./detail/FloatingPanel";
 import { CellContextMenuState } from "../shared/CustomContextMenu";
 import { recalculateBalances } from "./detail/DetailRowUtils";
+import { usePropertyIncomeExpenseValidation } from "./detail/useDetailValidation";
+import { usePropertyIncomeExpenseCalculation } from "./detail/useDetailCalculation";
 
-/**
- * Fallback empty values to avoid recreating new empty arrays on every render.
- */
+
 const EMPTY_TABS: PropertyTabSummary[] = [];
 const EMPTY_ROWS: PropertyIncomeExpenseDetailRow[] = [];
 
-
-
 export default function DetailPage() {
-  /**
-   * Local UI state
-   */
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [editedRows, setEditedRows] = useState<PropertyIncomeExpenseDetailRow[]>([]);
-  const [selectedPropertyIncomeExpenseDetailRows, setSelectedPropertyIncomeExpenseDetailRows] =
-  useState<PropertyIncomeExpenseDetailRow[]>([]);
+  const [editedRows, setEditedRows] =
+    useState<PropertyIncomeExpenseDetailRow[]>([]);
+  const [
+    selectedPropertyIncomeExpenseDetailRows,
+    setSelectedPropertyIncomeExpenseDetailRows,
+  ] = useState<PropertyIncomeExpenseDetailRow[]>([]);
+
   const [isDirty, setIsDirty] = useState(false);
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   const [confirmTabChangeOpen, setConfirmTabChangeOpen] = useState(false);
-  const { recalculateRows } = usePropertyIncomeExpenseCalculation();
 
-  /**
-   * Validation hook for all editable rows.
-   * Currently prepared for save validation.
-   */
-  const { validateRows } = usePropertyIncomeExpenseValidation();
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
+  const [selectedRow, setSelectedRow] =
+    useState<PropertyIncomeExpenseDetailRow | null>(null);
+  const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
 
-  /**
-   * Selected property code from global store.
-   * This is usually set from the property list screen.
-   */
   const selectedPropertyCode = usePropertySelectionStore(
     (state) => state.selectedPropertyCode
   );
@@ -66,84 +56,94 @@ export default function DetailPage() {
     (state) => state.setSelectedPropertyCode
   );
 
-  const [selectedGroup, setSelectedGroup] = useState<string>("");
+  const { showToast } = useAppToast();
+  const { validateRows } = usePropertyIncomeExpenseValidation();
+  const { recalculateRows } = usePropertyIncomeExpenseCalculation();
 
   /**
-   * Fetch property tab list based on selected property code.
+   * 0. Master: group list
+   */
+  const { data: groups = [], isLoading: isGroupsLoading } =
+    usePropertyGroups();
+
+  /**
+   * 1. If selectedPropertyCode exists, resolve selectedGroup.
    */
   const {
-  data: propertyTabsByPropertyCodeData,
-  isLoading: isTabsByPropertyCodeLoading,
-  refetch: refetchTabsByPropertyCode,
-  } = usePropertyIncomeExpenseTabs(
-    selectedGroup ? undefined : selectedPropertyCode ?? undefined
-  );
+    data: resolvedGroup,
+    isLoading: isResolvingGroup,
+  } = usePropertyGroupByPropertyCode(selectedPropertyCode);
 
+  /**
+   * 1.2 / 2.1 Fetch property list by selectedGroup.
+   * Convert to property tabs inside hook.
+   */
   const {
-    data: propertyTabsByGroupData,
-    isLoading: isTabsByGroupLoading,
+    data: propertyTabsData,
+    isLoading: isTabsLoading,
     refetch: refetchTabsByGroup,
-  } = usePropertyIncomeExpenseTabsByGroup(selectedGroup);
+  } = usePropertiesByGroup(selectedGroup || undefined);
 
-  const propertyTabs: PropertyTabSummary[] = selectedGroup
-    ? propertyTabsByGroupData ?? EMPTY_TABS
-    : propertyTabsByPropertyCodeData ?? EMPTY_TABS;
+  const propertyTabs: PropertyTabSummary[]  = propertyTabsData ?? EMPTY_TABS;
 
-  const isTabsLoading = selectedGroup
-    ? isTabsByGroupLoading
-    : isTabsByPropertyCodeLoading;
-
-  /**
-   * Resolve the currently active property tab.
-   */
   const activeProperty = useMemo<PropertyTabSummary | undefined>(() => {
     return propertyTabs[activeTab];
   }, [propertyTabs, activeTab]);
 
-  /**
-   * Active property code used to fetch row details and save data.
-   */
   const activePropertyCode = activeProperty?.header.propertyCode;
 
   /**
-   * Fetch detail rows for the active property tab.
+   * 1.4 / 2.4 / 3 Fetch rows by activePropertyCode.
    */
   const {
     data: fetchedRowsData,
     isLoading: isRowsLoading,
     refetch: refetchRows,
-  } = usePropertyIncomeExpenseRows(activePropertyCode);
+  } = usePropertyIncomeExpenseDetailRows(activePropertyCode);
 
   const fetchedRows = fetchedRowsData ?? EMPTY_ROWS;
 
-  /**
-   * Open toast message.
-   */
-  const { showToast } = useAppToast();
+  const { mutateAsync: saveRows, isPending: isSaving } =
+    useSavePropertyIncomeExpenseDetailRows();
 
-  const { data: groups = [] } = usePropertyIncomeExpenseGroups();
+  const isScreenLoading =
+    loading ||
+    isGroupsLoading ||
+    isResolvingGroup ||
+    isTabsLoading ||
+    isRowsLoading ||
+    isSaving;
 
-  const handleGroupChange = async (newGroup: string) => {
+  const handleGroupChange = (newGroup: string) => {
     if (newGroup === selectedGroup) return;
 
     setSelectedGroup(newGroup);
+    setSelectedPropertyCode(null);
     setActiveTab(0);
     setEditedRows([]);
     setIsDirty(false);
-};
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
+  };
 
-  /**
-   * Update editable rows from child grid.
-   */
   const updateActiveRows = (nextRows: PropertyIncomeExpenseDetailRow[]) => {
     setEditedRows(nextRows);
   };
 
-  /**
-   * Handle tab switching.
-   * If the current tab has unsaved changes, show confirmation dialog first.
-   */
-    const handleTabChange = (nextTab: number) => {
+  const moveToTab = (nextTab: number) => {
+    const nextPropertyCode = propertyTabs[nextTab]?.header.propertyCode;
+
+    setActiveTab(nextTab);
+
+    if (nextPropertyCode) {
+      setSelectedPropertyCode(nextPropertyCode);
+    }
+
+    setSelectedRow(null);
+    setIsFloatPanelOpen(false);
+  };
+
+  const handleTabChange = (nextTab: number) => {
     if (nextTab === activeTab) return;
 
     if (isDirty) {
@@ -152,28 +152,21 @@ export default function DetailPage() {
       return;
     }
 
-    setActiveTab(nextTab);
-
-    const nextPropertyCode = propertyTabs[nextTab]?.header.propertyCode;
-    if (nextPropertyCode) {
-      setSelectedPropertyCode(nextPropertyCode);
-    }
+    moveToTab(nextTab);
   };
 
-  /**
-   * Save current tab data, then move to the pending tab.
-   */
   const handleSaveAndTabChange = async () => {
     if (!activePropertyCode || pendingTab === null) return;
 
-    /*
     const validationResult = validateRows(editedRows);
     if (!validationResult.isValid) {
-      showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
+      showToast(
+        validationResult.errorMessage ?? "入力内容に誤りがあります。",
+        "error"
+      );
       setConfirmTabChangeOpen(false);
       return;
     }
-    */
 
     try {
       setLoading(true);
@@ -184,17 +177,12 @@ export default function DetailPage() {
       });
 
       showToast(`${activePropertyCode} を保存しました。`);
-      
+
       setIsDirty(false);
       setConfirmTabChangeOpen(false);
-      const nextPropertyCode = propertyTabs[pendingTab]?.header.propertyCode;
-      setActiveTab(pendingTab);
-      if (nextPropertyCode) {
-        setSelectedPropertyCode(nextPropertyCode);
-      }
 
+      moveToTab(pendingTab);
       setPendingTab(null);
-
     } catch (error) {
       if (error instanceof Error) {
         showToast(error.message, "error");
@@ -206,50 +194,30 @@ export default function DetailPage() {
     }
   };
 
-  /**
-   * Discard current edits and move to the pending tab.
-   */
   const handleDiscardTabChange = () => {
     if (pendingTab === null) return;
 
-    const nextPropertyCode = propertyTabs[pendingTab]?.header.propertyCode;
-
     setConfirmTabChangeOpen(false);
     setIsDirty(false);
-    setActiveTab(pendingTab);
 
-    if (nextPropertyCode) {
-      setSelectedPropertyCode(nextPropertyCode);
-    }
-
+    moveToTab(pendingTab);
     setPendingTab(null);
   };
 
-  /**
-   * Close unsaved changes dialog without changing tab.
-   */
   const handleCancelTabChange = () => {
     setPendingTab(null);
     setConfirmTabChangeOpen(false);
   };
 
-  /**
-   * Mutation hook for saving rows to the backend.
-   */
-  const { mutateAsync: saveRows, isPending: isSaving } =
-    useSavePropertyIncomeExpenseRows();
-
-  /**
-   * Save the current editable rows.
-   */
   const handleUpdate = async () => {
     if (!activePropertyCode) return;
 
-    
     const validationResult = validateRows(editedRows);
     if (!validationResult.isValid) {
-      console.log(validationResult);
-      showToast(validationResult.errorMessage ?? "入力内容に誤りがあります。", "error");
+      showToast(
+        validationResult.errorMessage ?? "入力内容に誤りがあります。",
+        "error"
+      );
       return;
     }
 
@@ -274,37 +242,29 @@ export default function DetailPage() {
     }
   };
 
-  /**
-   * Refresh both detail rows and tab summary data from the server.
-   * If row data is returned, overwrite local edits and clear dirty state.
-   */
   const handleRefresh = async () => {
+    if (!activePropertyCode) return;
+
     try {
       setLoading(true);
 
       const res = await refetchRows();
 
       if (res.data) {
-        // Reset local edited rows with latest fetched data
         setEditedRows(recalculateRows(res.data));
         setIsDirty(false);
       }
 
-      await (selectedGroup ? refetchTabsByGroup() : refetchTabsByPropertyCode());
+      await refetchTabsByGroup();
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * Cancel current edits and restore the latest fetched rows.
-   */
   const handleCancel = () => {
-    setEditedRows(recalculateRows(fetchedRows ?? []).map((row) => ({ ...row })));
+    setEditedRows(recalculateRows(fetchedRows).map((row) => ({ ...row })));
     setIsDirty(false);
   };
-
-  const [selectedRow, setSelectedRow] = useState<PropertyIncomeExpenseDetailRow | null>(null);
 
   const onOpenFloatPanelClick = (_menu: NonNullable<CellContextMenuState>) => {
     setSelectedRow(_menu.row as PropertyIncomeExpenseDetailRow);
@@ -313,6 +273,7 @@ export default function DetailPage() {
 
   const handleSelectedRowChange = (nextRow: PropertyIncomeExpenseDetailRow) => {
     setSelectedRow(nextRow);
+
     setEditedRows((prevRows) => {
       const nextRows = prevRows.map((row) =>
         row.id === nextRow.id ? nextRow : row
@@ -320,59 +281,60 @@ export default function DetailPage() {
 
       return recalculateBalances(nextRows);
     });
+
+    setIsDirty(true);
   };
 
-  const [isFloatPanelOpen, setIsFloatPanelOpen] = useState(false);
-
-  /**
-   * Combined loading flag for the whole screen.
-   */
-  const isScreenLoading = loading || isTabsLoading || isRowsLoading || isSaving;
-  
-  /**
-   * When the selected property code changes from the store,
-   * switch to the corresponding tab if it exists.
-   */
   useEffect(() => {
-    if (!selectedPropertyCode || propertyTabs.length === 0) return;
+    if (!selectedPropertyCode) return;
+    if (!resolvedGroup) return;
 
-    const index = propertyTabs.findIndex(
-      (tab) => tab.header.propertyCode === selectedPropertyCode
-    );
-
-    if (index !== -1 && index !== activeTab) {
-      setActiveTab(index);
-    }
-  }, [selectedPropertyCode, propertyTabs, activeTab]);
+    setSelectedGroup(resolvedGroup);
+  }, [selectedPropertyCode, resolvedGroup]);
 
   /**
-   * Reset editable rows whenever fresh rows are fetched.
-   * Also clear dirty state because the screen is now synced with server data.
+   * 1.3 / 2.3 Decide active tab.
    */
-  useEffect(() => {
-    setEditedRows(recalculateRows(fetchedRows));
-    setIsDirty(false);
-  }, [fetchedRows, recalculateRows]);
-
-
   useEffect(() => {
     if (!selectedGroup) return;
     if (propertyTabs.length === 0) return;
 
+    if (selectedPropertyCode) {
+      const index = propertyTabs.findIndex(
+        (tab: PropertyTabSummary) => tab.header.propertyCode === selectedPropertyCode
+      );
+
+      if (index >= 0) {
+        setActiveTab(index);
+        return;
+      }
+    }
+
     const firstPropertyCode = propertyTabs[0]?.header.propertyCode;
     if (!firstPropertyCode) return;
 
-    setActiveTab(0);
     setSelectedPropertyCode(firstPropertyCode);
-  }, [selectedGroup, propertyTabs, setSelectedPropertyCode]);
+    setActiveTab(0);
+  }, [
+    selectedGroup,
+    propertyTabs,
+    selectedPropertyCode,
+    setSelectedPropertyCode,
+  ]);
 
-  /**
-   * Recalculate balances and expected amounts for all rows when any row is updated.
-     * This is a simplified example of how to trigger recalculation from the main component.
-   */
+  useEffect(() => {
+    if (!activePropertyCode) {
+      setEditedRows([]);
+      setIsDirty(false);
+      return;
+    }
+
+    setEditedRows(recalculateRows(fetchedRows));
+    setIsDirty(false);
+  }, [activePropertyCode, fetchedRows, recalculateRows]);
+
   return (
     <div>
-      {/* Property tab selector */}
       <PropertyIncomeExpenseTabs
         groups={groups}
         onGroupChange={handleGroupChange}
@@ -381,7 +343,6 @@ export default function DetailPage() {
         onChange={handleTabChange}
       />
 
-      {/* Render tab content */}
       {propertyTabs.map((propertyTab, index) => (
         <TabPanel
           key={propertyTab.id}
@@ -397,13 +358,11 @@ export default function DetailPage() {
         />
       ))}
 
-      {/* Show guidance when no property is selected */}
       {!activePropertyCode ? (
         <Typography sx={{ mt: 4, color: "text.secondary" }}>
-          物件グループをお選択ください。
+          物件グループを選択してください。
         </Typography>
       ) : (
-        /* Footer actions */
         <div className="property-income-expense-detail-footer">
           <Button
             variant="contained"
@@ -432,7 +391,6 @@ export default function DetailPage() {
         onSelectedRowChange={handleSelectedRowChange}
       />
 
-      {/* Confirm dialog shown when leaving a tab with unsaved changes */}
       <UnsavedChangesDialog
         open={confirmTabChangeOpen}
         message="変更内容が保存されていません。保存してから移動しますか？"
@@ -441,7 +399,6 @@ export default function DetailPage() {
         onCancel={handleCancelTabChange}
       />
 
-      {/* Full-screen loading dialog */}
       <LoadingDialog open={isScreenLoading} />
     </div>
   );
