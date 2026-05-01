@@ -3,19 +3,19 @@ import { savePropertyIncomeExpenseRows } from "@/api/propertyIncomeExpenseDetail
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
 import type { PropertyIncomeExpenseDetailRow } from "@/features/property-income-expense-detail/types";
 
-type SavePropertyIncomeExpenseRowsParams = {
+type SavePropertyIncomeExpenseDetailRowsParams = {
   propertyCode: string;
   rows: PropertyIncomeExpenseDetailRow[];
 };
 
-export const useSavePropertyIncomeExpenseRows = () => {
+export const useSavePropertyIncomeExpenseDetailRows = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
       propertyCode,
       rows,
-    }: SavePropertyIncomeExpenseRowsParams) => {
+    }: SavePropertyIncomeExpenseDetailRowsParams) => {
       return savePropertyIncomeExpenseRows(propertyCode, rows);
     },
 

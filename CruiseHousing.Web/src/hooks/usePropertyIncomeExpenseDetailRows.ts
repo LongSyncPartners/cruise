@@ -1,23 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchPropertyIncomeExpenseDetail } from "@/api/propertyIncomeExpenseDetailApi";
+import { fetchPropertyIncomeExpenseRows } from "@/api/propertyIncomeExpenseDetailApi";
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
 
 /**
- * Fetch full property income/expense detail
- * - tab summary
- * - row list
+ * Fetch row list by propertyCode
  */
-export const usePropertyIncomeExpenseDetail = (propertyCode?: string) => {
+export const usePropertyIncomeExpenseDetailRows = (propertyCode?: string) => {
   return useQuery({
     queryKey: propertyCode
-      ? propertyIncomeExpenseDetailKeys.detail(propertyCode)
+      ? propertyIncomeExpenseDetailKeys.rows(propertyCode)
       : propertyIncomeExpenseDetailKeys.all,
     queryFn: () => {
       if (!propertyCode) {
         throw new Error("propertyCode is required");
       }
 
-      return fetchPropertyIncomeExpenseDetail(propertyCode);
+      return fetchPropertyIncomeExpenseRows(propertyCode);
     },
     enabled: !!propertyCode,
     staleTime: 5 * 60 * 1000, // cache 5 minutes

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
 import { getPropertyGroups } from "@/api/propertyIncomeExpenseDetailApi";
 
-export const usePropertyIncomeExpenseGroups = () => {
+export const usePropertyGroups = () => {
   return useQuery({
     queryKey: propertyIncomeExpenseDetailKeys.groups(),
     queryFn: async () => {
