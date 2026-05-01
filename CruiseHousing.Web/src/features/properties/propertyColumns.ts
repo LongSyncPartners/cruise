@@ -24,6 +24,7 @@ const buildBaseColumnMap = ({
     field: "propertyCode",
     headerName: "物件番号",
     width: 90,
+    align: "center",
     editable: false,
     sortable: false,
     filterable: false,
