@@ -32,7 +32,8 @@ export const dataGridCommonSx: SystemStyleObject<Theme> = {
       backgroundColor: "color-mix(in srgb, var(--DataGrid-t-color-background-base), var(--DataGrid-t-color-interactive-selected) calc(var(--DataGrid-t-color-interactive-selected-opacity) * 100%))",
   },
   "& .MuiDataGrid-row": {
-    minHeight: "40px !important",
+    minHeight: "30px",
+    height: "30px"
   },
   "& .MuiDataGrid-row:hover .sticky-col": {
     backgroundColor: "#eaeff5",

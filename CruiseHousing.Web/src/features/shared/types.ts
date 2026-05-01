@@ -1,4 +1,12 @@
 /**
+ * Dropdownlist 
+ */
+export type OptionItem = {
+  value: string;
+  label: string;
+};
+
+/**
  * Tab summary only
  */
 export type PropertyHeaderProps = {

@@ -2,11 +2,7 @@ import type { GridColDef } from "@mui/x-data-grid";
 import type { PropertyColumnConfig, PropertyRow } from "./types";
 import { singleSelectContainsOperator } from "../shared/createFilterableHeader";
 import { getPreviousMonthLabel } from "../shared/utils";
-
-type OptionItem = {
-  value: string;
-  label: string;
-};
+import { OptionItem } from "../shared/types";
 
 type Params = {
   renderFilterableHeader: GridColDef["renderHeader"];

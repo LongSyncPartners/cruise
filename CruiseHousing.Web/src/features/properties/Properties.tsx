@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Typography } from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 
 import PropertyDataGrid from "./PropertyDataGrid";
 import LoadingDialog from "../shared/LoadingDialog";
@@ -259,14 +260,10 @@ export default function Properties() {
     <div className="properties-container">
       <div className="properties-common-header">
         <div className="common-header-item" onClick={handleRefresh}>
-          <RefreshIcon />
-          <Typography>最新情報を更新</Typography>
+          <ApartmentIcon />
+          <Typography>物件一覧</Typography>
         </div>
       </div>
-
-      <Typography sx={{ fontSize: "150%", fontWeight: 500, paddingBottom: 2 }}>
-        物件一覧
-      </Typography>
 
       <div className="properties-grid-contaniner">
         <PropertyDataGrid

@@ -342,6 +342,7 @@ export default function ListEditPage({ editOpenContext }: ListEditPageProps) {
           detailTabValue={detailTabValue}
           subjectTabs={subjectTabs}
           subjectTabValue={subjectTabValue}
+          accountingSubjects={[]}
           onOpenFloatPanelClick={onOpenFloatPanelClick}
         />
       </div>

@@ -44,7 +44,7 @@ type MenuItemProps = {
 };
 
 export default function Menu() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);

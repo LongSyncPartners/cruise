@@ -11,6 +11,7 @@ import { createDateCellValidator } from "@/features/shared/gridValidators";
 import { SubjectOption, TabOption } from "../subjectOptions";
 import { LIST_EDIT_COLUMN_LABELS } from "./ListEditColumnLabels";
 import { withContextMenu } from "@/features/shared/withContextMenu";
+import { OptionItem } from "@/features/shared/types";
 
 type CreateListEditColumnsParams = {
   onRenameHeader?: (field: string, headerName: string) => void;
@@ -20,6 +21,7 @@ type CreateListEditColumnsParams = {
   ) => void;
   detailTabs: TabOption[];
   subjectTabs: SubjectOption[];
+  accountingSubjects? : OptionItem[];
 };
 
 const createEditableHeader =
@@ -36,6 +38,7 @@ export const createListEditColumns = ({
   onCellContextMenu,
   detailTabs,
   subjectTabs,
+  accountingSubjects
 }: CreateListEditColumnsParams): GridColDef<ListEditRow>[] => {
   const renderEditableHeader = createEditableHeader(onRenameHeader);
 
@@ -110,8 +113,8 @@ export const createListEditColumns = ({
       sortable: false,
       filterable: false,
       preProcessEditCellProps: createDateCellValidator({ required: true }),
-      renderCell: (params) => <MultilineCell {...params} />,
-      renderEditCell: (params) => <MultilineEditCell {...params} />,
+      type: "singleSelect",
+      valueOptions: accountingSubjects,
     }),
     addContextMenu({
       field: "appliedSubjectAux",
@@ -129,7 +132,7 @@ export const createListEditColumns = ({
       headerName: LIST_EDIT_COLUMN_LABELS.debit,
       headerClassName: "align-left-header",
       minWidth: 100,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
@@ -140,7 +143,7 @@ export const createListEditColumns = ({
       headerName: LIST_EDIT_COLUMN_LABELS.debitAux,
       headerClassName: "align-left-header",
       minWidth: 100,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
@@ -151,7 +154,7 @@ export const createListEditColumns = ({
       headerName: LIST_EDIT_COLUMN_LABELS.credit,
       headerClassName: "align-left-header",
       minWidth: 100,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,
@@ -162,7 +165,7 @@ export const createListEditColumns = ({
       headerName: LIST_EDIT_COLUMN_LABELS.creditAux,
       headerClassName: "align-left-header",
       minWidth: 100,
-      editable: true,
+      editable: false,
       sortable: false,
       filterable: false,
       renderCell: (params) => <MultilineCell {...params} />,

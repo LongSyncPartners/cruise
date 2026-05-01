@@ -22,6 +22,7 @@ import {
   TabOption,
 } from "../subjectOptions";
 import { usePropertyIncomeExpenseListStore } from "@/stores/usePropertyIncomeExpenseListStore";
+import { OptionItem } from "@/features/shared/types";
 
 type ListEditGridProps = {
   rows: ListEditRow[];
@@ -33,6 +34,7 @@ type ListEditGridProps = {
   detailTabValue: number;
   subjectTabs: SubjectOption[];
   subjectTabValue: string;
+  accountingSubjects: OptionItem[];
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
 };
 
@@ -65,6 +67,7 @@ export default function ListEditGrid({
   subjectTabs,
   subjectTabValue,
   onOpenFloatPanelClick,
+  accountingSubjects,
 }: ListEditGridProps) {
   const apiRef = useGridApiRef();
 
@@ -132,6 +135,7 @@ export default function ListEditGrid({
         onCellContextMenu: handleCellContextMenu,
         detailTabs: filteredDetailTabs,
         subjectTabs: filteredSubjectTabs,
+        accountingSubjects: accountingSubjects,
       }),
     [handleRenameHeader, filteredDetailTabs, filteredSubjectTabs]
   );

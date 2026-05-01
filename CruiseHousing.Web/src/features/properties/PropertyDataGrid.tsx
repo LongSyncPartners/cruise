@@ -69,6 +69,7 @@ export default function PropertyDataGrid({
     setLocalRows(data ?? []);
   }, [data]);
 
+    /**
   useEffect(() => {
     const timer = window.setTimeout(() => {
       apiRef.current?.resetRowHeights();
@@ -76,7 +77,7 @@ export default function PropertyDataGrid({
 
     return () => window.clearTimeout(timer);
   }, [apiRef, localRows, columns]);
-
+ */
   const handleOpenProcessingStatusDialog = useCallback(
     (propertyCode: string) => {
       setDialogPropertyCode(propertyCode);
@@ -153,13 +154,13 @@ export default function PropertyDataGrid({
 
 
   return (
-    <Box sx={{ width: "auto", height }}>
+    <Box sx={{ width: "auto", height: "calc(100vh - 180px)" }}>
       <DataGrid
         rows={localRows}
         columns={columns}
-        rowHeight={45}
-        columnHeaderHeight={40}
-        pageSizeOptions={[20]}
+        rowHeight={30}
+        columnHeaderHeight={30}
+        pageSizeOptions={[30]}
         editMode="cell"
         disableColumnMenu
         disableColumnFilter

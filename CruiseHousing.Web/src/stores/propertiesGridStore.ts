@@ -32,7 +32,7 @@ const createInitialRowSelectionModel = (): GridRowSelectionModel => ({
 const createInitialGridState = () => ({
   filterModel: { items: [] } as GridFilterModel,
   sortModel: [] as GridSortModel,
-  paginationModel: { page: 0, pageSize: 20 } as GridPaginationModel,
+  paginationModel: { page: 0, pageSize: 30 } as GridPaginationModel,
   rowSelectionModel: createInitialRowSelectionModel(),
 });
 

@@ -6,7 +6,7 @@ import ListEditPage from "./ListEditPage";
 import ListDownloadPage from "./ListDownloadPage";
 import { DetailTabValue } from "./subjectOptions";
 
-type ViewMode = "view" | "edit" | "download";
+export type ViewMode = "view" | "edit" | "download";
 export type EditOpenContext = {
   detailTabValue: DetailTabValue;
   subjectTabField: string;
