@@ -42,6 +42,7 @@ import { GridCellParams, GridColumnHeaderParams } from "@mui/x-data-grid";
 import { EditOpenContext } from "./PropertyIncomeExpenseListScreen";
 import { DETAIL_TAB_VALUES, DetailTabValue } from "./subjectOptions";
 
+
 /**
  * Fallback empty values to avoid recreating new empty arrays on every render.
  */

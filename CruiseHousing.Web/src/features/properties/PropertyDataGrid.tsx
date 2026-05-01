@@ -21,6 +21,8 @@ import { usePropertySelectionStore } from "../../stores/propertySelectionStore";
 import { usePropertiesGridStore } from "@/stores/propertiesGridStore";
 import { useProperties } from "@/hooks/useProperties";
 
+const PAGE_SIZE = 30;
+
 export default function PropertyDataGrid({
   height = 700,
   columns,
@@ -160,7 +162,7 @@ export default function PropertyDataGrid({
         columns={columns}
         rowHeight={30}
         columnHeaderHeight={30}
-        pageSizeOptions={[30]}
+        pageSizeOptions={[PAGE_SIZE]}
         editMode="cell"
         disableColumnMenu
         disableColumnFilter

@@ -38,7 +38,7 @@ type ListEditGridProps = {
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
 };
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 30;
 
 const createEmptyListEditRow = (): ListEditRow => ({
   id: uuidv4(),
@@ -310,7 +310,7 @@ export default function ListEditGrid({
   }, [rows, selectedRowIds, onSelectedRowsChange]);
 
   return (
-    <Box sx={{ width: "auto", height: "calc(100vh - 350px)" }}>
+    <Box sx={{ width: "auto", height: "calc(100vh - 300px)" }}>
       <DataGrid
         rows={rows}
         columns={columns}
