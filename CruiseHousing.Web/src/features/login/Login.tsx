@@ -13,6 +13,7 @@ import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { useAppToast } from "@/providers/ToastProvider";
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStore";
+import { useEffect } from "react";
 
 type LoginFormValues = {
   loginIdOrEmail: string;
@@ -22,11 +23,7 @@ type LoginFormValues = {
 export default function Login() {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  if (isAuthenticated) {
-    navigate("/properties");
-  }
-
+  
   const {
     register,
     handleSubmit,
@@ -60,6 +57,12 @@ export default function Login() {
       }
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/properties", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <Box

@@ -310,12 +310,12 @@ export default function ListEditGrid({
   }, [rows, selectedRowIds, onSelectedRowsChange]);
 
   return (
-    <Box sx={{ width: "auto", height: 520 }}>
+    <Box sx={{ width: "auto", height: "calc(100vh - 350px)" }}>
       <DataGrid
         rows={rows}
         columns={columns}
-        rowHeight={40}
-        columnHeaderHeight={40}
+        rowHeight={30}
+        columnHeaderHeight={30}
         localeText={{
           noRowsLabel: "データがありません",
           noResultsOverlayLabel: "データがありません",

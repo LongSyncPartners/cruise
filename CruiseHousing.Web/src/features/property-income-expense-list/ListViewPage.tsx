@@ -16,16 +16,16 @@ import { useDefaultPropertyCodeByGroup } from "@/hooks/useDefaultPropertyCodeByG
 
 import ListViewPageHeader from "./view/ListViewPageHeader";
 
-import TabInternalOwner from "./view/tab-internal-owner/Tab";
+import TabInternalOwner from "./view/tab-internal-owner/TabGrid";
 import TabInternalOwnerFloatingPanel from "./view/tab-internal-owner/FloatingPanel";
 
-import TabOwnerManagementCompany from "./view/tab-owner-management-company/Tab";
+import TabOwnerManagementCompany from "./view/tab-owner-management-company/TabGrid";
 import TabOwnerManagementCompanyFloatingPanel from "./view/tab-owner-management-company/FloatingPanel";
 
-import TabOwner from "./view/tab-owner/Tab";
+import TabOwner from "./view/tab-owner/TabGrid";
 import TabOwnerFloatingPanel from "./view/tab-owner/FloatingPanel";
 
-import TabPropertyManagementCompany from "./view/tab-property-management-company/Tab";
+import TabPropertyManagementCompany from "./view/tab-property-management-company/TabGrid";
 import TabPropertyManagementCompanyFloatingPanel from "./view/tab-property-management-company/FloatingPanel";
 
 import {

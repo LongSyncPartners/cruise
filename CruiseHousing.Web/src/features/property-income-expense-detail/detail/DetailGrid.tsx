@@ -69,7 +69,7 @@ export default function PropertyIncomeExpenseDetailGrid({
     new Set()
   );
 
-  const PAGE_SIZE = 20;
+  const PAGE_SIZE = 30;
   const [paginationModel, setPaginationModel] = useState(() => ({
     pageSize: PAGE_SIZE,
     page: Math.max(0, Math.ceil(rows.length / PAGE_SIZE) - 1),
@@ -356,12 +356,12 @@ export default function PropertyIncomeExpenseDetailGrid({
   }, [rows.length, isScreenLoading]);
 
   return (
-    <Box sx={{ width: "auto", height: 520 }}>
+    <Box sx={{ width: "auto", height: "calc(100vh - 260px)" }}>
       <DataGrid
         rows={rows}
         columns={columns}
         rowHeight={50}
-        columnHeaderHeight={40}
+        columnHeaderHeight={30}
         className="property-income-expense-detail-grid"
         localeText={{
           noRowsLabel: "データがありません",

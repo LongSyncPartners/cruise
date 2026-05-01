@@ -79,7 +79,6 @@ export default function PropertyIncomeExpenseSummaryHeader({
         sx={{
             display: "flex",
             alignItems: "center",
-            mt: 1,
         }}
         >
         {/* 全物件計 */}
@@ -118,8 +117,8 @@ export default function PropertyIncomeExpenseSummaryHeader({
                 sx={{
                 flex: "0 0 50%",
                 textAlign: "center",
-                px: 2,
-                py: 1,
+                px: 0,
+                py: 0,
                 whiteSpace: "nowrap",
                 pointerEvents: "none",
                 }}

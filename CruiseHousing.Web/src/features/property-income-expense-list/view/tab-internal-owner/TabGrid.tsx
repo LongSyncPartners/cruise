@@ -8,37 +8,37 @@ import {
 } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { createTabOwnerColumns } from "./Column";
-import { TabOwnerRow } from "../../types";
+import { createTabInternalOwnerColumns } from "./Column";
+import { TabInternalOwnerRow } from "../../types";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 import CustomContextMenu, {
   type CellContextMenuState,
 } from "@/features/shared/CustomContextMenu";
 import { DETAIL_TAB_VALUES, SUBJECT_OPTIONS_BY_DETAIL_TAB } from "../../subjectOptions";
 
-type TabOwnerProps = {
-  rows: TabOwnerRow[];
+type TabInternalOwnerProps = {
+  rows: TabInternalOwnerRow[];
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
-  onSelectedRowChange?: (row: TabOwnerRow) => void;
+  onSelectedRowChange?: (row: TabInternalOwnerRow) => void;
   onGridDoubleClick?:  (params: GridCellParams | GridColumnHeaderParams)  => void;
 };
 
-export default function TabOwner({
+export default function TabInternalOwner({
   rows,
   onOpenFloatPanelClick,
   onSelectedRowChange,
   onGridDoubleClick
-}: TabOwnerProps) {
+}: TabInternalOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
-  const [gridRows, setGridRows] = useState<TabOwnerRow[]>(rows);
+  const [gridRows, setGridRows] = useState<TabInternalOwnerRow[]>(rows);
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
   };
 
   const handleCellContextMenu = (
-    params: GridRenderCellParams<TabOwnerRow>,
+    params: GridRenderCellParams<TabInternalOwnerRow>,
     event: React.MouseEvent<HTMLElement>
   ) => {
     event.preventDefault();
@@ -57,37 +57,38 @@ export default function TabOwner({
   };
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
-    setHeaderNames((prev) => ({ ...prev, [field]: headerName }));
+    setHeaderNames((prev) => ({
+      ...prev,
+      [field]: headerName,
+    }));
   }, []);
 
   const baseColumns = useMemo(
     () =>
-      createTabOwnerColumns({
+      createTabInternalOwnerColumns({
         onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
   );
 
-  const columns = useMemo(
-    () =>
-      baseColumns.map((c) => ({
-        ...c,
-        headerName: headerNames[c.field] ?? c.headerName,
-      })),
-    [baseColumns, headerNames]
-  );
+  const columns = useMemo(() => {
+    return baseColumns.map((col) => ({
+      ...col,
+      headerName: headerNames[col.field] ?? col.headerName,
+    }));
+  }, [baseColumns, headerNames]);
 
   const selectedRowId = useMemo<GridRowId | undefined>(() => {
     return [...rows]
       .reverse()
       .find(
-        (r) =>
-          !r.id.toString().includes("total") &&
-          r.totalIncomeAmount !== null
+        (row) =>
+          !row.id.toString().includes("total") &&
+          row.totalIncomeAmount !== null
       )?.id;
   }, [rows]);
 
-  const handleRowClick = (params: { row: TabOwnerRow }) => {
+  const handleRowClick = (params: { row: TabInternalOwnerRow }) => {
     if (params.row.id.toString().includes("total")) return;
 
     onSelectedRowChange?.(params.row);
@@ -116,7 +117,7 @@ export default function TabOwner({
   
         const editableSubjects =
                 SUBJECT_OPTIONS_BY_DETAIL_TAB[
-                  DETAIL_TAB_VALUES.OWNER
+                  DETAIL_TAB_VALUES.INTERNAL_OWNER
                 ];
   
         if (editableSubjects.some((item) => item.value === columnField)) {
@@ -125,7 +126,7 @@ export default function TabOwner({
       },
       [handleToggleExecutedState, onGridDoubleClick]
     );
-
+  
   useEffect(() => {
     setGridRows(rows);
   }, [rows]);
@@ -133,12 +134,12 @@ export default function TabOwner({
   return (
     <Box sx={{ width: "auto", height: "auto" }}>
       <DataGrid
-        rows={gridRows}
+        rows={rows}
         columns={columns}
-        rowHeight={40}
-        columnHeaderHeight={40}
-        getRowClassName={(p) =>
-          p.id.toString().includes("total") ? "summary-total-row" : ""
+        rowHeight={30}
+        columnHeaderHeight={30}
+        getRowClassName={(params) =>
+          params.id.toString().includes("total") ? "summary-total-row" : ""
         }
         rowSelectionModel={{
           type: "include",
@@ -149,8 +150,8 @@ export default function TabOwner({
           noResultsOverlayLabel: "データがありません",
         }}
         onRowClick={handleRowClick}
-        onCellDoubleClick={handleGridDoubleClick}
-        onColumnHeaderDoubleClick={handleGridDoubleClick}
+        onCellDoubleClick={(params) => onGridDoubleClick?.(params)}
+        onColumnHeaderDoubleClick={(params) => onGridDoubleClick?.(params)}
         hideFooter
         disableRowSelectionOnClick
         disableColumnMenu

@@ -5,7 +5,8 @@
 ================================ */
 .property-income-expense-list-container {
   padding-left: 50px;     /* Add left spacing for layout alignment */
-  max-width: 1400px;      /* Limit max width for better readability */
+  width: calc(100vw - 100px);
+  max-width: 1600px;      /* Limit max width for better readability */
 }
 
 /* ================================

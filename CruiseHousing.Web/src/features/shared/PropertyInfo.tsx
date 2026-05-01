@@ -27,7 +27,7 @@ export const PropertyInfo = ({
         px: 2,
         py: 1,
         backgroundColor: "#e6f0f4",
-        marginBottom: 2,
+        marginBottom: "2px",
       }}
     >
       <Item label="管理種別" value={managementType} />

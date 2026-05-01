@@ -162,7 +162,6 @@ export default function ListEditPageHeader({
           alignItems: "center",
           borderBottom: 1,
           borderColor: "divider",
-          paddingTop:2
         }}
       >
         <Tabs

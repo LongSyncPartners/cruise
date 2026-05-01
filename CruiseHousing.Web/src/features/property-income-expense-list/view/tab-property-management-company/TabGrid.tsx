@@ -140,8 +140,8 @@ export default function TabPropertyManagementCompany({
       <DataGrid
         rows={gridRows}
         columns={columns}
-        rowHeight={40}
-        columnHeaderHeight={40}
+        rowHeight={30}
+        columnHeaderHeight={30}
         getRowClassName={(params) =>
           params.id.toString().includes("total") ? "summary-total-row" : ""
         }

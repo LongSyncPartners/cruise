@@ -51,8 +51,8 @@ export default function PropertyIncomeExpenseSummaryGrid({
       <DataGrid
         rows={rows}
         columns={columns}
-        rowHeight={40}
-        columnHeaderHeight={40}
+        rowHeight={30}
+        columnHeaderHeight={30}
         getRowClassName={(params) =>
           params.id.toString().includes("total") ? "summary-total-row" : ""
         }

@@ -8,44 +8,43 @@ import {
 } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { createTabOwnerManagementCompanyColumns } from "./Column";
-import { TabOwnerManagementCompanyRow } from "../../types";
+import { createTabOwnerColumns } from "./Column";
+import { TabOwnerRow } from "../../types";
 import { dataGridCommonSx } from "@/features/shared/dataGridCommonSx";
 import CustomContextMenu, {
   type CellContextMenuState,
 } from "@/features/shared/CustomContextMenu";
 import { DETAIL_TAB_VALUES, SUBJECT_OPTIONS_BY_DETAIL_TAB } from "../../subjectOptions";
 
-type TabOwnerManagementCompanyProps = {
-  rows: TabOwnerManagementCompanyRow[];
+type TabOwnerProps = {
+  rows: TabOwnerRow[];
   onOpenFloatPanelClick?: (menu: NonNullable<CellContextMenuState>) => void;
-  onSelectedRowChange?: (row: TabOwnerManagementCompanyRow) => void;
+  onSelectedRowChange?: (row: TabOwnerRow) => void;
   onGridDoubleClick?:  (params: GridCellParams | GridColumnHeaderParams)  => void;
 };
 
-export default function TabOwnerManagementCompany({
+export default function TabOwner({
   rows,
   onOpenFloatPanelClick,
   onSelectedRowChange,
   onGridDoubleClick
-}: TabOwnerManagementCompanyProps) {
+}: TabOwnerProps) {
   const [headerNames, setHeaderNames] = useState<Record<string, string>>({});
   const [contextMenu, setContextMenu] = useState<CellContextMenuState>(null);
-  const [gridRows, setGridRows] = useState<TabOwnerManagementCompanyRow[]>(rows);
+  const [gridRows, setGridRows] = useState<TabOwnerRow[]>(rows);
 
   const handleCloseContextMenu = () => {
     setContextMenu(null);
   };
 
   const handleCellContextMenu = (
-    params: GridRenderCellParams<TabOwnerManagementCompanyRow>,
+    params: GridRenderCellParams<TabOwnerRow>,
     event: React.MouseEvent<HTMLElement>
   ) => {
     event.preventDefault();
     event.stopPropagation();
 
     if (params.id.toString().includes("total")) return;
-    if (params.field === "empty") return;
 
     setContextMenu({
       mouseX: event.clientX,
@@ -58,77 +57,74 @@ export default function TabOwnerManagementCompany({
   };
 
   const handleRenameHeader = useCallback((field: string, headerName: string) => {
-    setHeaderNames((prev) => ({
-      ...prev,
-      [field]: headerName,
-    }));
+    setHeaderNames((prev) => ({ ...prev, [field]: headerName }));
   }, []);
 
   const baseColumns = useMemo(
     () =>
-      createTabOwnerManagementCompanyColumns({
+      createTabOwnerColumns({
         onCellContextMenu: handleCellContextMenu,
       }),
     [handleRenameHeader]
   );
 
-  const columns = useMemo(() => {
-    return baseColumns.map((col) => ({
-      ...col,
-      headerName: headerNames[col.field] ?? col.headerName,
-    }));
-  }, [baseColumns, headerNames]);
+  const columns = useMemo(
+    () =>
+      baseColumns.map((c) => ({
+        ...c,
+        headerName: headerNames[c.field] ?? c.headerName,
+      })),
+    [baseColumns, headerNames]
+  );
 
   const selectedRowId = useMemo<GridRowId | undefined>(() => {
     return [...rows]
       .reverse()
       .find(
-        (row) =>
-          !row.id.toString().includes("total") &&
-          row.managementEntrust !== null
+        (r) =>
+          !r.id.toString().includes("total") &&
+          r.totalIncomeAmount !== null
       )?.id;
   }, [rows]);
 
-  const handleRowClick = (params: {
-    row: TabOwnerManagementCompanyRow;
-  }) => {
+  const handleRowClick = (params: { row: TabOwnerRow }) => {
     if (params.row.id.toString().includes("total")) return;
 
     onSelectedRowChange?.(params.row);
   };
 
   const handleToggleExecutedState = useCallback((rowId: GridRowId) => {
-    setGridRows((prev) =>
-      prev.map((row) =>
-        row.id === rowId
-          ? { ...row, executedState: !row.executedState }
-          : row
-      )
-    );
-  }, []);
-
-  const handleGridDoubleClick = useCallback(
-    (params: GridCellParams | GridColumnHeaderParams) => {
-      const columnField = params.field;
-
-      if (columnField === "yearMonth") {
-        if ("id" in params) {
-          handleToggleExecutedState(params.id);
+      setGridRows((prev) =>
+        prev.map((row) =>
+          row.id === rowId
+            ? { ...row, executedState: !row.executedState }
+            : row
+        )
+      );
+    }, []);
+  
+    const handleGridDoubleClick = useCallback(
+      (params: GridCellParams | GridColumnHeaderParams) => {
+        const columnField = params.field;
+  
+        if (columnField === "yearMonth") {
+          if ("id" in params) {
+            handleToggleExecutedState(params.id);
+          }
+          return;
         }
-        return;
-      }
-
-      const editableSubjects =
-              SUBJECT_OPTIONS_BY_DETAIL_TAB[
-                DETAIL_TAB_VALUES.OWNER_MANAGEMENT_COMPANY
-              ];
-
-      if (editableSubjects.some((item) => item.value === columnField)) {
-        onGridDoubleClick?.(params);
-      }
-    },
-    [handleToggleExecutedState, onGridDoubleClick]
-  );
+  
+        const editableSubjects =
+                SUBJECT_OPTIONS_BY_DETAIL_TAB[
+                  DETAIL_TAB_VALUES.OWNER
+                ];
+  
+        if (editableSubjects.some((item) => item.value === columnField)) {
+          onGridDoubleClick?.(params);
+        }
+      },
+      [handleToggleExecutedState, onGridDoubleClick]
+    );
 
   useEffect(() => {
     setGridRows(rows);
@@ -139,10 +135,10 @@ export default function TabOwnerManagementCompany({
       <DataGrid
         rows={gridRows}
         columns={columns}
-        rowHeight={40}
-        columnHeaderHeight={40}
-        getRowClassName={(params) =>
-          params.id.toString().includes("total") ? "summary-total-row" : ""
+        rowHeight={30}
+        columnHeaderHeight={30}
+        getRowClassName={(p) =>
+          p.id.toString().includes("total") ? "summary-total-row" : ""
         }
         rowSelectionModel={{
           type: "include",
