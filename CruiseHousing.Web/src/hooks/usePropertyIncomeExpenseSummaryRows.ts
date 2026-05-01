@@ -3,8 +3,8 @@ import { fetchPropertyIncomeExpenseSummaryRows } from "@/api/propertyIncomeExpen
 import { propertyIncomeExpenseDetailKeys } from "@/queries/propertyIncomeExpenseDetailKeys";
 
 export const usePropertyIncomeExpenseSummaryRows = (
-  companyCode?: string,
-  year?: number
+  companyCode: string,
+  year: number,
 ) => {
   return useQuery({
     queryKey: propertyIncomeExpenseDetailKeys.propertyIncomeExpenseSummaryRows(

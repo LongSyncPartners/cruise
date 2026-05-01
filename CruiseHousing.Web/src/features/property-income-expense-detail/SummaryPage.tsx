@@ -2,20 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 
 import "./index.style.css";
 import { useManagementCompanies } from "@/hooks/useManagementCompanies";
-import { usePropertyIncomeExpenseSummaryTabs } from "@/hooks/usePropertyIncomeExpenseSummaryTabs";
+import { usePropertyGroupsByCompanyCode } from "@/hooks/usePropertyGroupsByCompanyCode";
 import { usePropertyIncomeExpenseSummaryRows } from "@/hooks/usePropertyIncomeExpenseSummaryRows";
 import LoadingDialog from "../shared/LoadingDialog";
 
 import {
   buildSummaryRows,
-  extractPropertyGroups,
   getVisibleGroups,
   getYears,
 } from "./summary/useSummaryPage";
+
 import PropertyIncomeExpenseSummaryHeader from "./summary/SummaryHeader";
 import PropertyIncomeExpenseSummaryGrid from "./summary/SummaryGrid";
 
 export default function SummaryPage() {
+  /**
+   * 1. Master data
+   */
   const years = getYears();
 
   const {
@@ -23,6 +26,9 @@ export default function SummaryPage() {
     isLoading: isManagementCompaniesLoading,
   } = useManagementCompanies();
 
+  /**
+   * 2. Selected state
+   */
   const [selectedManagementCompany, setSelectedManagementCompany] =
     useState<string>("");
 
@@ -32,11 +38,27 @@ export default function SummaryPage() {
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
-  const {
-    data: fetchedTabs = [],
-    isLoading: isTabsLoading,
-  } = usePropertyIncomeExpenseSummaryTabs(selectedManagementCompany);
+  /**
+   * Set default company (first item)
+   */
+  useEffect(() => {
+    if (managementCompanies.length === 0) return;
 
+    setSelectedManagementCompany((prev) => prev || managementCompanies[0]);
+  }, [managementCompanies]);
+
+  /**
+   * 3. Fetch propertyGroup (tabs) by company
+   */
+  const {
+    data: tabs = [],
+    isLoading: isTabsLoading,
+  } = usePropertyGroupsByCompanyCode(
+    selectedManagementCompany);
+
+  /**
+   * 4. Fetch summaryItems
+   */
   const {
     data: summaryItems = [],
     isLoading: isRowsLoading,
@@ -46,21 +68,15 @@ export default function SummaryPage() {
   );
 
   /**
-   * Use tabs from API if available.
-   * Otherwise fallback to extracted property groups from row items.
+   * 5. Visible groups (2 tabs at once)
    */
-  const tabs = useMemo(() => {
-    if (fetchedTabs.length > 0) {
-      return fetchedTabs;
-    }
-
-    return extractPropertyGroups(summaryItems);
-  }, [fetchedTabs, summaryItems]);
-
   const visibleGroups = useMemo(() => {
     return getVisibleGroups(tabs, activeTabIndex);
   }, [tabs, activeTabIndex]);
 
+  /**
+   * 5. Build rows
+   */
   const rows = useMemo(() => {
     return buildSummaryRows(
       summaryItems,
@@ -69,29 +85,15 @@ export default function SummaryPage() {
     );
   }, [summaryItems, visibleGroups]);
 
-  const handleClickPrev = () => {
-    setActiveTabIndex((prev) => Math.max(0, prev - 1));
-  };
-
-  const handleClickNext = () => {
-    const maxIndex = Math.max(0, tabs.length - 2);
-    setActiveTabIndex((prev) => Math.min(maxIndex, prev + 1));
-  };
-
-  const isScreenLoading =
-    isManagementCompaniesLoading || isTabsLoading || isRowsLoading;
-
   /**
-   * Reset active tab when management company / year changes.
+   * Reset tab when company or year changes
    */
   useEffect(() => {
     setActiveTabIndex(0);
   }, [selectedManagementCompany, selectedYear]);
 
   /**
-   * Keep activeTabIndex within valid range.
-   * Since 2 group columns are shown at once,
-   * the last valid start index is tabs.length - 2.
+   * Keep activeTabIndex valid
    */
   useEffect(() => {
     const maxIndex = Math.max(0, tabs.length - 2);
@@ -101,15 +103,23 @@ export default function SummaryPage() {
     }
   }, [activeTabIndex, tabs.length]);
 
-    /**
-   * Set default selected management company
-   * after management company list is loaded.
+  /**
+   * Tab navigation
    */
-  useEffect(() => {
-    if (managementCompanies.length === 0) return;
+  const handleClickPrev = () => {
+    setActiveTabIndex((prev) => Math.max(0, prev - 1));
+  };
 
-    setSelectedManagementCompany((prev) => prev || managementCompanies[0]);
-  }, [managementCompanies]);
+  const handleClickNext = () => {
+    const maxIndex = Math.max(0, tabs.length - 2);
+    setActiveTabIndex((prev) => Math.min(maxIndex, prev + 1));
+  };
+
+  /**
+   * Loading state
+   */
+  const isScreenLoading =
+    isManagementCompaniesLoading || isTabsLoading || isRowsLoading;
 
   return (
     <div>
